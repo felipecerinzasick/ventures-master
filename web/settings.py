@@ -123,10 +123,10 @@ DATABASES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'uavriaov',
-        'USER':'uavriaov',
-        'PASSWORD':'POcm6Vv2H5JSYkd4mUDvqCtFxPmcjBub',
-        'HOST':'abul.db.elephantsql.com',
+        'NAME': 'sick-ventures',
+        'USER':'postgres',
+        'PASSWORD':'',
+        'HOST':'localhost',
         'PORT': '5432',
     }
 }
