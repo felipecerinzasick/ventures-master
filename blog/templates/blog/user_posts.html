@@ -11,7 +11,7 @@
             </div>
               
           <h2><a class="article-title" href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
-            <p class="article-content|slice:":200" ">{{ post.content|safe|linebreaks }}</p>
+            <p class="article-content">{{ post.content|slice:":100"|safe|linebreaks }}</p>
           </div>
         </article>
     {% endfor %}
