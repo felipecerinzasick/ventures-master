@@ -11,9 +11,12 @@
             </div>
               
           <h2><a class="article-title" href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
-            <p class="article-content">{{ post.content|slice:":100"|safe|linebreaks }}</p>
+            <p class="article-content">{{ post.content|slice:":100"}}</p>
           </div>
         </article>
+
+
+
     {% endfor %}
     {% if is_paginated %}
       {% if page_obj.has_previous %}
