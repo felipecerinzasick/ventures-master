@@ -10,6 +10,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # API urls
     path('api-blog/', include('blog.api.urls')),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
     # Blog urls
     path('', include('blog.urls')),
     # Authentication Urls

@@ -75,6 +75,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'storages',
+    'ckeditor',
+    'ckeditor_uploader',
 
 ]
 
@@ -163,13 +165,29 @@ USE_L10N = True
 
 USE_TZ = True
 
+CKEDITOR_UPLOAD_PATH="uploads/"
+
+CKEDITOR_CONFIGS = {
+    'default': {
+       'toolbar': [
+           ["Maximize"],
+                ["Format", "Bold", "Italic", "Underline", "Strike", "SpellChecker"],
+                ['NumberedList', 'BulletedList', "Indent", "Outdent", 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+                ["Image"]  
+                ],
+        'height': 500,
+        'width': '100%',
+    }
+}
+AWS_QUERYSTRING_AUTH = False
+CKEDITOR_ALLOW_NONIMAGE_FILES = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 STATIC_ROOT  =   os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 STATICFILES_DIRS=[os.path.join(BASE_DIR, 'web/static')]
 MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')

@@ -9,5 +9,6 @@ class PostForm(forms.ModelForm):
         fields = ['title', 'content']
 
         widgets = {
-            'content': forms.Textarea(attrs={'class': 'editable medium-editor-textarea'})
+            'content': forms.CharField(label='Content',
+                   widget=forms.Textarea(attrs={'class': 'ckeditor'}))
         }
