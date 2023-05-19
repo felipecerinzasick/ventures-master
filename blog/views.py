@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import PostForm
+from .forms import PostForm, NewsletterUserForm
 from django.views.generic import (
     CreateView,
     ListView,
@@ -13,6 +13,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
+
 
 
 class PostListView(ListView):
@@ -108,3 +109,19 @@ def add_comment(request, pk):
     else:
         return redirect('post_detail', pk=pk)
     return redirect('post_detail', pk=pk)
+
+def newsletter_signup(request):
+    if request.method == 'POST':
+        form = NewsletterUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Thank you for subscribing to our newsletter.')
+            return redirect('some_view_name')
+        else:
+            messages.error(request, 'There was an error with your subscription.')
+            return redirect('some_view_name')
+
+    else:
+        form = NewsletterUserForm()
+
+    return render(request, 'blog/your_template.html', {'form': form})
