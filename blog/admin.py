@@ -23,4 +23,4 @@ class CommentAdmin(admin.ModelAdmin):
     list_per_page = 20
 
 
-admin.site.register(Comment, CommentAdmin)
+admin.site.register(Comment, CommentAdmin, NewsletterUser)
