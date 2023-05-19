@@ -195,6 +195,7 @@
             <p>Get the latest insights about effective strategies, tools and much more!!!</p>
             <form action="" method="post">
               {% csrf_token %}
+              {{ form.as_p }}
               <input type="email" name="email"><input type="submit" value="Subscribe">
             </form>
           </div>
