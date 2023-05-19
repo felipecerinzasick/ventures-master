@@ -56,3 +56,11 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.author
+
+
+class NewsletterUser(models.Model):
+    email = models.EmailField(unique=True)
+
+    def __str__(self):
+        return self.email
+
