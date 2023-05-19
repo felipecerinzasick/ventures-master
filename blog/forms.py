@@ -1,6 +1,5 @@
 from django import forms
-
-from .models import Post
+from .models import Post, NewsletterUser
 
 
 class PostForm(forms.ModelForm):
@@ -12,3 +11,9 @@ class PostForm(forms.ModelForm):
             'content': forms.CharField(label='Content',
                    widget=forms.Textarea(attrs={'class': 'ckeditor'}))
         }
+
+
+class NewsletterUserForm(forms.ModelForm):
+    class Meta:
+        model = NewsletterUser
+        fields = ['email']
