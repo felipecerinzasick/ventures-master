@@ -7,7 +7,8 @@ from .views import (
     PostUpdateView,
     PostDeleteView,
     UserPostListView,
-    add_comment
+    add_comment,
+    newsletter_signup,
 )
 
 
@@ -22,4 +23,6 @@ urlpatterns = [
     path('blog/', PostListView.as_view(), name='blog'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('post/<int:pk>/comment/', add_comment, name='add_comment'),
+    path('newsletter_signup/', newsletter_signup, name='newsletter_signup'),
+    
 ]
