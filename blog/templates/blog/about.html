@@ -1,36 +1,44 @@
 {% extends "blog/base.html" %}
 
-
-<head>
-    <!-- ... other head content like meta tags, title, etc. ... -->
+{% block head %}
+    <!-- Inherit head content like meta tags, title, etc., from the base template -->
+    {{ block.super }}
 
     <style>
-
-
-        /* Adding styles for jumbotron */
+        /* Existing styles */
         .jumbotron.text-center.bg-primary.text-white {
-            color: #fff;  /* Ensuring the text color is white */
-            background-color: #007bff;  /* Ensuring the background is primary color */
+            color: #fff;
+            background-color: #007bff;
+        }
+
+        /* New styles for content-section */
+        .content-section {
+            background-color: white; /* White background */
+            padding: 20px; /* Padding inside the content section */
+            border-radius: 5px; /* Rounded corners */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
         }
     </style>
-</head>
+{% endblock head %}
 
 {% block content %}
     <!-- Jumbotron for a more striking visual presentation -->
     <div class="jumbotron text-center bg-primary text-white py-5 shadow-lg">
-        <h1 class="display-4" style="color: #fff;">Welcome to Sick Ventures!</h1>
+        <h1 class="display-4">Welcome to Sick Ventures!</h1>
         <p class="lead">Charting the Future of Wealth Management.</p>
     </div>
     
-    <!-- Main content section -->
+    <!-- Main content section with a white background -->
     <div class="container mt-5">
-        <p class="text-justify">At Sick & Ventures, I recognize that we're at a pivotal moment in financial history — a moment that could redefine wealth management for the next generations. As a trusted voice in the cryptocurrency domain, especially Bitcoin, I'm here to guide you beyond traditional finance. Step into a world where you can be in full control of your wealth, embracing the philosophy of "being your own banker".</p>
-        
-        <h2 class="mt-4">Your Guide in Cryptocurrency Wealth Management</h2>
-        <p class="text-justify">With a profound understanding of market dynamics, I serve as your beacon in the often-turbulent realm of cryptocurrencies. Offering steadfast guidance through the intricacies of Bitcoin investment, I'm more than just an advisor; I'm your partner on this transformative journey towards digital wealth building.</p>
-        
-        <h2 class="mt-4">Realize Bitcoin's True Potential</h2>
-        <p class="text-justify">Bitcoin, for many, is a realm filled with misconceptions and pitfalls. But delve deeper, and you'll see it as an opportunity, not just speculation. Bitcoin represents a seismic shift in technological innovation with the potential to reshape the financial landscape. Here at Sick & Ventures, I believe that the essence of Bitcoin is its empowerment, offering financial freedom away from traditional banking constraints. But unlocking this potential requires a deep dive into the world of Bitcoin and blockchain technology.</p>
+        <div class="content-section">
+            <p class="text-justify">At Sick & Ventures, I recognize that we're at a pivotal moment in financial history—a moment that could redefine wealth management for the next generations. As a trusted voice in the cryptocurrency domain, especially Bitcoin, I'm here to guide you beyond traditional finance. Step into a world where you can be in full control of your wealth, embracing the philosophy of "being your own banker".</p>
+            
+            <h2 class="mt-4">Your Guide in Cryptocurrency Wealth Management</h2>
+            <p class="text-justify">With a profound understanding of market dynamics, I serve as your beacon in the often-turbulent realm of cryptocurrencies. Offering steadfast guidance through the intricacies of Bitcoin investment, I'm more than just an advisor; I'm your partner on this transformative journey towards digital wealth building.</p>
+            
+            <h2 class="mt-4">Realize Bitcoin's True Potential</h2>
+            <p class="text-justify">Bitcoin, for many, is a realm filled with misconceptions and pitfalls. But delve deeper, and you'll see it as an opportunity, not just speculation. Bitcoin represents a seismic shift in technological innovation with the potential to reshape the financial landscape. Here at Sick & Ventures, I believe that the essence of Bitcoin is its empowerment, offering financial freedom away from traditional banking constraints. But unlocking this potential requires a deep dive into the world of Bitcoin and blockchain technology.</p>
+        </div>
 
         <!-- Call to Action -->
         <div class="mt-5 text-center">
