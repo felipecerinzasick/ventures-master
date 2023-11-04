@@ -62,28 +62,30 @@
     </nav>
   </header>
   <main role="main" class="container">
-    <div class="row">
-      <div class="col-md-8">
-        {% if messages %}
+  <div class="row">
+    <div class="col-md-8">
+      <!-- Content goes here -->
+      {% if messages %}
         {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-          {{ message }}
-        </div>
+          <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+          </div>
         {% endfor %}
-        {% endif %}
-        {% block content %}{% endblock %}
-      </div>
-        <div class="col-md-4">
-          <div class="content-section">
-           <h3>Contact us</h3>
-           <p class='text-muted'>Your quest for crypto expertise and growth starts with Sick Ventures.
-           <br>
-           <br>
-           <a class="btn btn-primary" class="nav-item nav-link" href="{% url 'about' %}">Get in touch</a>
-           </p>
-           <hr>
-           {% if user.is_authenticated %}
-           <div class="footer-newsletter">
+      {% endif %}
+      {% block content %}{% endblock %}
+    </div>
+    
+    <div class="col-md-4">
+      <div class="content-section">
+        <h3>Contact us</h3>
+        <p class='text-muted'>Your quest for crypto expertise and growth starts with Sick Ventures.</p>
+        <!-- Trigger button for the modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#contactModal">
+          Get in touch
+        </button>
+        <hr>
+        {% if user.is_authenticated %}
+          <div class="footer-newsletter">
             <h3>Join Our Newsletter</h3>
             <p>Get the latest insights about effective strategies, tools and much more!!!</p>
             <form action="/newsletter/daily-news/subscribe/" method="post">
@@ -91,12 +93,47 @@
               <input type="email" name="email"><input type="submit" value="Subscribe">
             </form>
           </div>
-          {%endif%}
-          </div>
+        {% endif %}
       </div>
-
     </div>
-  </main>
+  </div>
+</main>
+
+<!-- Contact Modal -->
+<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="contactModalLabel">Get in Touch</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Contact Form -->
+        <form>
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Enter your name">
+          </div>
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" class="form-control" id="email" placeholder="Enter your email">
+          </div>
+          <div class="form-group">
+            <label for="customText">Your Message</label>
+            <textarea class="form-control" id="customText" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Send Message</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
@@ -107,6 +144,13 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
     integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
   </script>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
   <!-- Optional JavaScript -->
   <script src="{% static 'js/main.js' %}"></script>
