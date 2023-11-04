@@ -8,6 +8,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('newsletter/', include('newsletter.urls')),
+    path('tinymce/', include('tinymce.urls')),
     # API urls
     path('api-blog/', include('blog.api.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
