@@ -81,6 +81,17 @@
            <br>
            <a class="btn btn-primary" class="nav-item nav-link" href="{% url 'about' %}">Find out more!</a>
            </p>
+           <hr>
+           {% if user.is_authenticated %}
+           <div class="footer-newsletter">
+            <h3>Join Our Newsletter</h3>
+            <p>Get the latest insights about effective strategies, tools and much more!!!</p>
+            <form action="/newsletter/daily-news/subscribe/" method="post">
+              {% csrf_token %}
+              <input type="email" name="email"><input type="submit" value="Subscribe">
+            </form>
+          </div>
+          {%endif%}
           </div>
       </div>
 
