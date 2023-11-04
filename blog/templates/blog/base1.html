@@ -185,17 +185,35 @@
       </div>
     </div>
   </section>
-  <!-- ======= Cta Section ======= -->
-  <section id="cta" class="cta" style="margin-top: 20px;">
+<!-- ======= Cta Section ======= -->
+<section id="cta" class="cta" style="margin-top: 20px;">
   <div class="container" data-aos="zoom-in">
     <div class="text-center">
       <h3>Your guide in Bitcoin investing</h3>
       <p>Providing clear strategies to manage risk, enhance returns, and diversify portfolios for lasting financial success.</p>
       <!-- Trigger/Open The Modal -->
-      <button class="cta-btn" data-toggle="modal" data-target="#contactModal">Get in touch</button>
+      <button class="cta-btn" data-toggle="modal" data-target="#contactModal" 
+              style="
+                background-color: #007bff; /* Blue background color */
+                color: white; /* White text color */
+                border: 2px solid white; /* White border */
+                padding: 10px 24px; /* Padding inside the button */
+                font-size: 16px; /* Size of the text */
+                font-weight: bold; /* Bold font weight */
+                border-radius: 25px; /* Rounded corners with 25px radius */
+                text-transform: uppercase; /* Uppercase text */
+                outline: none; /* Remove outline */
+                cursor: pointer; /* Cursor changes to pointer when hovering over the button */
+                box-shadow: none; /* No shadow (assumed from the image) */
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s; /* Transition for hover effects */
+              "
+              onmouseover="this.style.backgroundColor='#0056b3'; this.style.borderColor='#0056b3'; this.style.color='#007bff';" /* Darker blue background and border on hover, blue text */
+              onmouseout="this.style.backgroundColor='#007bff'; this.style.borderColor='white'; this.style.color='white';"
+              >Get in touch</button>
     </div>
   </div>
-</section><!-- End Cta Section -->
+</section>
+<!-- End Cta Section -->
 
     <!-- The Modal -->
 <div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
