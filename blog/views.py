@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import PostForm
+from .forms import PostForm,ContactForm
 from django.views.generic import (
     CreateView,
     ListView,
@@ -13,6 +13,20 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
+
+
+
+def contact_view(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('success_url')  # Redirect to a success page.
+    else:
+        form = ContactForm()
+    
+    return render(request, 'base1.html', {'form': form})
+
 
 
 class PostListView(ListView):
