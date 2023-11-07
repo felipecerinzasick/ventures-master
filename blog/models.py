@@ -5,6 +5,15 @@ from django.conf import settings
 from ckeditor_uploader.fields import RichTextUploadingField
 
 
+class Contact(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    message = models.TextField()
+
+    def __str__(self):
+        return self.name
+        
+
 class PostManager(models.Manager):
     def like_toggle(self, user, post_obj):
         if user in post_obj.liked.all():
