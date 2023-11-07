@@ -220,6 +220,11 @@
 </section>
 
 
+
+    
+
+
+    
 <!-- End Cta Section -->
 
     <!-- The Modal -->
@@ -234,7 +239,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      
+      <form method="post" action="{% url 'contact' %}">
       <!-- Modal Body -->
       <div class="modal-body">
         <form>
@@ -252,13 +257,14 @@
           </div>
         </form>
       </div>
+     {% csrf_token %}
       
       <!-- Modal Footer -->
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-primary">Send Message</button>
       </div>
-      
+      </form>
     </div>
   </div>
 </div>
