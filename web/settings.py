@@ -234,7 +234,7 @@ TINYMCE_DEFAULT_CONFIG = {
     "a11ycheck ltr rtl | showcomments addcomment code",
     "custom_undo_redo_levels": 10,  # To force a specific language instead of the Django current language.
 }
-SITE_ID = 1
+SITE_ID = 2
 # Email Settings
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
