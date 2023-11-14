@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, Comment
+from .models import Post, Comment, Contact
 
 
 class PostAdmin(admin.ModelAdmin):
@@ -22,7 +22,10 @@ class CommentAdmin(admin.ModelAdmin):
     search_fields = ('author', 'post')
     list_per_page = 20
 
+class ContactAdmin(admin.ModelAdmin):
+    list_display = ["name", "date_posted"]
 
 admin.site.register(Comment, CommentAdmin)
+admin.site.register(Contact, ContactAdmin)
 
 

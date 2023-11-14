@@ -21,11 +21,14 @@ def contact_view(request):
         form = ContactForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('success_url')  # Redirect to a success page.
-    else:
-        form = ContactForm()
+            messages.success(request, "Thanks for contacting us!")
+            return redirect('index')  # Redirect to a success page.
+        else:
+            print(form.errors)
+    # else:
+    #     form = ContactForm()
     
-    return render(request, 'base1.html', {'form': form})
+    # return render(request, 'base1.html', {'form': form})
 
 
 

@@ -109,27 +109,30 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
+      <form method="post" action="{% url 'contact'%}">
+              <div class="modal-body">
         <!-- Contact Form -->
-        <form>
+        
+          {% csrf_token %}
           <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" class="form-control" id="name" placeholder="Enter your name">
+            <input type="text" class="form-control" name="name" id="name" placeholder="Enter your name">
           </div>
           <div class="form-group">
             <label for="email">Email address</label>
-            <input type="email" class="form-control" id="email" placeholder="Enter your email">
+            <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email">
           </div>
           <div class="form-group">
             <label for="customText">Your Message</label>
-            <textarea class="form-control" id="customText" rows="3"></textarea>
+            <textarea class="form-control" name="message" id="customText" rows="3"></textarea>
           </div>
-        </form>
+       
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Send Message</button>
+        <button type="submit" class="btn btn-primary">Send Message</button>
       </div>
+    </form>
     </div>
   </div>
 </div>
