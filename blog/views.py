@@ -1,4 +1,5 @@
 from .models import Post, Comment
+from newsletter.models import Newsletter
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -108,7 +109,9 @@ def blog(request):
         return render(request, 'blog/blog.html', {'title': 'Blog'})
 
 def index(request):
-        return render(request, 'blog/index.html', {'title': 'Index'})
+    newsletter = Newsletter.objects.first()
+    print(newsletter.slug)
+    return render(request, 'blog/index.html', {'title': 'Index', 'newsletter':newsletter})
 
 def dashboard(request):
     return render(request, 'blog/dashboard.html', {'title': 'Dashboard'})
