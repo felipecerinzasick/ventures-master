@@ -46,14 +46,14 @@
       background: url('path_to_your_fallback_image.jpg') no-repeat center center;
       background-size: cover;
     }
-          #hero::before { /* Assuming there is a pseudo-element for overlay */
+    #hero::before { /* Assuming there is a pseudo-element for overlay */
     content: '';
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    background: rgba(255, 255, 255, 0.3); /* Reduce the last number to decrease opacity */
+    background: rgba(255, 255, 255, 0.1); /* Reduce the last number to decrease opacity */
     z-index: 0;
 }
 
