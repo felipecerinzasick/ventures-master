@@ -22,6 +22,11 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
 <style>
+    @media only screen and (max-width: 768px) {
+    .main-title, .sub-title {
+        color: #1f4068; /* Replace with the exact dark blue color code you prefer */
+    }
+}
     .bg-white {
     background-color: #fff !important; /* Pure white background */
 }
@@ -155,30 +160,32 @@
     <source src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/connection_-_113367+(1080p).mp4" type="video/mp4">
     Your browser does not support HTML5 video.
   </video>
-  <div class="container position-relative" data-aos="fade-up" data-aos-delay="100" style="z-index: 1;">
+ <div class="container position-relative" data-aos="fade-up" data-aos-delay="100" style="z-index: 1;">
     <div class="row justify-content-center">
-      <div class="col-xl-7 col-lg-9 text-center">
-        {% for message in messages %}
-          <p class="fw-bold" style="color: red;">{{ message }}</p>
-        {% endfor %}
-        <h1>DEDICATED TO PRESERVING AND GROWING WEALTH IN A DIGITAL ECONOMY</h1>
-        <h2>Invest: <span class="auto-type"></span></h2>
-      </div>
-      <script src="https://unpkg.com/typed.js@2.0.132/dist/typed.umd.js"></script>
-      <script>
-        var typed = new Typed(".auto-type", {
-          strings: ["in emerging technologies.", "in the future of the internet.", "with a competent partner."],
-          typeSpeed: 120,
-          backSpeed: 90,
-          loop: true
-        });
-      </script>
-      </div>
-      <div class="text-center">
-    <i class='bx bxs-like bx-fade-down'></i>
-    <a href="{% url 'about' %}" class="btn-get-started scrollto" 
-       style="background-color: #2596BE;">learn more</a>
+        <div class="col-xl-7 col-lg-9 text-center">
+            {% for message in messages %}
+                <p class="fw-bold" style="color: red;">{{ message }}</p>
+            {% endfor %}
+            <h1 class="main-title">DEDICATED TO PRESERVING AND GROWING WEALTH IN A DIGITAL ECONOMY</h1>
+            <h2 class="sub-title">Invest: <span class="auto-type"></span></h2>
+        </div>
+        <script src="https://unpkg.com/typed.js@2.0.132/dist/typed.umd.js"></script>
+        <script>
+            var typed = new Typed(".auto-type", {
+                strings: ["in emerging technologies.", "in the future of the internet.", "with a competent partner."],
+                typeSpeed: 120,
+                backSpeed: 90,
+                loop: true
+            });
+        </script>
+    </div>
+    <div class="text-center">
+        <i class='bx bxs-like bx-fade-down'></i>
+        <a href="{% url 'about' %}" class="btn-get-started scrollto" 
+           style="background-color: #2596BE;">learn more</a>
+    </div>
 </div>
+
 
       
  
