@@ -16,13 +16,41 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
     integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 
-  <!-- Medium Editor -->
-  <script src="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/js/medium-editor.min.js"></script>
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/css/medium-editor.min.css"
-    type="text/css" media="screen" charset="utf-8">
-
   <!-- Custom Style -->
   <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+  <style>
+    .hero-section {
+      background-image: url('{% static 'images/hero-banner.jpg' %}'); /* Path to your hero banner image */
+      background-size: cover;
+      background-position: center;
+      color: white;
+      text-align: center;
+      padding: 60px 0;
+    }
+
+    .content-layout {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .image-section {
+      flex: 1;
+      max-width: 50%;
+    }
+
+    .image-section img {
+      width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+
+    .text-section {
+      flex: 1;
+      max-width: 50%;
+      padding: 0 20px;
+    }
+  </style>
 
   {% if title %}
   <title>Sick-Ventures {{ title }}</title>
@@ -61,17 +89,13 @@
       </div>
     </nav>
   </header>
-  <main role="main" class="container" style="padding-top: 80px;">
-  <div class="row">
-    <div class="col-md-8">
-      <!-- Content goes here -->
-      {% if messages %}
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }}">
-            {{ message }}
-          </div>
-        {% endfor %}
-      {% endif %}
+  <main role="main" class="container-fluid" style="padding-top: 80px;">
+    <div class="hero-section">
+      <h1>Your Hero Title Here</h1>
+      <p>Your hero subtitle or description here.</p>
+    </div>
+
+    <div class="container">
       {% block content %}{% endblock %}
     </div>
     
