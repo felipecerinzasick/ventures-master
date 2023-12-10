@@ -19,7 +19,34 @@
   <!-- Custom Style -->
   <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
   <style>
-     <style>
+     /* Ensure the hero section is full-width */
+.container-fluid {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Remove extra space below the navigation bar */
+nav.navbar {
+  margin-bottom: 0;
+}
+
+/* Correct the layout for the image and text section */
+.content-layout {
+  display: flex;
+  flex-direction: row; /* Ensure this is set for larger screens */
+  align-items: start; /* Align items at the start of the flex container */
+}
+
+/* Responsive behavior for the content layout */
+@media (max-width: 768px) {
+  .content-layout {
+    flex-direction: column; /* Stack image and text on smaller screens */
+  }
+
+  .image-section, .text-section {
+    max-width: 100%;
+  }
+}
     .hero-section {
       background-image: url('https://sick-ventures.s3.eu-central-1.amazonaws.com/media/banner_bg.jpg');
       background-size: cover;
