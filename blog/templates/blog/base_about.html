@@ -75,27 +75,7 @@
       {% block content %}{% endblock %}
     </div>
     
-    <div class="col-md-4">
-      <div class="content-section">
-        <h3>Contact us</h3>
-        <p class='text-muted'>Your quest for crypto expertise and growth starts with Sick Ventures.</p>
-        
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#contactModal">
-          Get in touch
-        </button>
-        <hr>
-        {% if user.is_authenticated %}
-          <div class="footer-newsletter">
-            <h3>Join Our Newsletter</h3>
-            <p>Get the latest insights about effective strategies, tools and much more!!!</p>
-            <form action="/newsletter/{{newsletter.slug}}/subscribe/" method="post">
-              {% csrf_token %}
-              <input type="email" name="email"><input type="submit" value="Subscribe">
-            </form>
-          </div>
-        {% endif %}
-      </div>
-    </div>
+    
   </div>
 </main>
 
