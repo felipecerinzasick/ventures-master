@@ -1,0 +1,421 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<!-- Favicons --> 
+<link href="assets/img/favicon.png" rel="icon"> 
+<link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+<!-- Icons boxicon -->
+<script src="https://unpkg.com/boxicons@2.0.9/dist/boxicons.js"></script>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Vendor CSS Files -->
+<link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+<link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+<link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+<link href="assets/vendor/venobox/venobox.css" rel="stylesheet">
+<link href="assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
+<link href="assets/vendor/aos/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<style>
+  
+
+}
+    .bg-white {
+    background-color: #fff !important; /* Pure white background */
+}
+    #hero {
+    position: relative;
+    overflow: hidden;
+  }
+
+  #hero video {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+    z-index: -1;
+  }
+
+
+      @media (max-width: 768px) {
+    #hero video {
+      display: none;
+    }
+
+    #hero {
+      background: url('path_to_your_fallback_image.jpg') no-repeat center center;
+      background-size: cover;
+    }
+    #hero::before { /* Assuming there is a pseudo-element for overlay */
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(255, 255, 255, 0.1); /* Reduce the last number to decrease opacity */
+    z-index: 0;
+}
+
+  }
+    body {
+        font-family: 'Raleway', sans-serif;
+    }
+  
+        #hero {
+            margin-top: -25px;
+            padding-top: 50px;
+        }
+
+        .section-title {
+            text-align: center;
+            width: 100%;
+        }
+
+        .icon-box {
+            margin: 0;
+            padding: 20px;
+        }
+
+        .navbar-brand {
+            margin: 0;
+        }
+
+        /* Adding styles for jumbotron */
+        .jumbotron.text-center.bg-primary.text-white {
+            color: #fff;  /* Ensuring the text color is white */
+            background-color: #007bff;  /* Ensuring the background is primary color */
+        }
+    </style>
+<head>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+    integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+  <!-- Medium Editor -->
+  <script src="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/js/medium-editor.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/css/medium-editor.min.css"
+    type="text/css" media="screen" charset="utf-8">
+
+  <!-- Custom Style -->
+  <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+  {% if title %}
+  <title>Sick-Ventures {{ title }}</title>
+  {% else %}
+  <title>Sick-Ventures</title>
+  {% endif %}
+</head>
+
+<body>
+  <header class="site-header" >
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white" >
+      <div class="container">
+        <a class="navbar-brand mr-4" href="{% url 'index' %}"><b>Sick Ventures </b></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
+          aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarToggle">
+          <div class="navbar-nav mr-auto">
+            <a class="nav-item nav-link" href="{% url 'index' %}">Home</a>
+            <a class="nav-item nav-link" href="{% url 'about' %}">About</a>
+            <a class="nav-item nav-link" href="{% url 'blog' %}">Blog</a>
+          </div>
+          <!-- Navbar Right Side -->
+          <div class="navbar-nav">
+            {% if user.is_authenticated %}
+            <a class="nav-item nav-link" href="{% url 'post_create' %}">New Post</a>
+            <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
+            <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+            {% else %}
+            <a class="btn btn-primary" class="nav-item nav-link" href="{% url 'login' %}">Get started</a>
+            <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+            {% endif %}
+          </div> 
+        </div>
+      </div>
+    </nav>
+  </header>
+  <!-- ======= Hero Section ======= -->
+  <section id="hero" class="d-flex align-items-center">
+  <video autoplay muted loop id="myVideo" style="position: absolute; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -1;">
+    <source src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/connection_-_113367+(1080p).mp4" type="video/mp4">
+    Your browser does not support HTML5 video.
+  </video>
+ <div class="container position-relative" data-aos="fade-up" data-aos-delay="100" style="z-index: 1;">
+    <div class="row justify-content-center">
+      <div class="col-xl-7 col-lg-9 text-center">
+        {% for message in messages %}
+          <p class="fw-bold" style="color: red;">{{ message }}</p>
+        {% endfor %}
+        <h1>DEDICATED TO PRESERVING AND GROWING WEALTH IN A DIGITAL ECONOMY</h1>
+        <h2>Invest: <span class="auto-type"></span></h2>
+      </div>
+      <script src="https://unpkg.com/typed.js@2.0.132/dist/typed.umd.js"></script>
+      <script>
+        var typed = new Typed(".auto-type", {
+          strings: ["in emerging technologies.", "in the future of the internet.", "with a competent partner."],
+          typeSpeed: 120,
+          backSpeed: 90,
+          loop: true
+        });
+      </script>
+      </div>
+      <div class="text-center">
+    <i class='bx bxs-like bx-fade-down'></i>
+    <a href="{% url 'about' %}" class="btn-get-started scrollto" 
+       style="background-color: #2596BE;">learn more</a>
+</div>
+
+
+
+
+      
+ 
+      
+        <!-- Call to Action -->
+        <div class="mt-5 text-center" style="margin-bottom: 10px;" style="margin-top: 60px;">
+            
+        </div>
+      <div class="row icon-boxes" style="margin-bottom: 120px;">
+
+
+    <!-- Secure Custody Card -->
+<div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0" data-aos="zoom-in" data-aos-delay="200">
+    <div class="icon-box" style="background: linear-gradient(145deg, #1f4068, #1b1b2f); border-radius: 10px; box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); padding: 20px; color: #fff;">
+        <h4 class="title"><a href="https://www.sick-ventures.com/post/46/" style="color: #4eeaf6; text-decoration: none; transition: color 0.3s;">    Secure Custody</a></h4>
+        <hr style="border-top: 1px solid #4eeaf6; width: 80%; margin: 10px auto;"/>
+        <p class="description" style="color: #ffffff;">Expert guidance on storing your digital assets safely and efficiently.</p>
+        <a href="https://www.sick-ventures.com/about/"style="color: #2596BE; 
+          text-decoration: none; 
+          transition: all 0.3s ease;">Learn More</a>
+    </div>
+</div>
+
+    <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0" data-aos="zoom-in" data-aos-delay="300">
+    <div class="icon-box" style="background: linear-gradient(145deg, #1f4068, #1b1b2f); border-radius: 10px; box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); padding: 20px; color: #fff;">
+        <h4 class="title"><a href="https://www.sick-ventures.com/post/47/" style="color: #4eeaf6; text-decoration: none; transition: color 0.3s;">   Navigating the Cycle</a></h4>
+        <hr style="border-top: 1px solid #4eeaf6; width: 80%; margin: 10px auto;"/>
+        <p class="description" style="color: #ffffff;">With specific knowledge, I am your ideal partner for the next cycle. Dive in to discover the strategies that will navigate you through the crypto currents.</p>
+       <a href="https://www.sick-ventures.com/about/"style="color: #2596BE; 
+          text-decoration: none; 
+          transition: all 0.3s ease;">Learn More</a>
+    </div>
+</div>
+
+<!-- Learning Platform Card -->
+<div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0" data-aos="zoom-in" data-aos-delay="400">
+    <div class="icon-box" style="background: linear-gradient(145deg, #1f4068, #1b1b2f); border-radius: 10px; box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); padding: 20px; color: #fff;">
+        <h4 class="title"><a href="https://www.sick-ventures.com/blog/" style="color: #4eeaf6; text-decoration: none; transition: color 0.3s;">  Learning Platform</a></h4>
+        <hr style="border-top: 1px solid #ffffff; width: 80%; margin: 10px auto;"/>
+        <p class="description" style="color: #ffffff;">An extensive platform dedicated to educating on all things blockchain and emerging technologies.</p>
+        <a href="https://www.sick-ventures.com/about/"style="color: #2596BE; 
+          text-decoration: none; 
+          transition: all 0.3s ease;">Learn More</a>
+    </div>
+</div>
+
+    <!-- Continuous Innovation Card -->
+<div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0" data-aos="zoom-in" data-aos-delay="500">
+    <div class="icon-box" style="background: linear-gradient(145deg, #1f4068, #1b1b2f); border-radius: 10px; box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); padding: 20px; color: #fff;">
+        <h4 class="title"><a href="https://www.sick-ventures.com/about/" style="color: #4eeaf6; text-decoration: none; transition: color 0.3s;"> Continuous Innovation</a></h4>
+        <hr style="border-top: 1px solid #ffffff; width: 80%; margin: 10px auto;"/>
+        <p class="description" style="color: #ffffff;">Always ahead of the curve and committed to introducing the latest innovations.</p>
+        <a href="https://www.sick-ventures.com/about/"style="color: #2596BE; 
+          text-decoration: none; 
+          transition: all 0.3s ease;">Learn More</a>
+    </div>
+</div>
+
+</div>
+
+      </div>
+    </div>
+  </section>
+
+    
+<!-- ======= Performance Chart Section ======= -->
+<section id="performance-chart" class="performance-chart" style="margin-top: 20px; box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.1); background-color: white;">
+  <div class="container" data-aos="fade-up">
+    <div class="section-title text-center">
+      <h2>Proof of Performance</h2>
+      <p>Year-to-date (YTD) performance against the S&P 500</p>
+    </div>
+    <div class="chart-container text-center" style="padding: 40px 0;">
+      <img src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/proof-of-performance.png" alt="YTD Performance Chart" style="max-width: 100%; height: auto; box-shadow: 0 8px 8px rgba(0, 0, 0, 0.1); margin-top: 20px; border-radius: 4px;">
+      <div class="disclaimer text-center" style="margin-top: 20px">
+        <p style="font-style: italic; color: #333;">Where green is the historical performance of the company shares in the sick-ventures portfolio and blue represent the S&P as benchmark. The performance figures given relate to the past and are not a reliable indicator of future results. They do not constitute an offer or invitation to subscribe to fund units and are for information purposes only. Information on this website is no substitute for the clarification that may be required on an individual basis about the described products or services.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ======= Continuation of Other Sections ======= -->
+
+<!-- ======= Cta Section ======= -->
+<section id="cta" class="cta" style="margin-top: 20px; background-color: #2596BE;">
+  <div class="container" data-aos="zoom-in">
+    <div class="text-center">
+      <h3>Your guide in disruptive investments</h3>
+      <p>Providing clear strategies to manage risk, enhance returns, and diversify portfolios for lasting financial success.</p>
+      <!-- Trigger/Open The Modal -->
+      <button class="cta-btn" data-toggle="modal" data-target="#contactModal" 
+              style="
+                background-color: #2596BE; /* Matching the background */
+                color: white; /* Text color */
+                border: 2px solid white; /* White border */
+                padding: 10px 24px; /* Padding */
+                font-size: 16px; /* Font size */
+                border-radius: 10px; /* Rounded borders */
+                outline: none; /* Remove outline */
+                cursor: pointer; /* Pointer cursor on hover */
+                box-shadow: none; /* No shadow */
+                transition: all 0.3s ease; /* Smooth transition for hover effects */
+              "
+              onmouseover="this.style.backgroundColor='#237BA0';" /* Slightly different shade on hover for a subtle effect */
+              onmouseout="this.style.backgroundColor='#2596BE';" /* Return to original color on mouse out */
+              >Get in touch</button>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+    
+<!-- End Cta Section -->
+
+    <!-- The Modal -->
+<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="contactModalLabel">Get in Touch</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <!-- Remove the nested form tag and add the 'name' attribute to the inputs -->
+        <form method="post" action="{% url 'contact' %}">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email address:</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea class="form-control" id="message" name="message" rows="3" required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </div>
+        </form>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-lg-3 col-md-6 footer-contact">
+            <h3>Sick Ventures </h3>
+            <p>
+            <strong>Email:</strong> info@sick-ventures.com<br>
+            </p>
+          </div>
+
+          <div class="col-lg-2 col-md-6 footer-links">
+            <h4> Links</h4>
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="{% url 'index' %}">Home</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="{% url 'about' %}">About </a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-md-6 footer-links">
+          </div>
+
+          
+          <div class="col-lg-4 col-md-6 footer-newsletter">
+            <h4>Join Our Newsletter</h4>
+            <p>Get the latest insights about effective strategies, tools and much more!!!</p>
+            <form action="/newsletter/{{newsletter.slug}}/subscribe/" method="post">
+              {% csrf_token %}
+              <input type="email" name="email"><input type="submit" value="Subscribe">
+            </form>
+          </div>
+          
+
+        </div>
+      </div>
+    </div>
+
+   <div class="container py-4">
+    <div class="footer-block" style="text-align: center; max-width: 960px; margin-left: auto; margin-right: auto;">
+      <div class="credits" style="text-align: left;">
+          Designed with the end-user in mind. If you have suggestions, please feel free to reach out (info@sick-ventures.com). The content available on this webste (www.sick-ventures.com) and any affiliated subpages is for informational purposes only and is not to be construed as investment advice or an endorsement of any particular investment strategy. The views and opinions expressed are those of the Portfolio Manager at Sick-Ventures and are provided to enhance your understanding of my investment philosophy, not as personalized investment recommendations. Investments are subject to market risks, including the loss of principal. Past performance is not indicative of future results, and there is no assurance that any investment will achieve its objectives or avoid significant losses. The information provided herein is proprietary to Sick-Ventures and is intended solely for the recipient. Unauthorized copying, disclosure, or distribution of this material is strictly forbidden. While I have sourced our information from what we believe to be reliable resources, I cannot warrant its absolute accuracy, completeness, or timeliness. It is not intended as an offer or solicitation for the purchase or sale of any financial instrument. Investment products and services may vary across jurisdictions and are subject to eligibility criteria. This website is not a substitute for personalized advice from the financial services firm from which you intend to acquire securities or other financial products. Please note that not all products or services detailed on this website may be available in your country or region, and availability is subject to local regulation and law.
+        
+
+        </div>
+      <div class="copyright" style="text-align: left;">
+        &copy; Copyright <strong><span>Sick Ventures</span></strong>. All Rights Reserved
+      </div>
+    </div>
+  </div>
+  </footer><!-- End Footer -->
+
+
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+  </script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+  </script>
+
+  <!-- Optional JavaScript -->
+  <script src="{% static 'js/main.js' %}"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
