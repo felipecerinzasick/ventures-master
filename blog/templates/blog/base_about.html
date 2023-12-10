@@ -19,21 +19,20 @@
   <!-- Custom Style -->
   <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
   <style>
+     <style>
     .hero-section {
-      background-image: url('{% static 'https://sick-ventures.s3.eu-central-1.amazonaws.com/media/banner_bg.jpg' %}'); /* Path to your hero banner image */
+      background-image: url('https://sick-ventures.s3.eu-central-1.amazonaws.com/media/banner_bg.jpg');
       background-size: cover;
       background-position: center;
       color: white;
       text-align: center;
       padding: 60px 0;
     }
-   .hero-section {
-      background-image: url('https://sick-ventures.s3.eu-central-1.amazonaws.com/media/banner_bg.jpg'); /* Your background image URL */
-      background-size: cover;
-      background-position: center;
-      color: white; /* Text color set to white */
-      text-align: center;
-      padding: 60px 0;
+
+    .container {
+      background-color: white; /* Set background color to white */
+      border: none; /* Remove borders */
+      padding: 20px; /* Adjust padding as needed */
     }
 
     .content-layout {
@@ -97,7 +96,7 @@
       </div>
     </nav>
   </header>
-  <main role="main" class="container-fluid" style="padding-top: 80px;">
+  <main role="main" class="container-fluid" style="padding-top: 50px;">
     <div class="hero-section">
       <h1>Welcome to Sick Ventures</h1>
       <p>Charting the Future of Asset Management.</p>
