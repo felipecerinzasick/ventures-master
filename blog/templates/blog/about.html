@@ -5,6 +5,41 @@
     {{ block.super }}
 
     <style>
+         <style>
+        .hero-section {
+            background-image: url('path_to_your_banner_image.jpg'); /* Add your banner image */
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .image-section, .text-section {
+            flex: 1;
+            padding: 15px;
+        }
+
+        .image-section {
+            max-width: 50%;
+        }
+
+        .image-section img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .text-section {
+            max-width: 50%;
+            padding: 0 20px;
+        }
         /* Existing styles */
         .jumbotron.text-center.bg-primary.text-white {
             color: #fff;
@@ -30,24 +65,31 @@
     </style>
 {% endblock head %}
 
-{% block content %}
-    <div class="container-fluid mt-5"> <!-- Changed to container-fluid -->
-        <div class="content-section">
-            <!-- Jumbotron with the provided color -->
-            <div class="jumbotron text-center py-5 shadow-lg" style="color: white; background-color: #3498db;">
-                <h1 class="display-4" style="color: white;">Welcome to Sick Ventures!</h1>
-                <p class="lead">Charting the Future of Wealth Management.</p>
-            </div>
 
-            <!-- Main content section with a white background -->
-            <p class="text-justify">At Sick-Ventures, I recognize that we're at a pivotal moment in financial history—a moment that could redefine wealth management for the next generations. As a trusted voice in the cryptocurrency domain, especially Bitcoin, I'm here to guide you beyond traditional finance. Step into a world where you can be in full control of your wealth, embracing the philosophy of "being your own banker".</p>
+{% block content %}
+    <div class="hero-section">
+        <h1>Welcome to Sick Ventures!</h1>
+        <p>Charting the Future of Wealth Management.</p>
+    </div>
+
+    <div class="container">
+        <div class="content-wrapper">
+            <div class="image-section">
+                <img src="path_to_your_image.jpg" alt="Descriptive Alt Text">
+            </div>
+            <div class="text-section">
+                <h2>Your Guide in Cryptocurrency Wealth Management</h2>
+                 <p class="text-justify">At Sick-Ventures, I recognize that we're at a pivotal moment in financial history—a moment that could redefine wealth management for the next generations. As a trusted voice in the cryptocurrency domain, especially Bitcoin, I'm here to guide you beyond traditional finance. Step into a world where you can be in full control of your wealth, embracing the philosophy of "being your own banker".</p>
             
             <h2 class="mt-4">Your Guide in Cryptocurrency Wealth Management</h2>
             <p class="text-justify">With a profound understanding of market dynamics, I serve as your beacon in the often-turbulent realm of cryptocurrencies. Offering steadfast guidance through the intricacies of Bitcoin investment, I'm more than just an advisor; I'm your partner on this transformative journey towards digital wealth building.</p>
             
             <h2 class="mt-4">Realize Bitcoin's True Potential</h2>
             <p class="text-justify">Bitcoin, for many, is a realm filled with misconceptions and pitfalls. But delve deeper, and you'll see it as an opportunity, not just speculation. Bitcoin represents a seismic shift in technological innovation with the potential to reshape the financial landscape. Here at Sick-Ventures, I believe that the essence of Bitcoin is its empowerment, offering financial freedom away from traditional banking constraints. But unlocking this potential requires a deep dive into the world of Bitcoin and blockchain technology.</p>
+        
+            </div>
         </div>
     </div>
 {% endblock content %}
+
 
