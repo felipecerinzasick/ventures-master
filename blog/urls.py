@@ -13,8 +13,6 @@ from .views import (
 
 
 
-
-
 urlpatterns = [
     path('', views.index, name='index'),
     path('user/<str:username>/', UserPostListView.as_view(), name='user_posts'),
@@ -27,4 +25,5 @@ urlpatterns = [
     path('blog/', PostListView.as_view(), name='blog'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('post/<int:pk>/comment/', add_comment, name='add_comment'),
+    path('privacy-policy/', views.privacy_policy, name='privacy-policy'),
 ]
