@@ -15,6 +15,8 @@ from django.views.generic import (
     DeleteView
 )
 
+def privacy_policy(request):
+    return render(request, 'privacy.html')
 
 
 def contact_view(request):
