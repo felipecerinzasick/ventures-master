@@ -16,8 +16,7 @@ from django.views.generic import (
 )
 
 def privacy_policy(request):
-    return render(request, 'privacy.html')
-
+    return render(request, 'blog/privacy.html')
 
 def contact_view(request):
     if request.method == 'POST':
