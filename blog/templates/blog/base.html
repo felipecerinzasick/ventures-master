@@ -97,7 +97,7 @@
         <hr>
         {% if user.is_authenticated %}
           <div class="footer-newsletter">
-            <h3>Join Our Newsletter</h3>
+            <h3>Join the Newsletter</h3>
             <p>Get the latest insights about effective strategies, tools and much more!!!</p>
             <form action="/newsletter/{{newsletter.slug}}/subscribe/" method="post">
               {% csrf_token %}
