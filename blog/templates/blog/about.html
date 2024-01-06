@@ -93,6 +93,78 @@
 </div>
 
 
+<!-- ======= Cta Section ======= -->
+<section id="cta" class="cta" style="margin-top: 20px; background-color: #2596BE;">
+  <div class="container" data-aos="zoom-in">
+    <div class="text-center">
+      <h3>Your guide in disruptive investments</h3>
+      <p>Providing clear strategies to manage risk, enhance returns, and diversify portfolios for lasting financial success.</p>
+      <!-- Trigger/Open The Modal -->
+      <button class="cta-btn" data-toggle="modal" data-target="#contactModal" 
+              style="
+                background-color: #2596BE; /* Matching the background */
+                color: white; /* Text color */
+                border: 2px solid white; /* White border */
+                padding: 10px 24px; /* Padding */
+                font-size: 16px; /* Font size */
+                border-radius: 10px; /* Rounded borders */
+                outline: none; /* Remove outline */
+                cursor: pointer; /* Pointer cursor on hover */
+                box-shadow: none; /* No shadow */
+                transition: all 0.3s ease; /* Smooth transition for hover effects */
+              "
+              onmouseover="this.style.backgroundColor='#237BA0';" /* Slightly different shade on hover for a subtle effect */
+              onmouseout="this.style.backgroundColor='#2596BE';" /* Return to original color on mouse out */
+              >Get in touch</button>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+    
+<!-- End Cta Section -->
+
+    <!-- The Modal -->
+<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="contactModalLabel">Get in Touch</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <!-- Remove the nested form tag and add the 'name' attribute to the inputs -->
+        <form method="post" action="{% url 'contact' %}">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email address:</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea class="form-control" id="message" name="message" rows="3" required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </div>
+        </form>
+
+    </div>
+  </div>
+
 {% endblock content %}
 
 
