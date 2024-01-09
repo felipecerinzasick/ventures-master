@@ -116,6 +116,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
     integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
 
   <!-- Medium Editor -->
   <script src="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/js/medium-editor.min.js"></script>
@@ -136,10 +137,11 @@
   <header class="site-header">
     <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white">
         <div class="container">
-            <a class="navbar-brand mr-4" href="{% url 'index' %}">
-                <img src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/logo_neu.jpg" alt="Sick Ventures Logo" style="height: 25px; margin-right: 10px;">
-                <b>Sick Ventures</b>
-            </a>
+             <a class="navbar-brand mr-4" href="{% url 'index' %}">
+        <img src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/logo_neu.jpg" alt="Sick Ventures Logo" style="height: 25px; margin-right: 10px;">
+        <!-- Apply the 'Roboto Slab' font to your brand name -->
+        <b style="font-family: 'Roboto Slab', serif; font-weight: 700; color: #fff;">Sick Ventures</b>
+    </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
                 aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
