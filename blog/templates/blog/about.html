@@ -117,9 +117,8 @@
     <div class="modal-content" style="border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,.5);">
       
       <!-- Modal Header -->
-      <div class="modal-header" style="background-color: #2596BE; color: white; padding: 20px;">
-        <h5 class="modal-title" id="contactModalLabel" style="font-size: 1.5rem; color: white;">Get in Touch</h5>
-
+      <div class="modal-header" style="background: linear-gradient(45deg, #2596BE, #63B4D1); color: white; padding: 20px;">
+        <h5 class="modal-title" id="contactModalLabel" style="font-size: 1.5rem; color: white; font-family: 'Arial', sans-serif;">Get in Touch</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true" style="color: white;">&times;</span>
         </button>
@@ -127,29 +126,30 @@
 
       <form method="post" action="{% url 'contact' %}">
         {% csrf_token %}
-        <div class="modal-body" style="padding: 20px;">
+        <div class="modal-body" style="padding: 20px; font-family: 'Arial', sans-serif;">
             <div class="form-group">
-                <label for="name">Name:</label>
-                <input type="text" class="form-control" id="name" name="name" required placeholder="Enter your name">
+                <label for="name"><i class="fas fa-user"></i> Name:</label>
+                <input type="text" class="form-control" id="name" name="name" required placeholder="Enter your name" style="border-radius: 5px;">
             </div>
             <div class="form-group">
-                <label for="email">Email address:</label>
-                <input type="email" class="form-control" id="email" name="email" required placeholder="Enter your email">
+                <label for="email"><i class="fas fa-envelope"></i> Email address:</label>
+                <input type="email" class="form-control" id="email" name="email" required placeholder="Enter your email" style="border-radius: 5px;">
             </div>
             <div class="form-group">
-                <label for="message">Message:</label>
-                <textarea class="form-control" id="message" name="message" rows="3" required placeholder="Type your message here"></textarea>
+                <label for="message"><i class="fas fa-pencil-alt"></i> Message:</label>
+                <textarea class="form-control" id="message" name="message" rows="3" required placeholder="Type your message here" style="border-radius: 5px;"></textarea>
             </div>
         </div>
-        <div class="modal-footer" style="padding: 20px;">
+        <div class="modal-footer" style="padding: 20px; background: #f2f2f2;">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary" style="background-color: #2596BE;">Send Message</button>
+            <button type="submit" class="btn btn-primary" style="background-color: #2596BE; border-color: #2596BE; font-family: 'Arial', sans-serif;">Send Message</button>
         </div>
       </form>
 
     </div>
   </div>
 </div>
+
 
 
 {% endblock content %}
