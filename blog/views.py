@@ -33,6 +33,22 @@ def contact_view(request):
     # return render(request, 'base1.html', {'form': form})
 
 
+@login_required
+def dashboard(request):
+    # Fetch the posts by the current user
+    user_posts = Post.objects.filter(author=request.user).order_by('-date_posted')
+
+    # Fetch comments on the user's posts
+    user_comments = Comment.objects.filter(post__author=request.user).order_by('-created_at')
+
+    # You can add more context as per your application's functionality
+    context = {
+        'title': 'Dashboard',
+        'user_posts': user_posts,
+        'user_comments': user_comments
+    }
+
+    return render(request, 'blog/dashboard.html', context)
 
 class PostListView(ListView):
     model = Post
