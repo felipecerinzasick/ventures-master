@@ -1,5 +1,43 @@
 {% extends "blog/base1.html" %}
+
 {% block content %}
-    <h1>Dashboard</h1>
-    <p>Nothing here yet. Dashboard coming soon</p>
+<h1>Dashboard</h1>
+
+<!-- User Posts -->
+<h2>Your Posts</h2>
+<ul>
+    {% for post in user_posts %}
+        <li>{{ post.title }} - {{ post.date_posted }}</li>
+    {% empty %}
+        <p>You have no posts.</p>
+    {% endfor %}
+</ul>
+
+<!-- User Comments -->
+<h2>Recent Comments on Your Posts</h2>
+<ul>
+    {% for comment in user_comments %}
+        <li>{{ comment.text }} - {{ comment.created_at }}</li>
+    {% empty %}
+        <p>No comments on your posts yet.</p>
+    {% endfor %}
+</ul>
+
+<!-- Graphs/Analytics (Example with Chart.js) -->
+<h2>Post Views Analytics</h2>
+<canvas id="postViewsChart"></canvas>
+
+<script>
+// Assuming `postViewsData` is a context variable containing data for the graph
+var ctx = document.getElementById('postViewsChart').getContext('2d');
+var postViewsChart = new Chart(ctx, {
+    // Chart configuration goes here
+    type: 'line',
+    data: {{ postViewsData|safe }},
+    options: {
+        // Chart options go here
+    }
+});
+</script>
+
 {% endblock content %}
