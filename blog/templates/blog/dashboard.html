@@ -35,6 +35,46 @@
     <!-- ... remaining content ... -->
 </div>
 
+  <!-- ... existing HTML content ... -->
+
+<!-- Optional JavaScript -->
+<script src="{% static 'js/main.js' %}"></script>
+
+<!-- Insert the new JavaScript code here -->
+<script>
+    function fetchBitcoinBalanceAndUpdateUSD() {
+        const btcAddress = '16DMiBNCdfGfz8w89ew5GDcf86WYW1vRKN'; // Your Bitcoin address
+        // Replace with the API endpoint you're using to fetch the Bitcoin balance
+        fetch(`https://blockchain-api-service.com/balance/${btcAddress}`)
+            .then(response => response.json())
+            .then(data => {
+                const btcBalance = data.balance; // Adjust according to the actual API response
+                fetchBitcoinPrice(btcBalance);
+            })
+            .catch(error => console.error('Error fetching Bitcoin balance:', error));
+    }
+
+    function fetchBitcoinPrice(btcBalance) {
+        fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
+            .then(response => response.json())
+            .then(data => {
+                const btcPrice = data.bitcoin.usd;
+                const balanceInUSD = btcPrice * btcBalance;
+                document.getElementById('btcBalance').innerText = `BTC Balance: ${btcBalance} BTC`;
+                document.getElementById('btcBalanceInUSD').innerText = `Equivalent USD: $${balanceInUSD.toLocaleString('en-US')}`;
+            })
+            .catch(error => console.error('Error fetching Bitcoin price:', error));
+    }
+
+    // Fetch Bitcoin balance and price on load
+    fetchBitcoinBalanceAndUpdateUSD();
+
+    // Optional: Fetch Bitcoin balance and price every 60 seconds
+    setInterval(fetchBitcoinBalanceAndUpdateUSD, 60000);
+</script>
+
+<!-- ... remaining HTML content ... -->
+
 </body> <!-- end of the body -->
 </html>
   <script>
