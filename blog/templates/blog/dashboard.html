@@ -1,6 +1,177 @@
-{% extends "blog/base.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html>
 
-{% block content %}
+<head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-D23D4PMX7E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-D23D4PMX7E');
+</script>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+    integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Medium Editor -->
+  <script src="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/js/medium-editor.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/css/medium-editor.min.css"
+    type="text/css" media="screen" charset="utf-8">
+
+  <!-- Custom Style -->
+  <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+  {% if title %}
+  <title>Sick-Ventures {{ title }}</title>
+  {% else %}
+  <title>Dashboard</title>
+  {% endif %}
+</head>
+
+<body>
+  <header class="site-header">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white">
+        <div class="container">
+             <a class="navbar-brand mr-4" href="{% url 'index' %}">
+    <img src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/logo_neu.jpg" alt="Sick Ventures Logo" style="height: 30px; margin-right: 10px;">
+    <b style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">Sick Ventures</b>
+</a>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
+                aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarToggle">
+                <div class="navbar-nav mr-auto" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">
+                    <a class="nav-item nav-link" href="{% url 'index' %}">Home</a>
+                    <a class="nav-item nav-link" href="{% url 'about' %}">About</a>
+                    <a class="nav-item nav-link" href="{% url 'blog' %}">Blog</a>
+                </div>
+                <!-- Navbar Right Side -->
+                <div class="navbar-nav">
+                    {% if user.is_authenticated %}
+                    <a class="nav-item nav-link" href="{% url 'post_create' %}">New Post</a>
+                    <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
+                    <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+                    {% else %}
+                    <a class="btn btn-primary" style="background-color: #2596BE; border-color: #2596BE;" href="{% url 'login' %}">Get started</a>
+                    <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+                    {% endif %}
+                </div> 
+            </div>
+        </div>
+    </nav>
+</header>
+  <main role="main" class="container" style="padding-top: 80px;">
+  <div class="row">
+    <div class="col-md-8">
+      <!-- Content goes here -->
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+      {% block content %}{% endblock %}
+    </div>
+    
+    <div class="col-md-4">
+      <div class="content-section">
+        <h3>Contact us</h3>
+        <p class='text-muted'>Your quest for crypto expertise and growth starts with Sick Ventures.</p>
+        
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#contactModal">
+          Get in touch
+        </button>
+        <hr>
+        {% if user.is_authenticated %}
+          <div class="footer-newsletter">
+            <h3>Join the Newsletter</h3>
+            <p>Get the latest insights about effective strategies, tools and much more!!!</p>
+            <form action="/newsletter/{{newsletter.slug}}/subscribe/" method="post">
+              {% csrf_token %}
+              <input type="email" name="email"><input type="submit" value="Subscribe">
+            </form>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</main>
+<!-- Contact Modal -->
+<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="contactModalLabel">Get in Touch</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" action="{% url 'contact'%}">
+              <div class="modal-body">
+        <!-- Contact Form -->
+        
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" name="name" id="name" placeholder="Enter your name">
+          </div>
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email">
+          </div>
+          <div class="form-group">
+            <label for="customText">Your Message</label>
+            <textarea class="form-control" name="message" id="customText" rows="3"></textarea>
+          </div>
+       
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Send Message</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+  </script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+  </script>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- Optional JavaScript -->
+  <script src="{% static 'js/main.js' %}"></script>
+
+  
+
 <h1>Dashboard</h1>
 
 <!-- User Posts -->
@@ -40,4 +211,60 @@ var postViewsChart = new Chart(ctx, {
 });
 </script>
 
-{% endblock content %}
+
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-lg-3 col-md-6 footer-contact">
+            <h3>Sick Ventures </h3>
+            <p>
+            <strong>Email:</strong> info@sick-ventures.com<br>
+            </p>
+          </div>
+
+          <div class="col-lg-2 col-md-6 footer-links">
+            <h4> Links</h4>
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="{% url 'index' %}">Home</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="{% url 'about' %}">About </a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="{% url 'privacy-policy' %}">Privacy policy</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-md-6 footer-links">
+          </div>
+
+
+          <div class="col-lg-4 col-md-6 footer-newsletter">
+            <h4>Join Our Newsletter</h4>
+            <p>Get the latest insights about effective strategies, tools and much more!!!</p>
+            <form action="/newsletter/{{newsletter.slug}}/subscribe/" method="post">
+              {% csrf_token %}
+              <input type="email" name="email"><input type="submit" value="Subscribe">
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container py-4">
+    <div class="footer-block" style="text-align: center; max-width: 960px; margin-left: auto; margin-right: auto;">
+      <div class="credits" style="text-align: left;">
+          Designed with the end-user in mind. If you have suggestions, please feel free to reach out (info@sick-ventures.com). The content available on this webste (www.sick-ventures.com) and any affiliated subpages is for informational purposes only and is not to be construed as investment advice or an endorsement of any particular investment strategy. The views and opinions expressed are those of the Portfolio Manager at Sick-Ventures and are provided to enhance your understanding of my investment philosophy, not as personalized investment recommendations. Investments are subject to market risks, including the loss of principal. Past performance is not indicative of future results, and there is no assurance that any investment will achieve its objectives or avoid significant losses. The information provided herein is proprietary to Sick-Ventures and is intended solely for the recipient. Unauthorized copying, disclosure, or distribution of this material is strictly forbidden. While I have sourced our information from what we believe to be reliable resources, I cannot warrant its absolute accuracy, completeness, or timeliness. It is not intended as an offer or solicitation for the purchase or sale of any financial instrument. Investment products and services may vary across jurisdictions and are subject to eligibility criteria. This website is not a substitute for personalized advice from the financial services firm from which you intend to acquire securities or other financial products. Please note that not all products or services detailed on this website may be available in your country or region, and availability is subject to local regulation and law.
+        
+
+        </div>
+      <div class="copyright" style="text-align: left;">
+        &copy; Copyright <strong><span>Sick Ventures</span></strong>. All Rights Reserved
+      </div>
+    </div>
+  </div>
+  </footer><!-- End Footer -->
+
+    
