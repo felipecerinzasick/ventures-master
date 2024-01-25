@@ -12,7 +12,31 @@
 
   gtag('config', 'G-D23D4PMX7E');
 </script>
+<!-- ... existing HTML content ... -->
 
+<!-- Optional JavaScript -->
+
+<!-- Insert the new JavaScript code here -->
+<script>
+    // ... JavaScript code for fetchBitcoinBalanceAndUpdateUSD() and fetchBitcoinPrice() ...
+</script>
+
+<div class="container mt-5">
+    <!-- ... other content ... -->
+
+    <!-- Add a new section for displaying Bitcoin balance and its USD equivalent -->
+    <div class="row">
+        <div class="col">
+            <h2 id="btcBalance">BTC Balance: Loading...</h2>
+            <h2 id="btcBalanceInUSD">Equivalent USD: Loading...</h2>
+        </div>
+    </div>
+    
+    <!-- ... remaining content ... -->
+</div>
+
+</body> <!-- end of the body -->
+</html>
   <script>
     function fetchBitcoinPrice() {
         fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
