@@ -13,6 +13,24 @@
   gtag('config', 'G-D23D4PMX7E');
 </script>
 
+  <script>
+    function fetchBitcoinPrice() {
+        fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
+            .then(response => response.json())
+            .then(data => {
+                const btcPrice = data.bitcoin.usd;
+                document.getElementById('btcPrice').innerText = `$${btcPrice.toLocaleString('en-US')}`;
+            })
+            .catch(error => console.error('Error fetching Bitcoin price:', error));
+    }
+
+    // Fetch Bitcoin price on load
+    fetchBitcoinPrice();
+
+    // Optional: Fetch Bitcoin price every 60 seconds
+    setInterval(fetchBitcoinPrice, 60000);
+</script>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Required meta tags -->
   <meta charset="utf-8">
@@ -168,6 +186,15 @@ var postViewsChart = new Chart(ctx, {
     }
 });
 </script>
+  
+
+  
+
+<div class="row">
+    <div class="col">
+        <h2>Current Bitcoin Price: <span id="btcPrice">Loading...</span></h2>
+    </div>
+</div>
 
 
 
