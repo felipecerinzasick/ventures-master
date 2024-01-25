@@ -97,32 +97,62 @@
   <script src="{% static 'js/main.js' %}"></script>
 
   
+<div class="container mt-5">
+    <!-- Dashboard Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="text-center">Economic Dashboard</h1>
+        </div>
+    </div>
+    
+    <!-- Charts Row -->
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <!-- Money Supply M2 Chart Placeholder -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Money Supply M2 in Billion USD</h5>
+                    <canvas id="moneySupplyChartUSD"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <!-- Money Supply M2 in BTC Chart Placeholder -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Money Supply M2 in Million BTC</h5>
+                    <canvas id="moneySupplyChartBTC"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- More Rows for Other Charts or Data Tables -->
+</div>
 
-<h1>Dashboard</h1>
+<!-- Chart.js Script for Money Supply M2 in USD -->
+<script>
+var ctxUSD = document.getElementById('moneySupplyChartUSD').getContext('2d');
+var moneySupplyChartUSD = new Chart(ctxUSD, {
+    type: 'bar',
+    data: {
+        labels: ['China', 'United States', 'Eurozone', 'Japan', 'United Kingdom', 'Switzerland', 'Total Bitcoin Supply'],
+        datasets: [{
+            label: 'Money Supply M2 in Billion USD',
+            data: [40503.54, 20760.18, 15991.08, 10469.34, 3703.14, 942.9, 819.0],
+            backgroundColor: 'rgba(0, 123, 255, 0.5)',
+            borderColor: 'rgba(0, 123, 255, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        // options go here
+    }
+});
+</script>
 
-<!-- User Posts -->
-<h2>Your Posts</h2>
-<ul>
-    {% for post in user_posts %}
-        <li>{{ post.title }} - {{ post.date_posted }}</li>
-    {% empty %}
-        <p>You have no posts.</p>
-    {% endfor %}
-</ul>
-
-<!-- User Comments -->
-<h2>Recent Comments on Your Posts</h2>
-<ul>
-    {% for comment in user_comments %}
-        <li>{{ comment.text }} - {{ comment.created_at }}</li>
-    {% empty %}
-        <p>No comments on your posts yet.</p>
-    {% endfor %}
-</ul>
-
-<!-- Graphs/Analytics (Example with Chart.js) -->
-<h2>Post Views Analytics</h2>
-<canvas id="postViewsChart"></canvas>
+<!-- Similar script for Money Supply M2 in BTC -->
+<!-- ... -->
 
 <script>
 // Assuming `postViewsData` is a context variable containing data for the graph
