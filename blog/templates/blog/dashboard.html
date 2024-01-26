@@ -25,12 +25,7 @@
     <!-- ... other content ... -->
 
     <!-- Add a new section for displaying Bitcoin balance and its USD equivalent -->
-    <div class="row">
-        <div class="col">
-            <h2 id="btcBalance">BTC Balance: Loading...</h2>
-            <h2 id="btcBalanceInUSD">Equivalent USD: Loading...</h2>
-        </div>
-    </div>
+   
     
     <!-- ... remaining content ... -->
 </div>
@@ -186,6 +181,11 @@
     <div class="row mb-4">
         <div class="col">
             <h1 class="text-center">Economic Dashboard</h1>
+          <div class="row">
+    <div class="col">
+        <h2>Current Bitcoin Price: <span id="btcPrice">Loading...</span></h2>
+    </div>
+</div>
         </div>
     </div>
     
@@ -204,7 +204,7 @@
             <!-- Money Supply M2 in BTC Chart Placeholder -->
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Money Supply M2 in Million BTC</h5>
+                    <h5 class="card-title">Wallet Overview</h5>
                     <canvas id="moneySupplyChartBTC"></canvas>
                 </div>
             </div>
@@ -235,6 +235,10 @@ var moneySupplyChartUSD = new Chart(ctxUSD, {
 });
 </script>
 
+
+
+  
+
 <!-- Similar script for Money Supply M2 in BTC -->
 <!-- ... -->
 
@@ -254,11 +258,7 @@ var postViewsChart = new Chart(ctx, {
 
   
 
-<div class="row">
-    <div class="col">
-        <h2>Current Bitcoin Price: <span id="btcPrice">Loading...</span></h2>
-    </div>
-</div>
+
 
 
 
