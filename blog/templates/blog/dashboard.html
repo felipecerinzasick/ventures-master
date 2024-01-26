@@ -68,6 +68,42 @@
     setInterval(fetchBitcoinBalanceAndUpdateUSD, 60000);
 </script>
 
+  <!-- Insert the new JavaScript code here -->
+<script>
+    // ... Existing JavaScript code ...
+
+    // Function to calculate the countdown to the next Bitcoin halving
+    function updateHalvingCountdown() {
+        // Halving occurs approximately every four years (210,000 blocks)
+        // You need to replace 'nextHalvingDate' with the estimated date of the next halving
+        const nextHalvingDate = new Date('2024-04-22').getTime(); // Example date, update it accordingly
+        const currentDate = new Date().getTime();
+        const timeDifference = nextHalvingDate - currentDate;
+        
+        // Calculating days remaining
+        const daysRemaining = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+        document.getElementById('halvingCountdown').innerText = `${daysRemaining} days until next halving`;
+    }
+
+    // Function to fetch the total network hash rate
+    function fetchNetworkHashrate() {
+        fetch('https://blockchain.info/q/hashrate')
+            .then(response => response.json())
+            .then(hashrate => {
+                // The hash rate is in gigahashes per second, convert to terahashes by dividing by 1e6
+                const hashrateInTerahashes = hashrate / 1e6;
+                document.getElementById('networkHashrate').innerText = `Current Hash Rate: ${hashrateInTerahashes.toFixed(2)} TH/s`;
+            })
+            .catch(error => console.error('Error fetching network hash rate:', error));
+    }
+
+    // Call the functions on load
+    updateHalvingCountdown();
+    fetchNetworkHashrate();
+
+    // Optional: Update the
+
+
 <!-- ... remaining HTML content ... -->
 
 </body> <!-- end of the body -->
