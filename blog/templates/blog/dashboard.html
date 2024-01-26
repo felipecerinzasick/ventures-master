@@ -27,7 +27,13 @@
             .then(response => response.json())
             .then(data => {
                 // Convert balance from satoshis to BTC (1 BTC = 100,000,000 satoshis)
-                const btcBalance = data.balance / 100000000;
+                // Inside the .then() after fetching data in fetchBitcoinBalanceAndUpdateUSD()
+const btcBalance = data.balance / 100000000;
+const btcPrice = data.bitcoin.usd; // Assuming you fetched the price in the same function
+const balanceInUSD = btcPrice * btcBalance;
+document.getElementById('btcBalance').innerText = `BTC Balance: ${btcBalance.toFixed(8)} BTC`;
+document.getElementById('btcBalanceInUSD').innerText = `Equivalent USD: $${balanceInUSD.toLocaleString('en-US')}`;
+
                 fetchBitcoinPrice(btcBalance);
             })
             .catch(error => console.error('Error fetching Bitcoin balance:', error));
