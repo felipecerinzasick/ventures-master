@@ -161,7 +161,28 @@ body.dark-mode {
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Money Supply M2 in Billion USD</h5>
-                    <canvas id="moneySupplyChartUSD"></canvas>
+                     <canvas id="moneySupplyChartUSD"></canvas>
+
+    <script>
+        var ctxUSD = document.getElementById('moneySupplyChartUSD').getContext('2d');
+        var moneySupplyChartUSD = new Chart(ctxUSD, {
+            type: 'bar',
+            data: {
+                labels: ['China', 'United States', 'Eurozone', 'Japan', 'United Kingdom', 'Switzerland', 'Total Bitcoin Supply'],
+                datasets: [{
+                    label: 'Money Supply M2 in Billion USD',
+                    data: [40503.54, 20760.18, 15991.08, 10469.34, 3703.14, 942.9, 819.0],
+                    backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    </script>
                 </div>
             </div>
         </div>
