@@ -22,12 +22,11 @@
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     transition: 0.3s;
     border-radius: 5px; /* 5px rounded corners */
-  }
+}
 
-  /* On mouse-over, add a deeper shadow */
-  .card:hover {
+.card:hover {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-  }
+}
 
   .card-body {
     padding: 15px;
@@ -329,6 +328,9 @@ document.getElementById('btcBalanceInUSD').innerText = `Equivalent USD: $${balan
 
 
         <!-- Add a canvas element in the Wallet Overview section for the chart -->
+        <div class="card">
+
+
 <div class="card-body">
     <h5 class="card-title">Wallet Value Over Time</h5>
     <canvas id="walletValueChart"></canvas>
@@ -376,7 +378,7 @@ var postViewsChart = new Chart(ctx, {
 });
 </script>
   
-
+</div>
   
 
 
