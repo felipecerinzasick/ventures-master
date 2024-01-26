@@ -177,9 +177,16 @@ body.dark-mode {
                     borderWidth: 1
                 }]
             },
-            options: {
+          
+              options: {
+                 scales: {
+    y: { // Note the change from 'yAxes' to 'y'
+      beginAtZero: true
+    }
+  },
                 responsive: true,
                 maintainAspectRatio: false
+                
             }
         });
     </script>
