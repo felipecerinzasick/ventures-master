@@ -222,69 +222,71 @@ body.dark-mode {
 
 <!-- Chart.js Script for Money Supply M2 in USD -->
 <script>
-var ctxUSD = document.getElementById('moneySupplyChartUSD').getContext('2d');
-var moneySupplyChartUSD = new Chart(ctxUSD, {
-    type: 'bar',
-    data: {
-        labels: ['China', 'United States', 'Eurozone', 'Japan', 'United Kingdom', 'Switzerland', 'Total Bitcoin Supply'],
-        datasets: [{
-            label: 'Money Supply M2 in Billion USD',
-            data: [40503.54, 20760.18, 15991.08, 10469.34, 3703.14, 942.9, 819.0],
-            backgroundColor: 'rgba(0, 123, 255, 0.5)',
-            borderColor: 'rgba(0, 123, 255, 1)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
+  document.addEventListener('DOMContentLoaded', function() {
+    var ctxUSD = document.getElementById('moneySupplyChartUSD').getContext('2d');
+    var moneySupplyChartUSD = new Chart(ctxUSD, {
+        type: 'bar',
+        data: {
+            labels: ['China', 'United States', 'Eurozone', 'Japan', 'United Kingdom', 'Switzerland', 'Total Bitcoin Supply'],
+            datasets: [{
+                label: 'Money Supply M2 in Billion USD',
+                data: [40503.54, 20760.18, 15991.08, 10469.34, 3703.14, 942.9, 819.0],
+                backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                borderColor: 'rgba(0, 123, 255, 1)',
+                borderWidth: 1
             }]
         },
-        tooltips: {
-            enabled: true,
-            mode: 'index',
-            intersect: false,
-            callbacks: {
-                label: function(tooltipItem, data) {
-                    let label = data.datasets[tooltipItem.datasetIndex].label || '';
-                    if (label) {
-                        label += ': ';
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
                     }
-                    label += `${tooltipItem.yLabel.toLocaleString()} Billion USD`;
-                    return label;
+                }]
+            },
+            tooltips: {
+                enabled: true,
+                mode: 'index',
+                intersect: false,
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        let label = data.datasets[tooltipItem.datasetIndex].label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        label += `${tooltipItem.yLabel.toLocaleString()} Billion USD`;
+                        return label;
+                    }
+                }
+            },
+            hover: {
+                animationDuration: 300, // duration of animations when hovering an item
+            },
+            animation: {
+                duration: 1,
+                onComplete: function() {
+                    var chartInstance = this.chart,
+                    ctx = chartInstance.ctx;
+                    ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+    
+                    this.data.datasets.forEach(function(dataset, i) {
+                        var meta = chartInstance.controller.getDatasetMeta(i);
+                        meta.data.forEach(function(bar, index) {
+                            var data = dataset.data[index];                            
+                            ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                        });
+                    });
                 }
             }
-        },
-        hover: {
-            animationDuration: 300, // duration of animations when hovering an item
-        },
-        animation: {
-            duration: 1,
-            onComplete: function () {
-                var chartInstance = this.chart,
-                ctx = chartInstance.ctx;
-                ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'bottom';
-
-                this.data.datasets.forEach(function (dataset, i) {
-                    var meta = chartInstance.controller.getDatasetMeta(i);
-                    meta.data.forEach(function (bar, index) {
-                        var data = dataset.data[index];                            
-                        ctx.fillText(data, bar._model.x, bar._model.y - 5);
-                    });
-                });
-            }
         }
-    }
-});
-
+    });
+  });
 </script>
+
 
 
 
