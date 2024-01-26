@@ -161,7 +161,7 @@
         <div class="container">
              <a class="navbar-brand mr-4" href="{% url 'index' %}">
     <img src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/logo_neu.jpg" alt="Sick Ventures Logo" style="height: 30px; margin-right: 10px;">
-    <b style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">Sick Ventures</b>
+    <b style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">Economic Dashboard</b>
 </a>
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
@@ -170,8 +170,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarToggle">
                 <div class="navbar-nav mr-auto" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">
-                    <a class="nav-item nav-link" href="{% url 'index' %}">Home</a>
-                    <a class="nav-item nav-link" href="{% url 'about' %}">About</a>
                     <a class="nav-item nav-link" href="{% url 'blog' %}">Blog</a>
                 </div>
                 <!-- Navbar Right Side -->
@@ -216,11 +214,9 @@
     <!-- Dashboard Header -->
     <div class="row mb-4">
         <div class="col">
-            <h1 class="text-center">Economic Dashboard</h1>
+            <h2>Current Bitcoin Price: <span id="btcPrice">Loading...</span></h2>
           <div class="row">
-    <div class="col">
-        <h2>Current Bitcoin Price: <span id="btcPrice">Loading...</span></h2>
-    </div>
+   
 </div>
         </div>
     </div>
