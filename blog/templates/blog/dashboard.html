@@ -52,17 +52,20 @@
     setInterval(fetchBitcoinBalanceAndUpdateUSD, 60000);
 
     // Function to calculate the countdown to the next Bitcoin halving
-    function updateHalvingCountdown() {
-        // Halving occurs approximately every four years (210,000 blocks)
-        // You need to replace 'nextHalvingDate' with the estimated date of the next halving
-        const nextHalvingDate = new Date('2024-04-22').getTime(); // Example date, update it accordingly
-        const currentDate = new Date().getTime();
-        const timeDifference = nextHalvingDate - currentDate;
-        
-        // Calculating days remaining
-        const daysRemaining = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        document.getElementById('halvingCountdown').innerText = `${daysRemaining} days until next halving`;
-    }
+// Function to calculate the countdown to the next Bitcoin halving
+function updateHalvingCountdown() {
+    const nextHalvingDate = new Date('2024-04-22').getTime(); // Halving date
+    const currentDate = new Date().getTime();
+    const timeDifference = nextHalvingDate - currentDate;
+    
+    // Calculating days remaining
+    const daysRemaining = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    document.getElementById('halvingCountdown').innerText = `${daysRemaining} days until next halving`;
+}
+
+// Call the function on load and update every day
+updateHalvingCountdown();
+setInterval(updateHalvingCountdown, 86400000); // Update the countdown every 24 hours
 
     // Function to fetch the total network hash rate
     function fetchNetworkHashrate() {
@@ -129,14 +132,6 @@
     // Fetch historical Bitcoin price data on load
     fetchHistoricalBitcoinPrice();
 </script>
-
-<!-- Add a canvas element in the Wallet Overview section for the chart -->
-<div class="card-body">
-    <h5 class="card-title">Wallet Value Over Time</h5>
-    <canvas id="walletValueChart"></canvas>
-</div>
-
-
 
 <!-- ... remaining HTML content ... -->
 
@@ -294,6 +289,10 @@
     </div>
     
     <!-- More Rows for Other Charts or Data Tables -->
+</div>
+
+      <div class="col">
+    <h2>Days Until Next Bitcoin Halving: <span id="halvingCountdown">Loading...</span></h2>
 </div>
 
 <!-- Chart.js Script for Money Supply M2 in USD -->
