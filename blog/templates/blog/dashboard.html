@@ -21,17 +21,23 @@
     // ... JavaScript code for fetchBitcoinBalanceAndUpdateUSD() and fetchBitcoinPrice() ...
 
 
-    function fetchBitcoinBalanceAndUpdateUSD() {
-        const btcAddress = '16DMiBNCdfGfz8w89ew5GDcf86WYW1vRKN'; // Your Bitcoin address
-        fetch(`https://api.blockcypher.com/v1/btc/main/addrs/${btcAddress}/balance`)
-            .then(response => response.json())
-            .then(data => {
-                // Convert balance from satoshis to BTC (1 BTC = 100,000,000 satoshis)
-                const btcBalance = data.balance / 100000000;
-                fetchBitcoinPrice(btcBalance);
-            })
-            .catch(error => console.error('Error fetching Bitcoin balance:', error));
-    }
+   var btcBalance; // Declare btcBalance in the global scope
+
+// ... rest of your code ...
+
+function fetchBitcoinBalanceAndUpdateUSD() {
+    const btcAddress = '16DMiBNCdfGfz8w89ew5GDcf86WYW1vRKN'; // Your Bitcoin address
+    fetch(`https://api.blockcypher.com/v1/btc/main/addrs/${btcAddress}/balance`)
+        .then(response => response.json())
+        .then(data => {
+            // Convert balance from satoshis to BTC (1 BTC = 100,000,000 satoshis)
+            btcBalance = data.balance / 100000000; // Assign value to the global variable
+            fetchBitcoinPrice(btcBalance);
+        })
+        .catch(error => console.error('Error fetching Bitcoin balance:', error));
+}
+
+// ... rest of your code ...
 
     function fetchBitcoinPrice(btcBalance) {
         fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
