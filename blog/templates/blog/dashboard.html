@@ -35,22 +35,37 @@ function fetchBitcoinBalanceAndUpdateUSD() {
             fetchBitcoinPrice(btcBalance);
         })
         .catch(error => console.error('Error fetching Bitcoin balance:', error));
-}function fetchBitcoinPriceAndUpdateTimestamp() {
+}
+
+// ... rest of your code ...
+
+// Function to fetch Bitcoin price and update the last price timestamp
+function fetchBitcoinPriceAndUpdateTimestamp() {
     fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
         .then(response => response.json())
         .then(data => {
             const btcPrice = data.bitcoin.usd;
-            const lastUpdate = new Date();
-            document.getElementById('btcPrice').innerText = `Bitcoin price: $${btcPrice.toLocaleString('en-US')}`;
-            document.getElementById('lastUpdate').innerText = `Last update: ${lastUpdate.toLocaleString()}`;
+            const lastUpdate = new Date(); // Assuming the last update is now
+            document.getElementById('btcPrice').innerText = `Bitcoin price: $${btcPrice.toLocaleString('en-US')} (last update: ${lastUpdate.toLocaleString()})`;
+
+            // Call updateHalvingCountdown with the last update timestamp
+            updateHalvingCountdown(lastUpdate);
         })
-        .catch(error => {
-            console.error('Error fetching Bitcoin price:', error);
-            document.getElementById('lastUpdate').innerText = 'Last update: Error fetching data';
-        });
+        .catch(error => console.error('Error fetching Bitcoin price:', error));
 }
 
-// Fetch Bitcoin price on load
+// Function to calculate the countdown to the next Bitcoin halving
+function updateHalvingCountdown(lastUpdate) {
+    const nextHalvingDate = new Date('2024-04-22'); // Halving date
+    // Use lastUpdate as the current date
+    const timeDifference = nextHalvingDate.getTime() - lastUpdate.getTime();
+    
+    // Calculating days remaining
+    const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+    document.getElementById('halvingCountdown').innerText = `${daysRemaining} days until next halving`;
+}
+
+// Fetch Bitcoin price on load and update the countdown
 fetchBitcoinPriceAndUpdateTimestamp();
 
 // Optional: Fetch Bitcoin price every 60 seconds
@@ -252,10 +267,19 @@ setInterval(updateHalvingCountdown, 86400000); // Update the countdown every 24 
     <!-- Dashboard Header -->
     <div class="row mb-4">
       <div class="col">
-  <h2 id="btcPrice">Bitcoin Price: Loading...</h2>
-  <p id="lastUpdate" class="text-muted small">Last update: Loading...</p>
+            
+          <div class="row">
+        <div class="col">
+          <h2></h2>
+            <h2> <span id="btcPrice">Loading...</span></h2>
+          <div class="row">
+
+            
+<div class="col">
   <h2 id="halvingCountdown">Days Until Next Bitcoin Halving: Loading...</h2>
+  <h2 id="lastUpdate">Day</h2>
 </div>
+            
    
 </div>
         </div>
