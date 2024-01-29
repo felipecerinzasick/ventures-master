@@ -24,46 +24,54 @@ let retryInMilliseconds = 1000; // Start with a 1 second delay
 const maxDelay = 64000; // Maximum delay of 64 seconds
 
 function fetchWithBackoff(url, retries = 3) {
-  fetch(url)
-    .then(response => {
-      if (!response.ok && response.status === 429 && retries > 0) {
-        // If we hit the rate limit, wait and then retry
-        setTimeout(() => {
-          retryInMilliseconds = Math.min(maxDelay, retryInMilliseconds * 2); // Exponential backoff
-          fetchWithBackoff(url, retries - 1); // Recursive call to try again
-        }, retryInMilliseconds);
-      }
-      return response.json(); // Or handle the response appropriately
-    })
-    .catch(error => console.error('Error fetching data:', error));
+    return new Promise((resolve, reject) => {
+        const fetchData = () => {
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 429 && retries > 0) {
+                            // If we hit the rate limit, wait and then retry
+                            setTimeout(() => {
+                                retryInMilliseconds = Math.min(maxDelay, retryInMilliseconds * 2); // Exponential backoff
+                                retries--;
+                                fetchData(); // Recursive call to try again
+                            }, retryInMilliseconds);
+                        } else {
+                            reject(new Error('Non-429 error or ran out of retries'));
+                        }
+                    } else {
+                        response.json().then(resolve).catch(reject);
+                    }
+                })
+                .catch(reject);
+        };
+        fetchData();
+    });
 }
-
-// Call this function instead of directly using fetch
-fetchWithBackoff('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
-   var btcBalance; // Declare btcBalance in the global scope
 
 function fetchBitcoinBalanceAndUpdateUSD() {
     const btcAddress = '16DMiBNCdfGfz8w89ew5GDcf86WYW1vRKN'; // Your Bitcoin address
     const balanceUrl = `https://api.blockcypher.com/v1/btc/main/addrs/${btcAddress}/balance`;
 
-    // Using fetchWithBackoff instead of fetch
     fetchWithBackoff(balanceUrl)
         .then(data => {
             if (data && data.balance) {
                 btcBalance = data.balance / 100000000; // Convert from satoshis to BTC
-                // Update the balance display here
                 document.getElementById('btcBalance').innerText = `BTC Balance: ${btcBalance}`;
-                // Assuming you have a function to fetch the price and update the USD value
-                updateBalanceInUSD(btcBalance); // Make sure this function exists or replace with your own
+                updateBalanceInUSD(btcBalance); // Call this function to update the USD balance
             }
         })
         .catch(error => console.error('Error fetching Bitcoin balance:', error));
 }
 
-  // Ensure to define updateBalanceInUSD or replace with the actual function that calculates the USD value.
 function updateBalanceInUSD(btcBalance) {
-    // Fetch the current price and update the USD balance display
-    // This should be a separate function that takes the BTC balance and updates the equivalent USD value
+    fetchWithBackoff('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
+        .then(data => {
+            const btcPriceUSD = data.bitcoin.usd;
+            const balanceInUSD = btcBalance * btcPriceUSD;
+            document.getElementById('btcBalanceInUSD').innerText = `Equivalent USD: $${balanceInUSD.toLocaleString('en-US')}`;
+        })
+        .catch(error => console.error('Error fetching Bitcoin price:', error));
 }
 
 function fetchBitcoinPriceAndUpdateTimestamp() {
