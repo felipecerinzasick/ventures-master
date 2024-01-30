@@ -19,77 +19,7 @@
 <!-- Insert the new JavaScript code here -->
 <script>
 
-  let btcBalance = 0; // Variable to store the fetched BTC balance
-let moneySupplyChart; // Variable to store the chart instance
 
-document.addEventListener('DOMContentLoaded', function() {
-    setupChart();
-    fetchBitcoinBalanceAndUpdateUSD();
-});
-
-function setupChart() {
-    const ctx = document.getElementById('moneySupplyChartBTC').getContext('2d');
-    moneySupplyChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [], // Initially empty, will be populated with dates
-            datasets: [{
-                label: 'Percentage of Total Bitcoin Supply',
-                data: [], // Initially empty, will be populated with percentages
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-}
-
-function updateChartWithNewData(newDataPoint) {
-    const currentDate = new Date().toISOString().split('T')[0];
-    moneySupplyChart.data.labels.push(currentDate);
-    moneySupplyChart.data.datasets.forEach((dataset) => {
-        dataset.data.push(newDataPoint);
-    });
-    moneySupplyChart.update();
-}
-
-// Include other functions (fetchBitcoinBalanceAndUpdateUSD, fetchBitcoinTotalSupply, etc.)
-
-  
-function fetchBitcoinTotalSupply() {
-    const supplyUrl = 'https://api.coingecko.com/api/v3/global';
-
-    fetchWithBackoff(supplyUrl)
-        .then(data => {
-            if (data && data.data.total_market_cap) {
-                const totalSupply = data.data.total_market_cap.btc;
-                calculateAndPlotPercentageOfTotalSupply(btcBalance, totalSupply);
-            }
-        })
-        .catch(error => console.error('Error fetching total Bitcoin supply:', error));
-}
-
-// Function to calculate percentage and plot on the chart
-function calculateAndPlotPercentageOfTotalSupply(btcBalance, totalSupply) {
-    const percentageOfTotalSupply = (btcBalance / totalSupply) * 100;
-
-    // Here you can plot the percentageOfTotalSupply on the chart
-    // Assuming you have a function to update or create the chart
-    updateChartWithNewData(percentageOfTotalSupply); 
-}
-
-// Example function to update the chart, this needs to be implemented based on how you handle chart data
-function updateChartWithNewData(newDataPoint) {
-    // Implementation depends on how you're managing the chart data
-    // For example, if using Chart.js, you would update the dataset and call chart.update()
-}
 let retryInMilliseconds = 1000; // Start with a 1 second delay
 const maxDelay = 64000; // Maximum delay of 64 seconds
 
@@ -396,7 +326,7 @@ setInterval(updateHalvingCountdown, 86400000); // Update the countdown every 24 
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Money Supply M2 in Billion USD</h5>
-                    <canvas id="moneySupplyChartBTC"></canvas>
+                    <canvas id="moneySupplyChartUSD"></canvas>
                 </div>
             </div>
         </div>
@@ -406,67 +336,7 @@ setInterval(updateHalvingCountdown, 86400000); // Update the countdown every 24 
                 <div class="card-body">
                     <h5 class="card-title">Wallet Overview</h5>
                     <canvas id="moneySupplyChartBTC"></canvas>
-                  <h1>Bitcoin Price Over Time</h1>
-    <canvas id="btcChart"></canvas>
-    
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-    fetchBitcoinHistoricalData();
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    fetchBitcoinHistoricalData();
-});
-
-function fetchBitcoinHistoricalData() {
-    const endDate = new Date().toISOString().split('T')[0]; // Today's date in YYYY-MM-DD format
-    const startDate = new Date();
-    startDate.setFullYear(startDate.getFullYear() - 1); // One year ago
-    const startDateString = startDate.toISOString().split('T')[0];
-
-    fetch(`https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=usd&from=${Date.parse(startDateString) / 1000}&to=${Date.parse(endDate) / 1000}`)
-        .then(response => response.json())
-        .then(data => {
-            const dates = data.prices.map(price => {
-                const date = new Date(price[0]);
-                return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-            });
-            const prices = data.prices.map(price => price[1]);
-            createChart(dates, prices);
-        })
-        .catch(error => console.error('Error fetching historical Bitcoin data:', error));
-}
-
-function createChart(dates, prices) {
-    const ctx = document.getElementById('btcChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: dates,
-            datasets: [{
-                label: 'Bitcoin Price (USD)',
-                data: prices,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: false
-                }
-            }
-        }
-    });
-}
-
-    </script>
-                  
-
-                </div>
-            </div>
-          <div class="row">
+                  <div class="row">
     <div class="col">
         <h2><span id="networkHashrate">Loading...</span></h2>
     </div>
@@ -478,6 +348,9 @@ function createChart(dates, prices) {
             <h2 id="btcBalanceInUSD">Equivalent USD: Loading...</h2>
         </div>
 </div>
+
+                </div>
+            </div>
         </div>
     </div>
     
@@ -523,6 +396,14 @@ var postViewsChart = new Chart(ctx, {
     }
 });
 </script>
+  
+
+
+
+
+
+
+    
   
 
 
