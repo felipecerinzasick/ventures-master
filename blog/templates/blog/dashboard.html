@@ -377,63 +377,6 @@ var moneySupplyChartUSD = new Chart(ctxUSD, {
 });
 </script>
 
-      <h1>Bitcoin Price Over Time</h1>
-    <canvas id="btcChart"></canvas>
-    
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-    fetchBitcoinHistoricalData();
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    fetchBitcoinHistoricalData();
-});
-
-function fetchBitcoinHistoricalData() {
-    const endDate = new Date().toISOString().split('T')[0]; // Today's date in YYYY-MM-DD format
-    const startDate = new Date();
-    startDate.setFullYear(startDate.getFullYear() - 1); // One year ago
-    const startDateString = startDate.toISOString().split('T')[0];
-
-    fetch(`https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=usd&from=${Date.parse(startDateString) / 1000}&to=${Date.parse(endDate) / 1000}`)
-        .then(response => response.json())
-        .then(data => {
-            const dates = data.prices.map(price => {
-                const date = new Date(price[0]);
-                return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-            });
-            const prices = data.prices.map(price => price[1]);
-            createChart(dates, prices);
-        })
-        .catch(error => console.error('Error fetching historical Bitcoin data:', error));
-}
-
-function createChart(dates, prices) {
-    const ctx = document.getElementById('btcChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: dates,
-            datasets: [{
-                label: 'Bitcoin Price (USD)',
-                data: prices,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: false
-                }
-            }
-        }
-    });
-}
-
-    </script>
-
 
 
   
