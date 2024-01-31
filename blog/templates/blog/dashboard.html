@@ -87,19 +87,33 @@ function fetchWithBackoff(url, retries = 3) {
     });
 }
 
-function fetchBitcoinBalanceAndUpdateUSD() {
-    const btcAddress = '16DMiBNCdfGfz8w89ew5GDcf86WYW1vRKN'; // Your Bitcoin address
+document.getElementById('checkBalanceBtn').addEventListener('click', function() {
+    const btcAddress = document.getElementById('btcAddressInput').value;
+    fetchBitcoinBalanceAndUpdateUSD(btcAddress);
+});
+
+function fetchBitcoinBalanceAndUpdateUSD(btcAddress) {
+    if (!btcAddress) {
+        alert('Please enter a Bitcoin address.');
+        return;
+    }
+
     const balanceUrl = `https://api.blockcypher.com/v1/btc/main/addrs/${btcAddress}/balance`;
 
     fetchWithBackoff(balanceUrl)
         .then(data => {
             if (data && data.balance) {
-                btcBalance = data.balance / 100000000; // Convert from satoshis to BTC
+                const btcBalance = data.balance / 100000000; // Convert from satoshis to BTC
                 document.getElementById('btcBalance').innerText = `BTC Balance: ${btcBalance}`;
                 updateBalanceInUSD(btcBalance); // Call this function to update the USD balance
+            } else {
+                alert('No balance data available for this address.');
             }
         })
-        .catch(error => console.error('Error fetching Bitcoin balance:', error));
+        .catch(error => {
+            console.error('Error fetching Bitcoin balance:', error);
+            alert('Failed to fetch balance. Please try again.');
+        });
 }
 
 function updateBalanceInUSD(btcBalance) {
@@ -420,22 +434,17 @@ setInterval(updateHalvingCountdown, 86400000); // Update the countdown every 24 
         </div>
     </div>
 
-        <!-- Connect Wallet Section -->
+<!-- BTC Address Input Section -->
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Connect Your Wallet</h5>
-        <button id="connectWalletBtn" class="btn btn-primary">Connect Wallet</button>
+        <h5 class="card-title">Check BTC Balance</h5>
+        <div class="form-group">
+            <input type="text" id="btcAddressInput" class="form-control" placeholder="Enter BTC Address">
+        </div>
+        <button id="checkBalanceBtn" class="btn btn-primary">Check Balance</button>
     </div>
 </div>
 
-<!-- Modal for entering BTC Address -->
-<div id="walletModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Enter Your BTC Address</h2>
-        <input type="text" id="btcAddressInput" placeholder="BTC Address">
-        <button id="checkBalanceBtn" class="btn btn-success">Check Balance</button>
-    </div>
 </div>
 
 
