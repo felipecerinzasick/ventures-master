@@ -3,44 +3,6 @@
 <html>
 
 <head>
-<style>
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
-    padding-top: 60px;
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-  </style>
-
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-D23D4PMX7E"></script>
 <script>
@@ -87,33 +49,19 @@ function fetchWithBackoff(url, retries = 3) {
     });
 }
 
-document.getElementById('checkBalanceBtn').addEventListener('click', function() {
-    const btcAddress = document.getElementById('btcAddressInput').value;
-    fetchBitcoinBalanceAndUpdateUSD(btcAddress);
-});
-
-function fetchBitcoinBalanceAndUpdateUSD(btcAddress) {
-    if (!btcAddress) {
-        alert('Please enter a Bitcoin address.');
-        return;
-    }
-
+function fetchBitcoinBalanceAndUpdateUSD() {
+    const btcAddress = '16DMiBNCdfGfz8w89ew5GDcf86WYW1vRKN'; // Your Bitcoin address
     const balanceUrl = `https://api.blockcypher.com/v1/btc/main/addrs/${btcAddress}/balance`;
 
     fetchWithBackoff(balanceUrl)
         .then(data => {
             if (data && data.balance) {
-                const btcBalance = data.balance / 100000000; // Convert from satoshis to BTC
+                btcBalance = data.balance / 100000000; // Convert from satoshis to BTC
                 document.getElementById('btcBalance').innerText = `BTC Balance: ${btcBalance}`;
                 updateBalanceInUSD(btcBalance); // Call this function to update the USD balance
-            } else {
-                alert('No balance data available for this address.');
             }
         })
-        .catch(error => {
-            console.error('Error fetching Bitcoin balance:', error);
-            alert('Failed to fetch balance. Please try again.');
-        });
+        .catch(error => console.error('Error fetching Bitcoin balance:', error));
 }
 
 function updateBalanceInUSD(btcBalance) {
@@ -139,34 +87,6 @@ function fetchBitcoinPriceAndUpdateTimestamp() {
         })
         .catch(error => console.error('Error fetching Bitcoin price:', error));
 }
-
-  document.getElementById('connectWalletBtn').addEventListener('click', function() {
-    document.getElementById('walletModal').style.display = 'block';
-});
-
-document.getElementById('checkBalanceBtn').addEventListener('click', function() {
-    const btcAddress = document.getElementById('btcAddressInput').value;
-    fetchBitcoinBalanceAndUpdateUSD(btcAddress);
-    document.getElementById('walletModal').style.display = 'none';
-});
-
-// Get the modal
-var modal = document.getElementById('walletModal');
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
-
-// Modify the fetchBitcoinBalanceAndUpdateUSD function to accept btcAddress
-function fetchBitcoinBalanceAndUpdateUSD(btcAddress) {
-    const balanceUrl = `https://api.blockcypher.com/v1/btc/main/addrs/${btcAddress}/balance`;
-
-    // ... rest of your existing function
-}
-
 
 // Function to calculate the countdown to the next Bitcoin halving
 function updateHalvingCountdown(lastUpdate) {
@@ -411,7 +331,7 @@ setInterval(updateHalvingCountdown, 86400000); // Update the countdown every 24 
             </div>
         </div>
         <div class="col-lg-6 mb-4">
-            <!-- BTC balance and equivalent USD -->
+            <!-- Money Supply M2 in BTC Chart Placeholder -->
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Wallet Overview</h5>
@@ -433,22 +353,7 @@ setInterval(updateHalvingCountdown, 86400000); // Update the countdown every 24 
             </div>
         </div>
     </div>
-
-<!-- BTC Address Input Section -->
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">Check BTC Balance</h5>
-        <div class="form-group">
-            <input type="text" id="btcAddressInput" class="form-control" placeholder="Enter BTC Address">
-        </div>
-        <button id="checkBalanceBtn" class="btn btn-primary">Check Balance</button>
-    </div>
-</div>
-
-</div>
-
-
-        
+    
     <!-- More Rows for Other Charts or Data Tables -->
 </div>
 <!-- Chart.js Script for Money Supply M2 in USD -->
@@ -471,17 +376,8 @@ var moneySupplyChartUSD = new Chart(ctxUSD, {
     }
 });
 </script>
-<button id="checkBalanceBtn" class="btn btn-primary">Check Balance</button>
-<script>
-  document.getElementById('checkBalanceBtn').addEventListener('click', function() {
-    // function body
-});
-  document.getElementById('checkBalanceBtn').addEventListener('click', function() {
-    console.log("Button clicked"); // This line is for debugging
-    // Rest of the function
-});
 
-</script>
+
 
   
 
@@ -499,16 +395,6 @@ var postViewsChart = new Chart(ctx, {
         // Chart options go here
     }
 });
-  .then(data => {
-    console.log(data); // Add this line to log the data
-    // ... rest of the code
-})
-
-
-  function updateBalanceInUSD(btcBalance) {
-    console.log(`Updating balance in USD for BTC amount: ${btcBalance}`); // Debugging log
-    // ... rest of the code
-}
 </script>
   
 
