@@ -33,6 +33,14 @@ def contact_view(request):
     # return render(request, 'base1.html', {'form': form})
 
 
+
+@login_required
+def resources_view(request):
+    resources = Resource.objects.all().order_by('-created_at')  # Assuming you want the newest resources first
+    return render(request, 'blog/resources.html', {'resources': resources})
+
+
+
 @login_required
 def dashboard(request):
     # Fetch the posts by the current user
