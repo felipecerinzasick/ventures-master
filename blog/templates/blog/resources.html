@@ -1,52 +1,29 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-D23D4PMX7E"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D23D4PMX7E"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-D23D4PMX7E');
+  </script>
 
-  gtag('config', 'G-D23D4PMX7E');
-</script>
-
-
-<!-- ... remaining HTML content ... -->
-
-</body> <!-- end of the body -->
-</html>
-  
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" crossorigin="anonymous">
 
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
-    integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-
-  <!-- Medium Editor -->
-  <script src="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/js/medium-editor.min.js"></script>
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/css/medium-editor.min.css"
-    type="text/css" media="screen" charset="utf-8">
-
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" crossorigin="anonymous">
+  
   <!-- Custom Style -->
   <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 
-  {% if title %}
-  <title>Resources</title>
-  {% else %}
-  <title>resources</title>
-  {% endif %}
+  <title>{% if title %}{{ title }}{% else %}Resources{% endif %}</title>
 </head>
 
 <body>
@@ -83,42 +60,47 @@
 
 
   {% if user.is_authenticated %}
-    <!-- List of links visible only to registered users -->
-    <div class="container mt-4">
-      <h2>Exclusive Links for Registered Users</h2>
-      <ul>
-        <li><a href="url_to_resource_1">Resource 1</a></li>
-        <li><a href="url_to_resource_2">Resource 2</a></li>
-        <li><a href="url_to_resource_3">Resource 3</a></li>
-        <!-- Add more links as needed -->
-      </ul>
-    </div>
-  {% else %}
-    <!-- Message or redirect for non-authenticated users -->
-    <div class="container mt-4">
-      <p>Please <a href="{% url 'login' %}">log in</a> to access this page.</p>
-    </div>
-  {% endif %}
-  
+  <div class="navbar-spacer"></div>
 
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
-  </script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
-  </script>
+  <!-- Main content -->
+  <main role="main" class="container mt-5 pt-3">
+    <!-- Section for Equity Research -->
+    <section id="equity-research">
+      <h2>Equity Research</h2>
+      <p><a href="https://drive.google.com/file/d/1nt9LxDST59iF6C6JYqIxYVuFKLwtVgLU/view?usp=drive_link" target="_blank">The Case for Digital Fashion</a></p>
+    </section>
 
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Section for Bitcoin-related analyses -->
+    <section id="bitcoin-analyses" class="mt-5">
+      <h2>Bitcoin-related Analyses</h2>
+      <!-- Content for Bitcoin-related analyses goes here -->
+    </section>
 
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.1/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {% if user.is_authenticated %}
+      <!-- Additional resources for registered users -->
+      <section id="exclusive-links" class="mt-5">
+        <h2>Exclusive Links for Registered Users</h2>
+        <ul>
+          <li><a href="url_to_resource_1">Resource 1</a></li>
+          <li><a href="url_to_resource_2">Resource 2</a></li>
+          <li><a href="url_to_resource_3">Resource 3</a></li>
+          <!-- Add more links as needed -->
+        </ul>
+      </section>
+    {% else %}
+      <!-- Prompt to log in -->
+      <section id="login-prompt" class="mt-5">
+        <p>Please <a href="{% url 'login' %}">log in</a> to access exclusive content.</p>
+      </section>
+    {% endif %}
+  </main>
 
- 
-
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
 
 
 
