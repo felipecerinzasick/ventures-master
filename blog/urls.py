@@ -8,10 +8,9 @@ from .views import (
     PostDeleteView,
     UserPostListView,
     contact_view,
-    add_comment
+    add_comment, 
+    resources
 )
-
-
 
 urlpatterns = [
     path('', views.index, name='index'),
