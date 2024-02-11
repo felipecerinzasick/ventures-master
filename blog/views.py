@@ -35,7 +35,7 @@ def contact_view(request):
 
 
 @login_required
-def resources_view(request):
+def resources(request):
     resources = Resource.objects.all().order_by('-created_at')  # Assuming you want the newest resources first
     return render(request, 'blog/resources.html', {'resources': resources})
 
