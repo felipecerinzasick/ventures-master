@@ -1,1 +1,28 @@
 
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+  <!-- This block will replace the content block in base.html -->
+
+  {% if user.is_authenticated %}
+    <!-- List of links visible only to registered users -->
+    <div class="container mt-4">
+      <h2>Exclusive Links for Registered Users</h2>
+      <ul>
+        <li><a href="url_to_resource_1">Resource 1</a></li>
+        <li><a href="url_to_resource_2">Resource 2</a></li>
+        <li><a href="url_to_resource_3">Resource 3</a></li>
+        <!-- Add more links as needed -->
+      </ul>
+    </div>
+  {% else %}
+    <!-- Message or redirect for non-authenticated users -->
+    <div class="container mt-4">
+      <p>Please <a href="{% url 'login' %}">log in</a> to access this page.</p>
+    </div>
+  {% endif %}
+{% endblock %}
+
+  
