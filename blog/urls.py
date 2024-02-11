@@ -23,7 +23,7 @@ urlpatterns = [
     path('contact/', contact_view, name='contact'),
     path('blog/', PostListView.as_view(), name='blog'),
     path('dashboard/', views.dashboard, name='dashboard'),
-    path('resources/', views.resources, name='resources'),
+    path('resources/', views.resources_view, name='resources'),
     path('post/<int:pk>/comment/', add_comment, name='add_comment'),
     path('privacy-policy/', views.privacy_policy, name='privacy-policy'),
 ]
