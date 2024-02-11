@@ -12,7 +12,8 @@ from django.views.generic import (
     ListView,
     DetailView,
     UpdateView,
-    DeleteView
+    DeleteView, 
+    Resource
 )
 
 def privacy_policy(request):
