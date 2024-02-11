@@ -1,4 +1,4 @@
-from .models import Post, Comment
+from .models import Post, Comment, Resource
 from newsletter.models import Newsletter
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
@@ -12,8 +12,7 @@ from django.views.generic import (
     ListView,
     DetailView,
     UpdateView,
-    DeleteView, 
-    Resource
+    DeleteView
 )
 
 def privacy_policy(request):
