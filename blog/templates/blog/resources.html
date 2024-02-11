@@ -60,9 +60,10 @@
 
 
   <div class="navbar-spacer"></div>
-{% if user.is_authenticated %}
+
   <!-- Main content -->
   <main role="main" class="container mt-5 pt-3">
+  {% if user.is_authenticated %}
     <!-- Section for Equity Research -->
     <section id="equity-research">
       <h2>Equity Research</h2>
