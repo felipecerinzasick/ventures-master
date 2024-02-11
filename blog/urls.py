@@ -9,7 +9,7 @@ from .views import (
     UserPostListView,
     contact_view,
     add_comment, 
-    resources
+    resources_view
 )
 
 urlpatterns = [
