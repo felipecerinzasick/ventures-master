@@ -5,6 +5,14 @@ from django.conf import settings
 from ckeditor_uploader.fields import RichTextUploadingField
 
 
+class BitcoinWallet(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    wallet_address = models.CharField(max_length=42)  # Length of a Bitcoin address
+    # You can add more fields as needed, such as an alias for the wallet, etc.
+
+    def __str__(self):
+        return f"{self.user}'s Bitcoin Wallet"
+
 class Resource(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
