@@ -1,4 +1,33 @@
 // dashboard.js
+
+
+// Additional functions in dashboard.js
+
+// Function to add a widget
+function addWidget(widgetType) {
+  // Logic to add a widget to the dashboard
+}
+
+// Function to remove a widget
+function removeWidget(widgetId) {
+  // Logic to remove a widget from the dashboard
+}
+
+// Event listeners for widget interaction
+document.querySelectorAll('.add-widget-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    addWidget(this.dataset.widgetType);
+  });
+});
+
+document.querySelectorAll('.remove-widget-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    removeWidget(this.dataset.widgetId);
+  });
+});
+
+// Implement drag-and-drop functionality with a library like SortableJS or with native HTML5 drag-and-drop
+
 document.addEventListener('DOMContentLoaded', function() {
   // Function to load wallet data
   function loadWalletData() {
