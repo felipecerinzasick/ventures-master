@@ -4,10 +4,6 @@ from .models import Post
 from .models import Contact
 
 
-class BitcoinWalletForm(forms.ModelForm):
-    class Meta:
-        model = BitcoinWallet
-        fields = ['wallet_address']
         
 class ContactForm(forms.ModelForm):
     class Meta:
