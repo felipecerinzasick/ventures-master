@@ -16,6 +16,19 @@ from django.views.generic import (
 )
 
 
+# In your views.py
+
+def update_dashboard_layout(request):
+    if request.method == 'POST':
+        # Get the new layout data from the request
+        new_layout = request.POST.get('layout')
+        # Update the user's preferences in the database
+        # ...
+        return JsonResponse({'status': 'success'})
+    else:
+        return JsonResponse({'status': 'error'}, status=400)
+
+
 def dashboard_view(request):
     # If the form is submitted
     if request.method == 'POST':
