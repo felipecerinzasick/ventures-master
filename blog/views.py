@@ -1,4 +1,4 @@
-from .models import Post, Comment, Resource
+from .models import Post, Comment, Resource, BitcoinWallet
 from newsletter.models import Newsletter
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import PostForm,ContactForm
+from .forms import PostForm,ContactForm, BitcoinWalletForm
 from django.views.generic import (
     CreateView,
     ListView,
@@ -14,6 +14,30 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
+
+
+def dashboard_view(request):
+    # If the form is submitted
+    if request.method == 'POST':
+        form = BitcoinWalletForm(request.POST)
+        if form.is_valid():
+            # You would have some logic here to call the Bitcoin API
+            # and update the wallet data
+            pass
+    else:
+        form = BitcoinWalletForm()
+    
+    # Retrieve the user's wallet data and preferences for the dashboard
+    wallet_data = {}  # Replace with actual wallet data retrieval logic
+    user_preferences = {}  # Replace with actual preferences retrieval logic
+    
+    return render(request, 'dashboard.html', {
+        'form': form,
+        'wallet_data': wallet_data,
+        'user_preferences': user_preferences
+    })
+
+
 
 def privacy_policy(request):
     return render(request, 'blog/privacy.html')
