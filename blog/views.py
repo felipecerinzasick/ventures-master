@@ -130,6 +130,9 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 def about(request):
     return render(request, 'blog/about.html', {'title': 'About'})
 
+def bitcoin(request):
+    return render(request, 'blog/bitcoin.html', {'title': 'Bitcoin'})
+
 def blog(request):
         return render(request, 'blog/blog.html', {'title': 'Blog'})
 
