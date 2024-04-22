@@ -20,6 +20,7 @@ urlpatterns = [
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post_update'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),
     path('about/', views.about, name='about'),
+    path('bitcoin/', views.bitcoin, name='bitcoin'),
     path('contact/', contact_view, name='contact'),
     path('blog/', PostListView.as_view(), name='blog'),
     path('dashboard/', views.dashboard, name='dashboard'),
