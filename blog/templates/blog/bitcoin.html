@@ -4,74 +4,50 @@
     <!-- Inherit head content like meta tags, title, etc., from the base template -->
     {{ block.super }}
 
-    <!-- Add custom styles -->
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 700px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-        h2 {
-            color: #007bff;
-        }
-        p {
-            text-align: justify;
-            text-justify: inter-word;
-        }
-        a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        .disclaimer {
-            color: #ff4136;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .highlight {
-            background-color: #ffff99;
-        }
-        .call-to-action {
-            background-color: #007bff;
-            color: #ffffff;
-            text-align: center;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 30px;
-        }
-        .call-to-action a {
-            color: #ffffff;
-            font-weight: bold;
-            font-size: 18px;
-        }
-    </style>
+    <!-- Include Bootstrap CSS for styling -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Include FontAwesome for icons -->
+    <link href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" rel="stylesheet">
 {% endblock head %}
 
 {% block content %}
-    <!-- Disclaimer for Information Purposes Only -->
-    <div class="disclaimer">
-        <p><strong>Disclaimer:</strong> The following content is for informational purposes only and is not intended as investment advice. The financial markets, including cryptocurrencies like Bitcoin, carry potential risks, and past performance is not indicative of future results.</p>
+<div class="container mt-5">
+    <!-- Disclaimer Card -->
+    <div class="card border-warning mb-3">
+        <div class="card-header bg-warning text-white">Disclaimer</div>
+        <div class="card-body text-warning">
+            <h5 class="card-title"><i class="fas fa-exclamation-triangle"></i> Important Information</h5>
+            <p class="card-text">The content on this site is for institutional investors only and is not intended as investment advice. The financial markets, including cryptocurrencies like Bitcoin, carry potential risks, and past performance is not indicative of future results.</p>
+        </div>
     </div>
 
-    <!-- Introduction -->
-    <h2>Understanding Bitcoin's Post-Halving Landscape</h2>
-    <p>Bitcoin has undergone another monumental event in its history: the halving. This phenomenon, occurring approximately every four years, has historically been a precursor to significant changes in Bitcoin's value. With each halving, the reward for mining new blocks is halved, thereby reducing the rate at which new bitcoins are generated and thus Bitcoin's inflation rate.</p>
+    <!-- Main Content -->
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title text-center">Understanding Bitcoin's Post-Halving Landscape</h2>
+            <p class="card-text">Bitcoin's halving is a significant event with historical implications on its value. Discover the potential changes and how they may influence investment strategies moving forward.</p>
 
-    <!-- Highlighting Past Performance -->
-    <p class="highlight">Let's highlight what Bitcoin has done after each of its halvings. Historically, the 18 months following a halving have been particularly eventful. After the first halving in 2012, Bitcoin saw an over 9,000% return in the following 18 months. Similarly, the 2016 halving preceded an approximate 2,900% return over the next year and a half. While these figures are impressive, it's crucial to understand that the cryptocurrency market is complex and past performance is not a reliable indicator of future results.</p>
+            <!-- Historical Performance Highlight -->
+            <div class="text-center my-4">
+                <i class="fas fa-chart-line fa-2x"></i>
+                <p class="d-inline-block ml-2">Reviewing the past performance after each Bitcoin halving, including the extraordinary returns seen over the 18 months following these events.</p>
+            </div>
 
-    <!-- Pitch -->
-    <p>But it doesn't have to be overly complicated. With thorough research and an understanding of the market dynamics, one can navigate this intricate web. At Sick Ventures, we've delved deep into the Digital asset space, examining patterns, market trends, and the underlying technology of digital assets like Bitcoin.</p>
+            <!-- Simplifying the Complex -->
+            <p class="card-text">The market can be complex, but with Sick Ventures, you're guided through an intricate web of digital asset dynamics to more straightforward understanding and informed decision-making.</p>
 
-    <!-- Call to Action -->
-    <div class="call-to-action">
-        <p>If you're looking to understand Bitcoin's potential after its latest halving, or if you're curious about the digital asset market in general I invite you to reach out. Explore the possibilities and equip yourself with the knowledge to make informed decisions. Visit <a href="https://sick-ventures.com/bitcoin">sick-ventures.com/bitcoin</a> to learn more and to find a pathway to our conversation. Whether you're considering Bitcoin as a part of your investment portfolio or simply eager to learn more, we're here to shed light on the possibilities ahead.</p>
+            <!-- Call to Action Button -->
+            <div class="text-center">
+                <a href="https://sick-ventures.com/bitcoin" class="btn btn-primary"><i class="fas fa-search-dollar"></i> Explore Bitcoin's Potential</a>
+            </div>
+        </div>
     </div>
+</div>
 
-    <p>I look forward to connecting with you and exploring the future of Bitcoin together.</p>
+<!-- Include Bootstrap and FontAwesome scripts for functionality and icons -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 {% endblock content %}
+
