@@ -1,26 +1,77 @@
-{% extends "blog/base1.html" %}
+{% extends "blog/base_about.html" %}
 
 {% block head %}
     <!-- Inherit head content like meta tags, title, etc., from the base template -->
     {{ block.super }}
+
+    <!-- Add custom styles -->
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        h2 {
+            color: #007bff;
+        }
+        p {
+            text-align: justify;
+            text-justify: inter-word;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .disclaimer {
+            color: #ff4136;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .highlight {
+            background-color: #ffff99;
+        }
+        .call-to-action {
+            background-color: #007bff;
+            color: #ffffff;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        .call-to-action a {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
 {% endblock head %}
 
 {% block content %}
-<!-- Disclaimer for Information Purposes Only -->
-<p><strong>Disclaimer:</strong> The following content is for informational purposes only and is not intended as investment advice. The financial markets, including cryptocurrencies like Bitcoin, carry potential risks, and past performance is not indicative of future results.</p>
+    <!-- Disclaimer for Information Purposes Only -->
+    <div class="disclaimer">
+        <p><strong>Disclaimer:</strong> The following content is for informational purposes only and is not intended as investment advice. The financial markets, including cryptocurrencies like Bitcoin, carry potential risks, and past performance is not indicative of future results.</p>
+    </div>
 
-<!-- Introduction -->
-<h2>Bitcoin's Post-Halving Landscape: An Opportunity to get involved? </h2>
-<p>Bitcoin has undergone another monumental event in its history: the halving. This phenomenon, occurring approximately every four years, has historically been a precursor to significant changes in Bitcoin's value. With each halving, the reward for mining new blocks is halved, thereby reducing the rate at which new bitcoins are generated and thus Bitcoin's inflation rate.</p>
+    <!-- Introduction -->
+    <h2>Understanding Bitcoin's Post-Halving Landscape</h2>
+    <p>Bitcoin has undergone another monumental event in its history: the halving. This phenomenon, occurring approximately every four years, has historically been a precursor to significant changes in Bitcoin's value. With each halving, the reward for mining new blocks is halved, thereby reducing the rate at which new bitcoins are generated and thus Bitcoin's inflation rate.</p>
 
-<!-- Highlighting Past Performance -->
-<p>Let's highlight what Bitcoin has done after each of its halvings. Historically, the 18 months following a halving have been particularly eventful. After the first halving in 2012, Bitcoin saw an over 9,000% return in the following 18 months. Similarly, the 2016 halving preceded an approximate 2,900% return over the next year and a half. While these figures are impressive, it's crucial to understand that the cryptocurrency market is complex and past performance is not a reliable indicator of future results.</p>
+    <!-- Highlighting Past Performance -->
+    <p class="highlight">Let's highlight what Bitcoin has done after each of its halvings. Historically, the 18 months following a halving have been particularly eventful. After the first halving in 2012, Bitcoin saw an over 9,000% return in the following 18 months. Similarly, the 2016 halving preceded an approximate 2,900% return over the next year and a half. While these figures are impressive, it's crucial to understand that the cryptocurrency market is complex and past performance is not a reliable indicator of future results.</p>
 
-<!-- Pitch -->
-<p>But it doesn't have to be overly complicated. With thorough research and an understanding of the market dynamics, one can navigate this intricate web. At Sick Ventures, we've delved deep into the Digital asset space, examining patterns, market trends, and the underlying technology of digital assets like Bitcoin.</p>
+    <!-- Pitch -->
+    <p>But it doesn't have to be overly complicated. With thorough research and an understanding of the market dynamics, one can navigate this intricate web. At Sick Ventures, we've delved deep into the Digital asset space, examining patterns, market trends, and the underlying technology of digital assets like Bitcoin.</p>
 
-<!-- Call to Action -->
-<p>If you're looking to understand Bitcoin's potential after its latest halving, or if you're curious about the digital asset market in general I invite you to reach out. Explore the possibilities and equip yourself with the knowledge to make informed decisions. Visit <a href="https://sick-ventures.com/bitcoin">sick-ventures.com/bitcoin</a> to learn more and to find a pathway to our conversation. Whether you're considering Bitcoin as a part of your investment portfolio or simply eager to learn more, we're here to shed light on the possibilities ahead.</p>
+    <!-- Call to Action -->
+    <div class="call-to-action">
+        <p>If you're looking to understand Bitcoin's potential after its latest halving, or if you're curious about the digital asset market in general I invite you to reach out. Explore the possibilities and equip yourself with the knowledge to make informed decisions. Visit <a href="https://sick-ventures.com/bitcoin">sick-ventures.com/bitcoin</a> to learn more and to find a pathway to our conversation. Whether you're considering Bitcoin as a part of your investment portfolio or simply eager to learn more, we're here to shed light on the possibilities ahead.</p>
+    </div>
 
-<p>I look forward to connecting with you and exploring the future of Bitcoin together.</p>
+    <p>I look forward to connecting with you and exploring the future of Bitcoin together.</p>
 {% endblock content %}
