@@ -1,1 +1,162 @@
 
+{% extends "blog/base_about.html" %}
+
+{% block head %}
+    <!-- Inherit head content like meta tags, title, etc., from the base template -->
+    {{ block.super }}
+
+    <style>
+         <style>
+        .hero-section {
+            background-image: url('https://sick-ventures.s3.eu-central-1.amazonaws.com/media/banner_bg.jpg'); /* Add your banner image */
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .image-section, .text-section {
+            flex: 1;
+          
+        }
+
+        .image-section {
+            max-width: 50%;
+            order: 2; /* Position image on the right */
+        }
+
+
+
+        .image-section img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .text-section {
+            max-width: 50%;
+            padding: 0 20px;
+            order: 1; /* Position text on the left */
+        }
+        /* Existing styles */
+        .jumbotron.text-center.bg-primary.text-white {
+            color: #fff;
+            background-color: #007bff;
+        }
+
+        /* New styles for content-section */
+        .content-section {
+            background-color: white; /* White background */
+            padding: 20px; /* Padding inside the content section */
+            border-radius: 5px; /* Rounded corners */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            margin: 0 -15px; /* Adjust margins if necessary */
+        }
+
+        /* Full-width adjustments for container */
+        .container-fluid {
+            padding-right: 0;
+            padding-left: 0;
+            margin-right: auto;
+            margin-left: auto;
+        }
+    </style>
+{% endblock head %}
+
+
+
+
+{% block content %}
+
+
+<div class="container">
+    <div class="content-wrapper" style="padding-top: 20px;">
+        <div class="text-section" style="padding-top: 20px;">
+
+            <!-- Insert the image here and float it to the right -->
+            <img src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/1626883648587.jpg" alt="About Image" style="float: right; margin-left: 20px; width: 300px; height: auto; border-radius: 5px;">
+            <p class="text-justify">I recognize that we're at a pivotal moment in financial history—a moment that could redefine wealth management for the next generations. Having studied the intricacies within the domain of financial technology I'm here to guide you beyond traditional finance. In an era where technology continuously reshapes our world, staying ahead is not just an option but a necessity. My journey, grounded in Financial Economics and  a solid technical background, positions me well at the intersection of finance and technology.</p>
+            
+         
+            <p class="text-justify">With a profound understanding of market dynamics, and experience in portfolio management, I want to serve as your guide in what are often assessed as often-turbulent cryptomarket. Offering  guidance through the intricacies of fintech investment, it is my goals to show how a transformative journey towards digital wealth building is not only possible but necessary. I believe that understanding and adapting to technological trends and fundamentals is crucial in times in which conventional finance is starting to errode. With a deep dive into market dynamics and a keen eye on emerging technologies, I guide my clients through the complexities of digital finance.</p>
+    
+            <p class="text-justify">The blockchain, for many, is a realm filled with misconceptions and pitfalls. But delve deeper, and you'll see it as an opportunity, not just speculation. Bitcoin represents a seismic shift in technological innovation with the potential to reshape the financial landscape. Here at Sick-Ventures, I believe that the essence is its empowerment, offering financial freedom away from traditional banking constraints. But unlocking this potential requires a deep dive into the world of blockchain technology. Step into a world where you can be in full control of your wealth, and learn about the philosophy of "being your own banker". </p>
+
+            <p class="text-justify">Technology will continue to be an important force and leave no area of our lives unaffected.</p>
+        <div style="text-align: center; margin-top: 30px;"> <!-- Add space above the button -->
+            <button class="cta-btn" data-toggle="modal" data-target="#contactModal" 
+                style="
+                  background-color: #2596BE;
+                  color: white; /* Text color */
+                  border: 2px solid white; /* White border */
+                  padding: 10px 30px; /* Padding */
+                  font-size: 18px; /* Font size */
+                  border-radius: 50px; /* Fully rounded borders for pill shape */
+                  outline: none; /* Remove outline */
+                  cursor: pointer; /* Pointer cursor on hover */
+                  transition: all 0.3s ease; /* Smooth transition for hover effects */
+                  display: inline-block; /* For center alignment */
+                  margin-bottom: 30px; /* Add space below the button */
+                "
+                onmouseover="this.style.backgroundColor='#237BA0'; this.style.color='white';" /* Different shade on hover with text color change for a subtle effect */
+                onmouseout="this.style.backgroundColor='#2596BE'; this.style.color='white';" /* Return to original style on mouse out */
+                >Get in touch</button>
+        </div>
+</div>
+
+
+    <!-- The Modal -->
+<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,.5);">
+      
+      <!-- Modal Header -->
+      <div class="modal-header" style="background: linear-gradient(45deg, #2596BE, #63B4D1); color: white; padding: 20px;">
+        <!--<img src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/logo_neu.jpg" alt="Sick Ventures Logo" style="height: 25px; margin-right: 10px;">-->
+        <h5 class="modal-title" id="contactModalLabel" style="font-size: 1.5rem; color: white; font-family: 'Arial', sans-serif;">Get in Touch</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true" style="color: white;">&times;</span>
+        </button>
+      </div>
+
+      <form method="post" action="{% url 'contact' %}">
+        {% csrf_token %}
+        <div class="modal-body" style="padding: 20px; font-family: 'Arial', sans-serif;">
+            <div class="form-group">
+                <label for="name"><i class="fas fa-user"></i> Name:</label>
+                <input type="text" class="form-control" id="name" name="name" required placeholder="Enter your name" style="border-radius: 5px;">
+            </div>
+            <div class="form-group">
+                <label for="email"><i class="fas fa-envelope"></i> Email address:</label>
+                <input type="email" class="form-control" id="email" name="email" required placeholder="Enter your email" style="border-radius: 5px;">
+            </div>
+            <div class="form-group">
+                <label for="message"><i class="fas fa-pencil-alt"></i> Message:</label>
+                <textarea class="form-control" id="message" name="message" rows="3" required placeholder="Type your message here" style="border-radius: 5px;"></textarea>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="consentCheckbox" required>
+                <label class="form-check-label" for="consentCheckbox">I give consent to be contacted.</label>
+            </div>
+        </div>
+        <div class="modal-footer" style="padding: 20px; background: #f2f2f2;">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" style="background-color: #2596BE; border-color: #2596BE; font-family: 'Arial', sans-serif;">Send Message</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+{% endblock content %}
