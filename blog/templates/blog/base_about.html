@@ -1,9 +1,138 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
+<!-- Favicons --> 
+<link href="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/lgog_neu.png" rel="icon">
+<link href="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/lgog_neu.png" rel="apple-touch-icon">
 
+<!-- Icons boxicon -->
+<script src="https://unpkg.com/boxicons@2.0.9/dist/boxicons.js"></script>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+
+
+<!-- Vendor CSS Files -->
+<link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+<link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+<link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+<link href="assets/vendor/venobox/venobox.css" rel="stylesheet">
+<link href="assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
+<link href="assets/vendor/aos/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<style>
+
+  .text-center a.btn-get-started {
+  margin-top: 20px; /* Add space above the button */
+  padding: 10px 25px; /* Increase padding for larger button */
+  font-size: 18px; /* Optional: Increase font size for better visibility */
+  border-radius: 5px; /* Optional: Adjust border-radius for aesthetic preference */
+}
+
+/* Ensure adequate space around the button, especially when viewed on smaller screens */
+@media (max-width: 768px) {
+  .text-center a.btn-get-started {
+    margin-top: 30px; /* Increase space above the button on smaller screens */
+    padding: 12px 30px; /* Adjust padding for a comfortable tap area */
+  }
+}
+
+  /* Increase the bottom margin of the last paragraph or heading above the button */
+.section-title h2, .section-title p:last-of-type {
+    margin-bottom: 1.5em; /* Adjust the value as needed */
+}
+
+/* Alternatively, increase the top margin of the button itself */
+.btn-get-started {
+    margin-top: 1.5em; /* Adjust the value as needed */
+}
+
+
+
+  .navbar {
+    position: fixed; /* Make the navbar fixed at the top of the page */
+    top: 0; /* Position the navbar at the very top of the viewport */
+    width: 100%; /* Ensure the navbar spans the full width of the viewport */
+    z-index: 1000; /* Ensure the navbar stays on top of other content */
+}
+  
+
+}
+    .bg-white {
+    background-color: #fff !important; /* Pure white background */
+}
+    #hero {
+    position: relative;
+    overflow: hidden;
+  }
+
+  #hero video {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+    z-index: -1;
+  }
+
+
+@media (max-width: 768px) {
+    #hero video {
+        display: none; /* Hide video on small screens */
+    }
+
+
+    #hero {
+      background: url('https://sick-ventures.s3.eu-central-1.amazonaws.com/media/p2p_network_background.jpeg') no-repeat center center;
+      background-size: cover;
+    }
+    #hero::before { /* Assuming there is a pseudo-element for overlay */
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(255, 255, 255, 0.1); /* Reduce the last number to decrease opacity */
+    z-index: 0;
+}
+
+  }
+    body {
+        font-family: 'Raleway', sans-serif;
+    }
+  
+        #hero {
+            margin-top: -25px;
+            padding-top: 50px;
+        }
+
+        .section-title {
+            text-align: center;
+            width: 100%;
+        }
+
+        .icon-box {
+            margin: 0;
+            padding: 20px;
+        }
+
+        .navbar-brand {
+            margin: 0;
+        }
+
+        /* Adding styles for jumbotron */
+        .jumbotron.text-center.bg-primary.text-white {
+            color: #fff;  /* Ensuring the text color is white */
+            background-color: #007bff;  /* Ensuring the background is primary color */
+        }
+    </style>
 <head>
-  <!-- Google tag (gtag.js) -->
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-D23D4PMX7E"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -23,77 +152,15 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
     integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-   <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Medium Editor -->
+  <script src="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/js/medium-editor.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/css/medium-editor.min.css"
+    type="text/css" media="screen" charset="utf-8">
 
   <!-- Custom Style -->
   <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
-  <style>
-     /* Ensure the hero section is full-width */
-.container-fluid {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-/* Remove extra space below the navigation bar */
-nav.navbar {
-  margin-bottom: 0;
-}
-
-/* Correct the layout for the image and text section */
-.content-layout {
-  display: flex;
-  flex-direction: row; /* Ensure this is set for larger screens */
-  align-items: start; /* Align items at the start of the flex container */
-}
-
-/* Responsive behavior for the content layout */
-@media (max-width: 768px) {
-  .content-layout {
-    flex-direction: column; /* Stack image and text on smaller screens */
-  }
-
-  .image-section, .text-section {
-    max-width: 100%;
-  }
-}
-    .hero-section {
-      background-image: url('https://sick-ventures.s3.eu-central-1.amazonaws.com/media/banner_bg.jpg');
-      background-size: cover;
-      background-position: center;
-      color: white;
-      text-align: center;
-      padding: 60px 0;
-    }
-
-    .container {
-      background-color: white; /* Set background color to white */
-      border: none; /* Remove border
-    }
-
-    .content-layout {
-      display: flex;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-
-    .image-section {
-      flex: 1;
-      max-width: 50%;
-    }
-
-    .image-section img {
-      width: 100%;
-      height: auto;
-      border-radius: 5px;
-    }
-
-    .text-section {
-      flex: 1;
-      max-width: 50%;
-      padding: 0 20px;
-    }
-  </style>
 
   {% if title %}
   <title>Sick-Ventures {{ title }}</title>
@@ -124,92 +191,82 @@ nav.navbar {
                 <!-- Navbar Right Side -->
                 <div class="navbar-nav">
                     {% if user.is_authenticated %}
+                    <a class="nav-item nav-link" href="{% url 'resources' %}">Resources</a>
+                    <a class="nav-item nav-link" href="{% url 'dashboard' %}">Dashboard</a>
                     <a class="nav-item nav-link" href="{% url 'post_create' %}">New Post</a>
                     <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
                     <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
                     {% else %}
-                    <a class="btn btn-primary" style="background-color: #2596BE; border-color: #2596BE;" href="{% url 'login' %}">Get started</a>
-                    <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+                     <button class="cta-btn" data-toggle="modal" data-target="#contactModal" 
+              style="
+                background-color: #2596BE; /* Matching the background */
+                color: white; /* Text color */
+                border: 2px solid white; /* White border */
+                padding: 10px 24px; /* Padding */
+                font-size: 16px; /* Font size */
+                border-radius: 10px; /* Rounded borders */
+                outline: none; /* Remove outline */
+                cursor: pointer; /* Pointer cursor on hover */
+                box-shadow: none; /* No shadow */
+                transition: all 0.3s ease; /* Smooth transition for hover effects */
+              "
+              onmouseover="this.style.backgroundColor='#237BA0';" /* Slightly different shade on hover for a subtle effect */
+              onmouseout="this.style.backgroundColor='#2596BE';" /* Return to original color on mouse out */
+              >Contact</button>
+                     <!-- ======= <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>======= -->
                     {% endif %}
                 </div> 
             </div>
         </div>
     </nav>
 </header>
-<main role="main" class="container-fluid" style="padding-top: 20px;" style="padding-left: -20px;" style="padding-right: -20px;">
-    <div class="hero-section">
-    <p style="font-size: 24px;">Charting the Future of Asset Management.</p>
-</div>
 
-        {% block content %}
-      <!-- Page specific content goes here -->
-      {% endblock %}
+ 
 
-    <div class="container">
 
-    </div>
- </main>
-<!-- Contact Modal -->
+    
+<!-- End Cta Section -->
+
+    <!-- The Modal -->
 <div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
+      
+      <!-- Modal Header -->
       <div class="modal-header">
         <h5 class="modal-title" id="contactModalLabel">Get in Touch</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="post" action="{% url 'contact'%}">
-              <div class="modal-body">
-        <!-- Contact Form -->
-        
-          {% csrf_token %}
-          <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" class="form-control" name="name" id="name" placeholder="Enter your name">
-          </div>
-          <div class="form-group">
-            <label for="email">Email address</label>
-            <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email">
-          </div>
-          <div class="form-group">
-            <label for="customText">Your Message</label>
-            <textarea class="form-control" name="message" id="customText" rows="3"></textarea>
-          </div>
-       
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Send Message</button>
-      </div>
-    </form>
+      <!-- Remove the nested form tag and add the 'name' attribute to the inputs -->
+        <form method="post" action="{% url 'contact' %}">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email address:</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea class="form-control" id="message" name="message" rows="3" required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </div>
+        </form>
+
     </div>
   </div>
 </div>
 
 
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
-  </script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
-  </script>
-
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.1/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-  <!-- Optional JavaScript -->
-  <script src="{% static 'js/main.js' %}"></script>
-
-  
-  <!-- ======= Footer ======= -->
 
 
 
@@ -240,7 +297,7 @@ nav.navbar {
           </div>
 
           
-           <div class="col-lg-4 col-md-6 footer-newsletter">
+          <div class="col-lg-4 col-md-6 footer-newsletter">
             <h4>Sign up for the Newsletter</h4>
             <p>To obtain a monthly overview of current market opportunities and insightful research </p>
             <form action="/newsletter/{{newsletter.slug}}/subscribe/" method="post">
