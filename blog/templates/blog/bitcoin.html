@@ -9,25 +9,47 @@
 
     <!-- Include FontAwesome for icons -->
     <link href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" rel="stylesheet">
+
+    <!-- Custom CSS for popup -->
+    <style>
+        .popup {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2;
+            display: none; /* Hidden by default */
+        }
+
+        .card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: auto;
+        }
+    </style>
 {% endblock head %}
 
 {% block content %}
 <!-- Main Content -->
 
 <div class="container mt-5">
-    <!-- Disclaimer Card -->
-   <!-- Disclaimer Popup -->
-<div id="disclaimerPopup" class="popup">
-    <div class="card border-warning mb-3">
-        <div class="card-header bg-warning text-white">Disclaimer</div>
-        <div class="card-body text-warning">
-            <h5 class="card-title"><i class="fas fa-exclamation-triangle"></i> Important Information</h5>
-            <p class="card-text">The content on this site is for institutional investors only and is not intended as investment advice. The financial markets, including cryptocurrencies like Bitcoin, carry potential risks, and past performance is not indicative of future results.</p>
-            <button onclick="closePopup()" class="btn btn-secondary">Agree & Close</button>
+    <!-- Disclaimer Popup -->
+    <div id="disclaimerPopup" class="popup">
+        <div class="card border-warning mb-3">
+            <div class="card-header bg-warning text-white">Disclaimer</div>
+            <div class="card-body text-warning">
+                <h5 class="card-title"><i class="fas fa-exclamation-triangle"></i> Important Information</h5>
+                <p class="card-text">The content on this site is for institutional investors only and is not intended as investment advice. The financial markets, including cryptocurrencies like Bitcoin, carry potential risks, and past performance is not indicative of future results.</p>
+                <button onclick="closePopup()" class="btn btn-secondary">Agree & Close</button>
+            </div>
         </div>
     </div>
-</div>
-
 
     <!-- Main Content -->
     <div class="card">
@@ -51,9 +73,15 @@
     </div>
 </div>
 
+<script>
+    window.onload = function() {
+        document.getElementById('disclaimerPopup').style.display = 'block';
+    }
 
-
-
+    function closePopup() {
+        document.getElementById('disclaimerPopup').style.display = 'none';
+    }
+</script>
 
 <!-- Include Bootstrap and FontAwesome scripts for functionality and icons -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
