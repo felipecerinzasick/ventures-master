@@ -78,10 +78,10 @@ def get_default_newsletter():
     if newsletter:
         return newsletter
     return Newsletter.objects.create(
-        title='Sick Ventures',
+        title='Hashen',
         slug='daily-news',
-        email='hello@sick.ventures',
-        sender='Sick Ventures',
+        email='contact@hashen.finance',
+        sender='Hashen',
     )
 
 
@@ -217,7 +217,7 @@ def dashboard(request):
 def portfolio_report_pdf(request):
     total = portfolio_total()
     lines = [
-        'Sick Ventures - Portfolio Report',
+        'Hashen - Portfolio Report',
         'Reporting date: %s' % PORTFOLIO_REPORT['date'],
         '',
         'Portfolio summary',
@@ -236,7 +236,7 @@ def portfolio_report_pdf(request):
         'Values are shown in CHF and are intended for local portfolio reporting.',
     ]
     response = HttpResponse(build_simple_pdf(lines), content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="sick-ventures-portfolio-report-2026-05-31.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="hashen-portfolio-report-2026-05-31.pdf"'
     return response
 
 

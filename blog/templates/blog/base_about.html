@@ -1,10 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-<!-- Favicons --> 
-<link href="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/lgog_neu.png" rel="icon">
-<link href="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/lgog_neu.png" rel="apple-touch-icon">
-
 <!-- Icons boxicon -->
 <script src="https://unpkg.com/boxicons@2.0.9/dist/boxicons.js"></script>
 
@@ -79,7 +75,7 @@
 
 
     #hero {
-      background: url('https://sick-ventures.s3.eu-central-1.amazonaws.com/media/p2p_network_background.jpeg') no-repeat center center;
+      background: url("{% static 'img/digital-horizon.png' %}") no-repeat center center;
       background-size: cover;
     }
     #hero::before { /* Assuming there is a pseudo-element for overlay */
@@ -155,9 +151,9 @@
   <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 
   {% if title %}
-  <title>Sick-Ventures {{ title }}</title>
+  <title>Hashen {{ title }}</title>
   {% else %}
-  <title>Sick-Ventures</title>
+  <title>Hashen</title>
   {% endif %}
 </head>
 
@@ -166,7 +162,7 @@
     <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white">
 	            <div class="container">
 	             <a class="navbar-brand mr-4" href="{% url 'index' %}">
-	    <b style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">Sick Ventures</b>
+	    <b style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">Hashen</b>
 	</a>
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
@@ -227,9 +223,9 @@
         <div class="row">
 
           <div class="col-lg-3 col-md-6 footer-contact">
-            <h3>Sick Ventures </h3>
+            <h3>Hashen </h3>
             <p>
-            <strong>Email:</strong> info@sick-ventures.com<br>
+            <strong>Email:</strong> contact@hashen.finance<br>
             </p>
           </div>
 
@@ -263,12 +259,12 @@
    <div class="container py-4">
     <div class="footer-block" style="text-align: center; max-width: 960px; margin-left: auto; margin-right: auto;">
       <div class="credits" style="text-align: left;">
-          The content on www.sick-ventures.com and affiliated subpages is for informational purposes only. Nothing herein is to be construed as investment advice or an endorsement of any particular investment strategy. The opinions expressed are those of the Portfolio Manager at Sick Ventures, aimed at enhancing understanding of our investment philosophy, not as personalized recommendations. Investment involves risk, including loss of principal. Past performance is not indicative of future results. There is no guarantee that any investment will achieve its objectives or avoid losses. Information provided is proprietary, intended for the recipient only, and not for unauthorized reproduction or distribution. While sourced from reliable resources, we cannot guarantee absolute accuracy or completeness. No part of this site constitutes an offer or solicitation for the purchase or sale of any financial instrument. Products and services may vary by jurisdiction and are subject to eligibility and local regulation. Sick Ventures is in the process of obtaining licensing and aims to affiliate with a Swiss self-regulatory organization. This site is not a substitute for advice from a financial services provider. Not all products or services may be available in your region and are subject to local laws.
+          The content on www.hashen.com and affiliated subpages is for informational purposes only. Nothing herein is to be construed as investment advice or an endorsement of any particular investment strategy. The opinions expressed are those of the Portfolio Manager at Hashen, aimed at enhancing understanding of our investment philosophy, not as personalized recommendations. Investment involves risk, including loss of principal. Past performance is not indicative of future results. There is no guarantee that any investment will achieve its objectives or avoid losses. Information provided is proprietary, intended for the recipient only, and not for unauthorized reproduction or distribution. While sourced from reliable resources, we cannot guarantee absolute accuracy or completeness. No part of this site constitutes an offer or solicitation for the purchase or sale of any financial instrument. Products and services may vary by jurisdiction and are subject to eligibility and local regulation. Hashen is in the process of obtaining licensing and aims to affiliate with a Swiss self-regulatory organization. This site is not a substitute for advice from a financial services provider. Not all products or services may be available in your region and are subject to local laws.
 
 
         </div>
       <div class="copyright" style="text-align: left;">
-        &copy; Copyright <strong><span>Sick Ventures</span></strong>. All Rights Reserved
+        &copy; Copyright <strong><span>Hashen</span></strong>. All Rights Reserved
       </div>
     </div>
   </div>

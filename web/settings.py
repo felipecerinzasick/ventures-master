@@ -129,7 +129,7 @@ DATABASES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sick-ventures',
+        'NAME': 'hashen',
         'USER':'postgres',
         'PASSWORD':'',
         'HOST':'localhost',
