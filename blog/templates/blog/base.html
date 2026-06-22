@@ -43,11 +43,10 @@
 <body>
   <header class="site-header">
     <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white">
-        <div class="container">
-             <a class="navbar-brand mr-4" href="{% url 'index' %}">
-    <img src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/lgog_neu.png" alt="Sick Ventures Logo" style="height: 30px; margin-right: 10px;">
-    <b style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">Sick Ventures</b>
-</a>
+	            <div class="container">
+	             <a class="navbar-brand mr-4" href="{% url 'index' %}">
+	    <b style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">Sick Ventures</b>
+	</a>
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
                 aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,9 +54,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarToggle">
                 <div class="navbar-nav mr-auto" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">
-                    <a class="nav-item nav-link" href="{% url 'index' %}">Home</a>
-                    <a class="nav-item nav-link" href="{% url 'about' %}">About</a>
-                    <a class="nav-item nav-link" href="{% url 'blog' %}">Blog</a>
+	                    <a class="nav-item nav-link" href="{% url 'index' %}">Home</a>
+	                    <a class="nav-item nav-link" href="{% url 'about' %}">About</a>
+	                    <a class="nav-item nav-link" href="{% url 'blog' %}">Blog</a>
+	                    <a class="nav-item nav-link" href="{% url 'dashboard' %}">Dashboard</a>
                 </div>
                 <!-- Navbar Right Side -->
                 <div class="navbar-nav">
@@ -89,11 +89,11 @@
     </div>
     
     <div class="col-md-4">
-      <div class="content-section">
+	      <div class="content-section" style="border-radius: 8px; border-color: #dce5ec;">
         <h3>Contact us</h3>
         <p class='text-muted'>Your quest for crypto expertise and growth starts with Sick Ventures.</p>
         
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#contactModal">
+	        <button type="button" class="btn btn-primary" style="background-color: #2487ce; border-color: #2487ce; border-radius: 6px;" data-toggle="modal" data-target="#contactModal">
           Get in touch
         </button>
         <hr>
@@ -114,8 +114,8 @@
 <!-- Contact Modal -->
 <div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
+	    <div class="modal-content" style="border: 0; border-radius: 10px; overflow: hidden;">
+	      <div class="modal-header" style="background: #124265; color: #fff; border: 0;">
         <h5 class="modal-title" id="contactModalLabel">Get in Touch</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -128,21 +128,21 @@
           {% csrf_token %}
           <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" class="form-control" name="name" id="name" placeholder="Enter your name">
+	            <input type="text" class="form-control" name="name" id="name" placeholder="Enter your name" required>
           </div>
           <div class="form-group">
             <label for="email">Email address</label>
-            <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email">
+	            <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email" required>
           </div>
           <div class="form-group">
             <label for="customText">Your Message</label>
-            <textarea class="form-control" name="message" id="customText" rows="3"></textarea>
+	            <textarea class="form-control" name="message" id="customText" rows="5" placeholder="A few lines are enough." required></textarea>
           </div>
        
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Send Message</button>
+	        <button type="submit" class="btn btn-primary" style="background-color: #2487ce; border-color: #2487ce; border-radius: 6px;">Send Message</button>
       </div>
     </form>
     </div>

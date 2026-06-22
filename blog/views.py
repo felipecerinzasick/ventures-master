@@ -1,6 +1,14 @@
+import json
+import os
+import ssl
+from decimal import Decimal
+from urllib import parse, request as urlrequest
+from urllib.error import URLError, HTTPError
+
 from .models import Post, Comment, Resource
 from newsletter.models import Newsletter
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
@@ -14,6 +22,68 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
+
+PORTFOLIO_REPORT = {
+    'date': '31.05.2026',
+    'cash': Decimal('5976.43'),
+    'bitcoin': Decimal('19285.36'),
+    'stocks': Decimal('24489.50'),
+}
+
+
+def portfolio_total():
+    return PORTFOLIO_REPORT['cash'] + PORTFOLIO_REPORT['bitcoin'] + PORTFOLIO_REPORT['stocks']
+
+
+def chf(value):
+    return "CHF {:,.2f}".format(value).replace(",", "'")
+
+
+def pdf_escape(value):
+    return str(value).replace('\\', '\\\\').replace('(', '\\(').replace(')', '\\)')
+
+
+def build_simple_pdf(lines):
+    content_lines = ['BT', '/F1 11 Tf', '50 790 Td', '16 TL']
+    for line in lines:
+        content_lines.append('(%s) Tj' % pdf_escape(line))
+        content_lines.append('T*')
+    content_lines.append('ET')
+    stream = '\n'.join(content_lines).encode('latin-1', 'replace')
+    objects = [
+        b'<< /Type /Catalog /Pages 2 0 R >>',
+        b'<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+        b'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>',
+        b'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
+        b'<< /Length %d >>\nstream\n%s\nendstream' % (len(stream), stream),
+    ]
+    pdf = bytearray(b'%PDF-1.4\n')
+    offsets = [0]
+    for index, obj in enumerate(objects, 1):
+        offsets.append(len(pdf))
+        pdf.extend(b'%d 0 obj\n' % index)
+        pdf.extend(obj)
+        pdf.extend(b'\nendobj\n')
+    xref_offset = len(pdf)
+    pdf.extend(b'xref\n0 %d\n' % (len(objects) + 1))
+    pdf.extend(b'0000000000 65535 f \n')
+    for offset in offsets[1:]:
+        pdf.extend(b'%010d 00000 n \n' % offset)
+    pdf.extend(b'trailer\n<< /Size %d /Root 1 0 R >>\nstartxref\n%d\n%%%%EOF\n' % (len(objects) + 1, xref_offset))
+    return bytes(pdf)
+
+
+def get_default_newsletter():
+    newsletter = Newsletter.objects.first()
+    if newsletter:
+        return newsletter
+    return Newsletter.objects.create(
+        title='Sick Ventures',
+        slug='daily-news',
+        email='hello@sick.ventures',
+        sender='Sick Ventures',
+    )
+
 
 def privacy_policy(request):
     return render(request, 'blog/privacy.html')
@@ -137,12 +207,135 @@ def blog(request):
         return render(request, 'blog/blog.html', {'title': 'Blog'})
 
 def index(request):
-    newsletter = Newsletter.objects.first()
-    print(newsletter.slug)
+    newsletter = get_default_newsletter()
     return render(request, 'blog/index.html', {'title': 'Index', 'newsletter':newsletter})
 
 def dashboard(request):
     return render(request, 'blog/dashboard.html', {'title': 'Dashboard'})
+
+
+def portfolio_report_pdf(request):
+    total = portfolio_total()
+    lines = [
+        'Sick Ventures - Portfolio Report',
+        'Reporting date: %s' % PORTFOLIO_REPORT['date'],
+        '',
+        'Portfolio summary',
+        'Cash: %s' % chf(PORTFOLIO_REPORT['cash']),
+        'Bitcoin: %s' % chf(PORTFOLIO_REPORT['bitcoin']),
+        'Stocks: %s' % chf(PORTFOLIO_REPORT['stocks']),
+        'Total portfolio value: %s' % chf(total),
+        '',
+        'Allocation',
+        'Cash: %.2f%%' % (PORTFOLIO_REPORT['cash'] / total * Decimal('100')),
+        'Bitcoin: %.2f%%' % (PORTFOLIO_REPORT['bitcoin'] / total * Decimal('100')),
+        'Stocks: %.2f%%' % (PORTFOLIO_REPORT['stocks'] / total * Decimal('100')),
+        '',
+        'Notes',
+        'This report reflects user-provided figures for the month-end reporting date.',
+        'Values are shown in CHF and are intended for local portfolio reporting.',
+    ]
+    response = HttpResponse(build_simple_pdf(lines), content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="sick-ventures-portfolio-report-2026-05-31.pdf"'
+    return response
+
+
+def bitcoin_price(request):
+    currencies = request.GET.get('currencies', 'chf,usd,eur,gbp').lower()
+    allowed_currencies = {'chf', 'usd', 'eur', 'gbp'}
+    selected_currencies = [
+        currency for currency in currencies.split(',')
+        if currency in allowed_currencies
+    ] or ['chf']
+    params = parse.urlencode({
+        'ids': 'bitcoin',
+        'vs_currencies': ','.join(selected_currencies),
+        'include_24hr_change': 'true',
+        'include_last_updated_at': 'true',
+        'precision': 'full',
+    })
+    url = 'https://api.coingecko.com/api/v3/simple/price?%s' % params
+
+    try:
+        with urlrequest.urlopen(url, timeout=6) as response:
+            data = json.loads(response.read().decode('utf-8'))
+        return JsonResponse({
+            'source': 'CoinGecko',
+            'source_url': 'https://docs.coingecko.com/reference/simple-price',
+            'status': 'live',
+            'data': data,
+        })
+    except (HTTPError, URLError, TimeoutError, json.JSONDecodeError):
+        return JsonResponse({
+            'source': 'CoinGecko',
+            'source_url': 'https://docs.coingecko.com/reference/simple-price',
+            'status': 'unavailable',
+            'data': {
+                'bitcoin': {
+                    'chf': None,
+                    'usd': None,
+                    'eur': None,
+                    'gbp': None,
+                    'last_updated_at': None,
+                    'chf_24h_change': None,
+                    'usd_24h_change': None,
+                    'eur_24h_change': None,
+                    'gbp_24h_change': None,
+                }
+            },
+        }, status=503)
+
+
+def ibkr_portfolio(request):
+    base_url = os.environ.get('IBKR_GATEWAY_URL', 'https://localhost:5000').rstrip('/')
+    context = ssl._create_unverified_context()
+
+    def get_json(path):
+        url = '%s%s' % (base_url, path)
+        req = urlrequest.Request(url, headers={'Accept': 'application/json'})
+        with urlrequest.urlopen(req, timeout=6, context=context) as response:
+            return json.loads(response.read().decode('utf-8'))
+
+    try:
+        auth_status = get_json('/v1/api/iserver/auth/status')
+        accounts = get_json('/v1/api/portfolio/accounts')
+        if not accounts:
+            raise ValueError('No IBKR accounts returned')
+
+        account_id = accounts[0].get('id') or accounts[0].get('accountId') or accounts[0].get('account')
+        if not account_id:
+            raise ValueError('No IBKR account identifier returned')
+
+        summary = get_json('/v1/api/portfolio/%s/summary' % parse.quote(str(account_id)))
+        net_liquidation = None
+        currency = None
+        for key, value in summary.items():
+            normalized_key = key.lower().replace(' ', '').replace('_', '')
+            if normalized_key in ('netliquidation', 'netliquidationvalue', 'totalcashvalue'):
+                if isinstance(value, dict):
+                    net_liquidation = value.get('amount') or value.get('value')
+                    currency = value.get('currency') or currency
+                else:
+                    net_liquidation = value
+                break
+
+        return JsonResponse({
+            'status': 'connected',
+            'gateway_url': base_url,
+            'auth': auth_status,
+            'account': accounts[0],
+            'account_id': account_id,
+            'summary': summary,
+            'net_liquidation': net_liquidation,
+            'currency': currency,
+        })
+    except (HTTPError, URLError, TimeoutError, ssl.SSLError, ValueError, json.JSONDecodeError) as error:
+        return JsonResponse({
+            'status': 'unavailable',
+            'gateway_url': base_url,
+            'message': 'IBKR Client Portal Gateway is not reachable or not authenticated.',
+            'detail': str(error),
+        }, status=503)
 
 
 @login_required

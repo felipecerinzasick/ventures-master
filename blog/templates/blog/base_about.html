@@ -14,14 +14,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
 
 
-<!-- Vendor CSS Files -->
-<link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<link href="assets/vendor/icofont/icofont.min.css" rel="stylesheet">
-<link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-<link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-<link href="assets/vendor/venobox/venobox.css" rel="stylesheet">
-<link href="assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
-<link href="assets/vendor/aos/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
 <style>
@@ -172,28 +164,27 @@
 <body>
   <header class="site-header">
     <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white">
-        <div class="container">
-             <a class="navbar-brand mr-4" href="{% url 'index' %}">
-    <img src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/lgog_neu.png" alt="Sick Ventures Logo" style="height: 30px; margin-right: 10px;">
-    <b style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">Sick Ventures</b>
-</a>
+	            <div class="container">
+	             <a class="navbar-brand mr-4" href="{% url 'index' %}">
+	    <b style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">Sick Ventures</b>
+	</a>
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
                 aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarToggle">
-                <div class="navbar-nav mr-auto" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">
-                    <a class="nav-item nav-link" href="{% url 'index' %}">Home</a>
-                    <a class="nav-item nav-link" href="{% url 'about' %}">About</a>
-                    <a class="nav-item nav-link" href="{% url 'blog' %}">Blog</a>
-                </div>
-                <!-- Navbar Right Side -->
-                <div class="navbar-nav">
-                    {% if user.is_authenticated %}
-                    <a class="nav-item nav-link" href="{% url 'resources' %}">Resources</a>
-                    <a class="nav-item nav-link" href="{% url 'dashboard' %}">Dashboard</a>
-                    <a class="nav-item nav-link" href="{% url 'post_create' %}">New Post</a>
+	                <div class="navbar-nav mr-auto" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">
+	                    <a class="nav-item nav-link" href="{% url 'index' %}">Home</a>
+	                    <a class="nav-item nav-link" href="{% url 'about' %}">About</a>
+	                    <a class="nav-item nav-link" href="{% url 'blog' %}">Blog</a>
+	                    <a class="nav-item nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+	                </div>
+	                <!-- Navbar Right Side -->
+	                <div class="navbar-nav">
+	                    {% if user.is_authenticated %}
+	                    <a class="nav-item nav-link" href="{% url 'resources' %}">Resources</a>
+	                    <a class="nav-item nav-link" href="{% url 'post_create' %}">New Post</a>
                     <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
                     <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
                     {% else %}

@@ -1,414 +1,1057 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-D23D4PMX7E"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-D23D4PMX7E');
-</script>
-<!-- ... existing HTML content ... -->
-
-<!-- Optional JavaScript -->
-
-<!-- Insert the new JavaScript code here -->
-<script>
-
-
-let retryInMilliseconds = 1000; // Start with a 1 second delay
-const maxDelay = 64000; // Maximum delay of 64 seconds
-
-function fetchWithBackoff(url, retries = 3) {
-    return new Promise((resolve, reject) => {
-        const fetchData = () => {
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        if (response.status === 429 && retries > 0) {
-                            // If we hit the rate limit, wait and then retry
-                            setTimeout(() => {
-                                retryInMilliseconds = Math.min(maxDelay, retryInMilliseconds * 2); // Exponential backoff
-                                retries--;
-                                fetchData(); // Recursive call to try again
-                            }, retryInMilliseconds);
-                        } else {
-                            reject(new Error('Non-429 error or ran out of retries'));
-                        }
-                    } else {
-                        response.json().then(resolve).catch(reject);
-                    }
-                })
-                .catch(reject);
-        };
-        fetchData();
-    });
-}
-
-function fetchBitcoinBalanceAndUpdateUSD() {
-    const btcAddress = '16DMiBNCdfGfz8w89ew5GDcf86WYW1vRKN'; // Your Bitcoin address
-    const balanceUrl = `https://api.blockcypher.com/v1/btc/main/addrs/${btcAddress}/balance`;
-
-    fetchWithBackoff(balanceUrl)
-        .then(data => {
-            if (data && data.balance) {
-                btcBalance = data.balance / 100000000; // Convert from satoshis to BTC
-                document.getElementById('btcBalance').innerText = `BTC Balance: ${btcBalance}`;
-                updateBalanceInUSD(btcBalance); // Call this function to update the USD balance
-            }
-        })
-        .catch(error => console.error('Error fetching Bitcoin balance:', error));
-}
-
-function updateBalanceInUSD(btcBalance) {
-    fetchWithBackoff('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
-        .then(data => {
-            const btcPriceUSD = data.bitcoin.usd;
-            const balanceInUSD = btcBalance * btcPriceUSD;
-            document.getElementById('btcBalanceInUSD').innerText = `Equivalent USD: $${balanceInUSD.toLocaleString('en-US')}`;
-        })
-        .catch(error => console.error('Error fetching Bitcoin price:', error));
-}
-
-function fetchBitcoinPriceAndUpdateTimestamp() {
-    fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
-        .then(response => response.json())
-        .then(data => {
-            const btcPrice = data.bitcoin.usd;
-            const lastUpdate = new Date();
-            document.getElementById('btcPrice').innerText = `Bitcoin price: $${btcPrice.toLocaleString('en-US')}`;
-            document.getElementById('lastUpdate').innerText = `Last update: ${lastUpdate.toLocaleString()}`;
-            
-            updateHalvingCountdown(lastUpdate);
-        })
-        .catch(error => console.error('Error fetching Bitcoin price:', error));
-}
-
-// Function to calculate the countdown to the next Bitcoin halving
-function updateHalvingCountdown(lastUpdate) {
-    const nextHalvingDate = new Date('2028-03-14'); // Halving date
-    // Use lastUpdate as the current date
-    const timeDifference = nextHalvingDate.getTime() - lastUpdate.getTime();
-    
-    // Calculating days remaining
-    const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-    document.getElementById('halvingCountdown').innerText = `${daysRemaining} days until next halving`;
-}
-
-// Fetch Bitcoin price on load and update the countdown
-fetchBitcoinPriceAndUpdateTimestamp();
-
-// Optional: Fetch Bitcoin price every 60 seconds
-setInterval(fetchBitcoinPriceAndUpdateTimestamp, 60000);
-
-    // Fetch Bitcoin balance and price on load
-    fetchBitcoinBalanceAndUpdateUSD();
-
-    // Optional: Fetch Bitcoin balance and price every 60 seconds
-    setInterval(fetchBitcoinBalanceAndUpdateUSD, 60000);
-
-    // Function to calculate the countdown to the next Bitcoin halving
-// Function to calculate the countdown to the next Bitcoin halving
-function updateHalvingCountdown() {
-    const nextHalvingDate = new Date('2024-04-22').getTime(); // Halving date
-    const currentDate = new Date().getTime();
-    const timeDifference = nextHalvingDate - currentDate;
-    
-    // Calculating days remaining
-    const daysRemaining = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-    document.getElementById('halvingCountdown').innerText = `${daysRemaining} days until next halving`;
-}
-
-// Call the function on load and update every day
-updateHalvingCountdown();
-setInterval(updateHalvingCountdown, 86400000); // Update the countdown every 24 hours
-
-    // Function to fetch the total network hash rate
-    function fetchNetworkHashrate() {
-        fetch('https://blockchain.info/q/hashrate')
-            .then(response => response.json())
-            .then(hashrate => {
-                // The hash rate is in gigahashes per second, convert to terahashes by dividing by 1e6
-                const hashrateInTerahashes = hashrate / 1e6;
-                document.getElementById('networkHashrate').innerText = `Current Hash Rate: ${hashrateInTerahashes.toFixed(2)} TH/s`;
-            })
-            .catch(error => console.error('Error fetching network hash rate:', error));
-    }
-
-    // Call the functions on load
-    updateHalvingCountdown();
-    fetchNetworkHashrate();
-
-
-    // Function to fetch historical Bitcoin price data
-    function fetchHistoricalBitcoinPrice() {
-        const endDate = new Date().toISOString().split('T')[0]; // today's date in YYYY-MM-DD format
-        const startDate = new Date(new Date().setFullYear(new Date().getFullYear() - 1)).toISOString().split('T')[0]; // one year ago
-
-        fetch(`https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=usd&from=${Date.parse(startDate)/1000}&to=${Date.parse(endDate)/1000}`)
-            .then(response => response.json())
-            .then(data => {
-                const prices = data.prices;
-                updateWalletValueChart(prices);
-            })
-            .catch(error => console.error('Error fetching historical Bitcoin price:', error));
-    }
-
-    // Function to update the chart with historical wallet value data
-    function updateWalletValueChart(prices) {
-        const ctxBTC = document.getElementById('walletValueChart').getContext('2d');
-        const dates = prices.map(price => new Date(price[0]).toLocaleDateString());
-        const values = prices.map(price => {
-            // Assuming btcBalance is a global variable holding the current BTC balance of the wallet
-            return price[1] * btcBalance; // price[1] is the historical price, multiply by btcBalance to get historical value
-        });
-
-        new Chart(ctxBTC, {
-            type: 'line',
-            data: {
-                labels: dates,
-                datasets: [{
-                    label: 'Wallet Value Over Time',
-                    data: values,
-                    fill: false,
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: false
-                    }
-                }
-            }
-        });
-    }
-
-    // Fetch historical Bitcoin price data on load
-    fetchHistoricalBitcoinPrice();
-</script>
-
-<!-- ... remaining HTML content ... -->
-
-</body> <!-- end of the body -->
-</html>
-  <script>
-    function fetchBitcoinPrice() {
-        fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
-            .then(response => response.json())
-            .then(data => {
-                const btcPrice = data.bitcoin.usd;
-                document.getElementById('btcPrice').innerText = `$${btcPrice.toLocaleString('en-US')}`;
-            })
-            .catch(error => console.error('Error fetching Bitcoin price:', error));
-    }
-
-    // Fetch Bitcoin price on load
-    fetchBitcoinPrice();
-
-    // Optional: Fetch Bitcoin price every 60 seconds
-    setInterval(fetchBitcoinPrice, 60000);
-</script>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Required meta tags -->
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sick Ventures Wealth Dashboard</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <style>
+    :root {
+      --ink: #123044;
+      --muted: #607285;
+      --line: #dfe5ec;
+      --panel: #ffffff;
+      --page: #f5f8fb;
+      --accent: #2487ce;
+      --accent-soft: #e6f3fb;
+      --gold: #b68a35;
+      --blue: #124265;
+      --danger: #a94442;
+    }
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    * {
+      box-sizing: border-box;
+    }
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
-    integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Inter, Arial, sans-serif;
+      letter-spacing: 0;
+    }
 
-  <!-- Medium Editor -->
-  <script src="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/js/medium-editor.min.js"></script>
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/css/medium-editor.min.css"
-    type="text/css" media="screen" charset="utf-8">
+    button,
+    input,
+    select {
+      font: inherit;
+    }
 
-  <!-- Custom Style -->
-  <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    .dashboard-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+    }
 
-  {% if title %}
-  <title>Dashboard</title>
-  {% else %}
-  <title>Dashboard</title>
-  {% endif %}
+    .sidebar {
+      background: #0f2638;
+      color: #f8fafc;
+      padding: 28px 22px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 34px;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      background: #f8fafc;
+      color: #124265;
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .brand span {
+      color: #aab4c3;
+      font-size: 12px;
+    }
+
+    .nav-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav-link-local {
+      color: #d8dee9;
+      padding: 10px 12px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .nav-link-local.active,
+    .nav-link-local:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+      text-decoration: none;
+    }
+
+    .content {
+      min-width: 0;
+    }
+
+    .topbar {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 0 32px;
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar h1 {
+      font-size: 22px;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .topbar p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .currency-select,
+    .field-input,
+    .field-select {
+      border: 1px solid var(--line);
+      background: #fff;
+      min-height: 38px;
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: var(--ink);
+    }
+
+    .btn-local {
+      border: 1px solid transparent;
+      min-height: 38px;
+      border-radius: 6px;
+      padding: 8px 13px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .btn-local.secondary {
+      background: #fff;
+      color: var(--ink);
+      border-color: var(--line);
+    }
+
+    .btn-local:hover {
+      filter: brightness(0.96);
+    }
+
+    .main-grid {
+      padding: 28px 32px 40px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1.35fr repeat(3, minmax(160px, 1fr));
+      gap: 16px;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      min-width: 0;
+    }
+
+    .hero-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      font-weight: 700;
+    }
+
+    .value-large {
+      font-size: 38px;
+      line-height: 1.05;
+      font-weight: 700;
+      margin-top: 10px;
+    }
+
+    .metric-value {
+      font-size: 24px;
+      line-height: 1.15;
+      font-weight: 700;
+      margin-top: 10px;
+    }
+
+    .subtle {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 28px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .site-link {
+      color: var(--accent);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .site-link:hover {
+      color: #124265;
+      text-decoration: none;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .panel-header h2 {
+      font-size: 17px;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .panel-header p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .allocation {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .asset-block {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fff;
+    }
+
+    .asset-topline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .asset-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .asset-dot.cash {
+      background: var(--accent);
+    }
+
+    .asset-dot.stocks {
+      background: var(--blue);
+    }
+
+    .asset-dot.bitcoin {
+      background: var(--gold);
+    }
+
+    .allocation-bar {
+      height: 9px;
+      background: #e8edf3;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 14px;
+    }
+
+    .allocation-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      transition: width 180ms ease;
+    }
+
+    .report-table,
+    .holdings-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .report-table th,
+    .report-table td,
+    .holdings-table th,
+    .holdings-table td {
+      padding: 12px 8px;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    .report-table th,
+    .holdings-table th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      font-weight: 700;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field-group label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .field-input,
+    .field-select {
+      width: 100%;
+    }
+
+    .integrations {
+      display: grid;
+      gap: 10px;
+    }
+
+    .integration-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .integration-row strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .integration-row span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .status-dot.pending {
+      background: #c9a227;
+    }
+
+    .status-dot.off {
+      background: #aab4c3;
+    }
+
+    .integration-value {
+      font-weight: 700;
+      color: var(--ink);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.32);
+      display: none;
+      z-index: 20;
+    }
+
+    .asset-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(420px, 100%);
+      height: 100vh;
+      background: #fff;
+      border-left: 1px solid var(--line);
+      padding: 24px;
+      transform: translateX(100%);
+      transition: transform 180ms ease;
+      z-index: 21;
+      overflow-y: auto;
+    }
+
+    .drawer-open .drawer-backdrop {
+      display: block;
+    }
+
+    .drawer-open .asset-drawer {
+      transform: translateX(0);
+    }
+
+    .drawer-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .drawer-title h2 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .close-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .empty-note {
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      color: var(--muted);
+      background: #fbfcfd;
+    }
+
+    .error-text {
+      color: var(--danger);
+    }
+
+    @media (max-width: 1100px) {
+      .dashboard-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .summary-grid,
+      .section-grid,
+      .allocation {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        height: auto;
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px;
+      }
+
+      .topbar-actions {
+        justify-content: flex-start;
+      }
+
+      .main-grid {
+        padding: 18px;
+      }
+
+      .value-large {
+        font-size: 31px;
+      }
+
+      .report-table,
+      .holdings-table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
 </head>
-
 <body>
-  <header class="site-header">
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white">
-        <div class="container">
-             <a class="navbar-brand mr-4" href="{% url 'index' %}">
-    <img src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/logo_neu.jpg" alt="Sick Ventures Logo" style="height: 30px; margin-right: 10px;">
-    <b style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">Dashboard</b>
-</a>
+  <div class="dashboard-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">SV</div>
+        <div>
+          <strong>Sick Ventures</strong>
+          <span>Private wealth console</span>
+        </div>
+      </div>
+      <nav class="nav-list">
+        <a class="nav-link-local active" href="{% url 'dashboard' %}"><span>Overview</span><span>01</span></a>
+        <a class="nav-link-local" href="#reports"><span>Reports</span><span>02</span></a>
+        <a class="nav-link-local" href="#integrations"><span>Integrations</span><span>03</span></a>
+        <a class="nav-link-local" href="{% url 'index' %}"><span>Landing page</span><span>SV</span></a>
+      </nav>
+    </aside>
 
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
-                aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarToggle">
-  
-                <!-- Navbar Right Side -->
-                <div class="navbar-nav">
-                    {% if user.is_authenticated %}
-                    <a class="nav-item nav-link" href="{% url 'blog' %}">Blog</a>
-                    <a class="nav-item nav-link" href="{% url 'post_create' %}">New Post</a>
-                    <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
-                    <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
-                    {% else %}
-                    <a class="btn btn-primary" style="background-color: #2596BE; border-color: #2596BE;" href="{% url 'login' %}">Get started</a>
-                    <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
-                    {% endif %}
-                </div> 
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <h1>Portfolio Overview</h1>
+          <p>Month-end reporting view as at <strong>31.05.2026</strong> · <a class="site-link" href="{% url 'index' %}">Sick Ventures</a></p>
+        </div>
+        <div class="topbar-actions">
+          <select id="currencySelect" class="currency-select" aria-label="Display currency">
+            <option value="CHF" selected>CHF</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+          </select>
+          <a class="btn-local secondary" href="{% url 'portfolio_report_pdf' %}">Download PDF</a>
+          <button id="addAssetButton" class="btn-local" type="button">Add asset</button>
+        </div>
+      </header>
+
+      <section class="main-grid">
+        <div class="summary-grid">
+          <section class="panel hero-panel">
+            <div>
+              <div class="label">Total portfolio value</div>
+              <div id="totalValue" class="value-large">Loading</div>
+              <p id="priceStatus" class="subtle mt-2">Fetching Bitcoin price from CoinGecko.</p>
             </div>
+            <div class="pill">Month end: 31.05.2026</div>
+          </section>
+          <section class="panel">
+            <div class="label">Cash</div>
+            <div id="cashValue" class="metric-value">Loading</div>
+            <p class="subtle">Editable position at latest period end</p>
+          </section>
+          <section class="panel">
+            <div class="label">Stocks</div>
+            <div id="stocksValue" class="metric-value">Loading</div>
+            <p class="subtle">Model portfolio placeholder</p>
+          </section>
+          <section class="panel">
+            <div class="label">Bitcoin</div>
+            <div id="bitcoinValue" class="metric-value">Loading</div>
+            <p id="bitcoinMeta" class="subtle">0.39094743 BTC</p>
+          </section>
         </div>
-    </nav>
-</header>
-  
 
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
-  </script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
-  </script>
-
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.1/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-  <!-- Optional JavaScript -->
-  <script src="{% static 'js/main.js' %}"></script>
-
-  
-<div class="container mt-5">
-    <!-- Dashboard Header -->
-    <div class="row mb-4">
-      <div class="col">
-            
-          <div class="row">
-        <div class="col">
-          <h2></h2>
-            <h2> <span id="btcPrice">Loading...</span></h2>
-          <div class="row">
-
-            
-<div class="col">
-  <h2 id="halvingCountdown">Days Until Next Bitcoin Halving (Estimate): Loading...</h2>
-  <h6 id="lastUpdate">Day</h6>
-</div>
-            
-   
-</div>
-        </div>
-    </div>
-    
-    <!-- Charts Row -->
-    <div class="row">
-        <div class="col-lg-6 mb-4">
-            <!-- Money Supply M2 Chart Placeholder -->
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Money Supply M2 in Billion USD</h5>
-                    <canvas id="moneySupplyChartUSD"></canvas>
+        <div class="section-grid">
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>Asset Allocation</h2>
+                <p>Cash, listed securities, and Bitcoin are ready for local editing.</p>
+              </div>
+              <span class="pill">Live BTC</span>
+            </div>
+            <div class="allocation">
+              <div class="asset-block">
+                <div class="asset-topline">
+                  <strong><span class="asset-dot cash"></span> Cash</strong>
+                  <span id="cashWeight" class="subtle">0%</span>
                 </div>
-            </div>
-        </div>
-        <div class="col-lg-6 mb-4">
-            <!-- Money Supply M2 in BTC Chart Placeholder -->
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Wallet Overview</h5>
-                    <canvas id="moneySupplyChartBTC"></canvas>
-                  <div class="row">
-    <div class="col">
-        <h2><span id="networkHashrate">Loading...</span></h2>
-    </div>
-    <div class="col">
-        <h2><span id="halvingCountdown">Loading...</span></h2>
-    </div>
-                     <div class="col">
-            <h2 id="btcBalance">BTC Balance: Loading...</h2>
-            <h2 id="btcBalanceInUSD">Equivalent USD: Loading...</h2>
-        </div>
-</div>
-
+                <div id="cashBlockValue" class="metric-value">Loading</div>
+                <div class="allocation-bar"><div id="cashBar" class="allocation-fill" style="background: var(--accent);"></div></div>
+              </div>
+              <div class="asset-block">
+                <div class="asset-topline">
+                  <strong><span class="asset-dot stocks"></span> Stocks</strong>
+                  <span id="stocksWeight" class="subtle">0%</span>
                 </div>
+                <div id="stocksBlockValue" class="metric-value">Loading</div>
+                <div class="allocation-bar"><div id="stocksBar" class="allocation-fill" style="background: var(--blue);"></div></div>
+              </div>
+              <div class="asset-block">
+                <div class="asset-topline">
+                  <strong><span class="asset-dot bitcoin"></span> Bitcoin</strong>
+                  <span id="bitcoinWeight" class="subtle">0%</span>
+                </div>
+                <div id="bitcoinBlockValue" class="metric-value">Loading</div>
+                <div class="allocation-bar"><div id="bitcoinBar" class="allocation-fill" style="background: var(--gold);"></div></div>
+              </div>
             </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>Edit Positions</h2>
+                <p>Local inputs for the next account-backed version.</p>
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="field-group">
+                <label for="cashInput">Cash position as at 31.05.2026</label>
+                <input id="cashInput" class="field-input" type="number" min="0" step="0.01" value="5976.43">
+              </div>
+              <div class="field-group">
+                <label for="stocksInput">Stocks market value</label>
+                <input id="stocksInput" class="field-input" type="number" min="0" step="0.01" value="24489.50">
+              </div>
+              <div class="field-group">
+                <label for="bitcoinInput">Bitcoin amount</label>
+                <input id="bitcoinInput" class="field-input" type="number" min="0" step="0.00000001" value="0.39094743">
+              </div>
+              <button id="applyPositions" class="btn-local secondary" type="button">Update overview</button>
+            </div>
+          </section>
         </div>
+
+        <div class="section-grid">
+          <section id="reports" class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>Month-End Reports</h2>
+                <p>Reports are always anchored to month end.</p>
+              </div>
+              <span class="pill">31.05.2026</span>
+              <a class="btn-local secondary" href="{% url 'portfolio_report_pdf' %}">Download PDF</a>
+            </div>
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>Report</th>
+                  <th>Period</th>
+                  <th class="right">Value</th>
+                  <th class="right">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Net worth statement</td>
+                  <td>May 2026</td>
+                  <td id="reportTotal" class="right">Loading</td>
+                  <td class="right">Draft</td>
+                </tr>
+                <tr>
+                  <td>Asset allocation</td>
+                  <td>May 2026</td>
+                  <td id="reportAllocation" class="right">Loading</td>
+                  <td class="right">Ready</td>
+                </tr>
+                <tr>
+                  <td>Bitcoin mark-to-market</td>
+                  <td>Live plus period close</td>
+                  <td id="reportBitcoin" class="right">Loading</td>
+                  <td id="reportBitcoinStatus" class="right">Fetching</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="integrations" class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>Integrations</h2>
+                <p>Connectors planned for the account-backed version.</p>
+              </div>
+            </div>
+            <div class="integrations">
+              <div class="integration-row">
+                <div><strong>CoinGecko Bitcoin price</strong><span id="coingeckoStatus">Connecting</span></div>
+                <span id="coingeckoDot" class="status-dot pending"></span>
+              </div>
+              <div class="integration-row">
+                <div><strong>Interactive Brokers</strong><span id="ibkrStatus">Checking local gateway</span></div>
+                <div class="integration-value" id="ibkrValue">Pending</div>
+              </div>
+              <div class="integration-row">
+                <div><strong>Bank cash feed</strong><span>Manual import for now</span></div>
+                <span class="status-dot off"></span>
+              </div>
+              <div class="integration-row">
+                <div><strong>Brokerage holdings</strong><span>CSV or API connector later</span></div>
+                <span class="status-dot off"></span>
+              </div>
+              <div class="integration-row">
+                <div><strong>Private assets</strong><span>Manual valuation workflow</span></div>
+                <span class="status-dot pending"></span>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Holdings</h2>
+              <p>Private assets added here stay in this browser session for now.</p>
+            </div>
+          </div>
+          <table class="holdings-table">
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>Type</th>
+                <th>Valuation date</th>
+                <th class="right">Value</th>
+              </tr>
+            </thead>
+            <tbody id="holdingsBody"></tbody>
+          </table>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div id="drawerBackdrop" class="drawer-backdrop"></div>
+  <aside id="assetDrawer" class="asset-drawer" aria-hidden="true">
+    <div class="drawer-title">
+      <div>
+        <h2>Add Asset</h2>
+        <p class="subtle mb-0">Add real estate or a venture/private investment.</p>
+      </div>
+      <button id="closeDrawer" class="close-btn" type="button" aria-label="Close">x</button>
     </div>
-    
-    <!-- More Rows for Other Charts or Data Tables -->
-</div>
-<!-- Chart.js Script for Money Supply M2 in USD -->
-<script>
-var ctxUSD = document.getElementById('moneySupplyChartUSD').getContext('2d');
-var moneySupplyChartUSD = new Chart(ctxUSD, {
-    type: 'bar',
-    data: {
-        labels: ['China', 'United States', 'Eurozone', 'Japan', 'United Kingdom', 'Switzerland', 'Total Bitcoin Supply'],
-        datasets: [{
-            label: 'Money Supply M2 in Billion USD',
-            data: [40503.54, 20760.18, 15991.08, 10469.34, 3703.14, 942.9, 819.0],
-            backgroundColor: 'rgba(0, 123, 255, 0.5)',
-            borderColor: 'rgba(0, 123, 255, 1)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        // options go here
+    <form id="assetForm" class="form-grid">
+      <div class="field-group">
+        <label for="assetType">Asset type</label>
+        <select id="assetType" class="field-select">
+          <option value="Real Estate">Real estate</option>
+          <option value="Venture Portfolio">Venture portfolio</option>
+          <option value="Private Investment">Private investment</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label for="assetName">Name</label>
+        <input id="assetName" class="field-input" type="text" value="Example private investment">
+      </div>
+      <div class="field-group">
+        <label for="assetValue">Current value</label>
+        <input id="assetValue" class="field-input" type="number" min="0" step="1000" value="50000">
+      </div>
+      <div class="field-group">
+        <label for="assetDate">Valuation date</label>
+        <input id="assetDate" class="field-input" type="date" value="2026-05-31">
+      </div>
+      <button class="btn-local" type="submit">Add to portfolio</button>
+    </form>
+  </aside>
+
+  <script>
+    const state = {
+      currency: 'CHF',
+      cashChf: 5976.43,
+      stocksChf: 24489.50,
+      btcAmount: 0.39094743,
+      bitcoinReportChf: 19285.36,
+      btcPrices: { CHF: null, USD: null, EUR: null, GBP: null },
+      btcLastUpdated: null,
+      btcStatus: 'loading',
+      ibkrValue: null,
+      ibkrCurrency: null,
+      privateAssets: []
+    };
+
+    const fxFromChf = {
+      CHF: 1,
+      USD: 1.12,
+      EUR: 1.05,
+      GBP: 0.89
+    };
+
+    const currencyLocales = {
+      CHF: 'de-CH',
+      USD: 'en-US',
+      EUR: 'de-DE',
+      GBP: 'en-GB'
+    };
+
+    function money(value, currency = state.currency) {
+      if (!Number.isFinite(value)) {
+        return 'Unavailable';
+      }
+      return new Intl.NumberFormat(currencyLocales[currency], {
+        style: 'currency',
+        currency,
+        maximumFractionDigits: 0
+      }).format(value);
     }
-});
-</script>
 
-
-
-  
-
-<!-- Similar script for Money Supply M2 in BTC -->
-<!-- ... -->
-
-<script>
-// Assuming `postViewsData` is a context variable containing data for the graph
-var ctx = document.getElementById('postViewsChart').getContext('2d');
-var postViewsChart = new Chart(ctx, {
-    // Chart configuration goes here
-    type: 'line',
-    data: {{ postViewsData|safe }},
-    options: {
-        // Chart options go here
+    function btcAmount(value) {
+      return value.toFixed(8).replace('.', ',');
     }
-});
-</script>
-  
 
+    function fromChf(value) {
+      return value * fxFromChf[state.currency];
+    }
 
+    function btcValue() {
+      if (state.currency === 'CHF') {
+        return state.bitcoinReportChf;
+      }
+      const price = state.btcPrices[state.currency];
+      return Number.isFinite(price) ? state.btcAmount * price : state.bitcoinReportChf * fxFromChf[state.currency];
+    }
 
+    function privateAssetsValue() {
+      return state.privateAssets.reduce((total, asset) => total + asset.valueChf, 0);
+    }
 
+    function totalValue() {
+      const btc = btcValue();
+      if (!Number.isFinite(btc)) {
+        return null;
+      }
+      return fromChf(state.cashChf + state.stocksChf + privateAssetsValue()) + btc;
+    }
 
+    function setText(id, text) {
+      document.getElementById(id).textContent = text;
+    }
 
-    
-  
+    function setWidth(id, pct) {
+      document.getElementById(id).style.width = `${Math.max(0, Math.min(100, pct))}%`;
+    }
 
+    function render() {
+      const cash = fromChf(state.cashChf);
+      const stocks = fromChf(state.stocksChf);
+      const privateValue = fromChf(privateAssetsValue());
+      const btc = btcValue();
+      const total = totalValue();
+      const denominator = Number.isFinite(total) && total > 0 ? total : cash + stocks + privateValue;
 
+      setText('totalValue', money(total));
+      setText('cashValue', money(cash));
+      setText('stocksValue', money(stocks));
+      setText('bitcoinValue', money(btc));
+      setText('cashBlockValue', money(cash));
+      setText('stocksBlockValue', money(stocks));
+      setText('bitcoinBlockValue', money(btc));
+      setText('bitcoinMeta', `${btcAmount(state.btcAmount)} BTC`);
+      setText('reportTotal', money(total));
+      setText('reportAllocation', `${Math.round((cash / denominator) * 100)}% cash / ${Math.round((stocks / denominator) * 100)}% stocks / ${Number.isFinite(btc) ? Math.round((btc / denominator) * 100) : 0}% BTC`);
+      setText('reportBitcoin', `${btcAmount(state.btcAmount)} BTC = ${money(btc)}`);
 
+      const cashPct = denominator ? (cash / denominator) * 100 : 0;
+      const stocksPct = denominator ? (stocks / denominator) * 100 : 0;
+      const bitcoinPct = denominator && Number.isFinite(btc) ? (btc / denominator) * 100 : 0;
+      setText('cashWeight', `${Math.round(cashPct)}%`);
+      setText('stocksWeight', `${Math.round(stocksPct)}%`);
+      setText('bitcoinWeight', `${Math.round(bitcoinPct)}%`);
+      setWidth('cashBar', cashPct);
+      setWidth('stocksBar', stocksPct);
+      setWidth('bitcoinBar', bitcoinPct);
 
+      renderHoldings();
+    }
 
+    function renderHoldings() {
+      const rows = [
+        { name: 'Cash position', type: 'Cash', date: '31.05.2026', value: fromChf(state.cashChf) },
+        { name: 'Listed equity portfolio', type: 'Stocks', date: '31.05.2026', value: fromChf(state.stocksChf) },
+        ...(Number.isFinite(state.ibkrValue) ? [{ name: 'IBKR portfolio value', type: 'Brokerage', date: 'Live via local gateway', value: state.ibkrCurrency === state.currency ? state.ibkrValue : null }] : []),
+        { name: 'Bitcoin wallet', type: 'Bitcoin', date: state.btcLastUpdated || 'Live price pending', value: btcValue() },
+        ...state.privateAssets.map(asset => ({
+          name: asset.name,
+          type: asset.type,
+          date: formatDate(asset.date),
+          value: fromChf(asset.valueChf)
+        }))
+      ];
 
-    
+      document.getElementById('holdingsBody').innerHTML = rows.map(row => `
+        <tr>
+          <td>${escapeHtml(row.name)}</td>
+          <td>${escapeHtml(row.type)}</td>
+          <td>${escapeHtml(row.date)}</td>
+          <td class="right">${money(row.value)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function formatDate(dateValue) {
+      const [year, month, day] = dateValue.split('-');
+      return `${day}.${month}.${year}`;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function applyPositionInputs() {
+      state.cashChf = Number(document.getElementById('cashInput').value) || 0;
+      state.stocksChf = Number(document.getElementById('stocksInput').value) || 0;
+      state.btcAmount = Number(document.getElementById('bitcoinInput').value) || 0;
+      render();
+    }
+
+    function openDrawer() {
+      document.body.classList.add('drawer-open');
+      document.getElementById('assetDrawer').setAttribute('aria-hidden', 'false');
+    }
+
+    function closeDrawer() {
+      document.body.classList.remove('drawer-open');
+      document.getElementById('assetDrawer').setAttribute('aria-hidden', 'true');
+    }
+
+    function addAsset(event) {
+      event.preventDefault();
+      state.privateAssets.push({
+        type: document.getElementById('assetType').value,
+        name: document.getElementById('assetName').value || 'Private asset',
+        valueChf: Number(document.getElementById('assetValue').value) || 0,
+        date: document.getElementById('assetDate').value || '2026-05-31'
+      });
+      closeDrawer();
+      render();
+    }
+
+    async function fetchBitcoinPrice() {
+      try {
+        const response = await fetch('{% url "bitcoin_price" %}?currencies=chf,usd,eur,gbp');
+        const payload = await response.json();
+        if (!response.ok || !payload.data || !payload.data.bitcoin) {
+          throw new Error('Bitcoin price unavailable');
+        }
+        const bitcoin = payload.data.bitcoin;
+        state.btcPrices = {
+          CHF: bitcoin.chf,
+          USD: bitcoin.usd,
+          EUR: bitcoin.eur,
+          GBP: bitcoin.gbp
+        };
+        state.btcLastUpdated = bitcoin.last_updated_at
+          ? new Date(bitcoin.last_updated_at * 1000).toLocaleString()
+          : 'Live';
+        state.btcStatus = 'live';
+        setText('priceStatus', `Bitcoin price from CoinGecko. Last update: ${state.btcLastUpdated}.`);
+        setText('coingeckoStatus', 'Connected');
+        setText('reportBitcoinStatus', 'Live');
+        document.getElementById('coingeckoDot').classList.remove('pending', 'off');
+      } catch (error) {
+        state.btcStatus = 'unavailable';
+        setText('priceStatus', 'Bitcoin price is unavailable. Check your internet connection and refresh.');
+        setText('coingeckoStatus', 'Unavailable');
+        setText('reportBitcoinStatus', 'Unavailable');
+        document.getElementById('coingeckoDot').classList.add('off');
+        document.getElementById('priceStatus').classList.add('error-text');
+      }
+      render();
+    }
+
+    async function fetchIbkrPortfolio() {
+      try {
+        const response = await fetch('{% url "ibkr_portfolio" %}');
+        const payload = await response.json();
+        if (!response.ok || payload.status !== 'connected') {
+          throw new Error(payload.message || 'IBKR unavailable');
+        }
+        const value = Number(payload.net_liquidation);
+        state.ibkrCurrency = (payload.currency || '').toUpperCase() || null;
+        state.ibkrValue = Number.isFinite(value) ? value : null;
+        if (Number.isFinite(value) && state.ibkrCurrency && fxFromChf[state.ibkrCurrency]) {
+          state.stocksChf = value / fxFromChf[state.ibkrCurrency];
+          document.getElementById('stocksInput').value = Math.round(state.stocksChf);
+        }
+        setText('ibkrStatus', `Connected account ${payload.account_id}`);
+        setText('ibkrValue', Number.isFinite(value) && state.ibkrCurrency ? money(value, state.ibkrCurrency) : 'Connected');
+      } catch (error) {
+        state.ibkrValue = null;
+        state.ibkrCurrency = null;
+        setText('ibkrStatus', 'Start and authenticate IBKR Client Portal Gateway');
+        setText('ibkrValue', 'Not connected');
+      }
+      render();
+    }
+
+    document.getElementById('currencySelect').addEventListener('change', event => {
+      state.currency = event.target.value;
+      render();
+    });
+    document.getElementById('applyPositions').addEventListener('click', applyPositionInputs);
+    document.getElementById('bitcoinInput').addEventListener('input', applyPositionInputs);
+    document.getElementById('cashInput').addEventListener('input', applyPositionInputs);
+    document.getElementById('stocksInput').addEventListener('input', applyPositionInputs);
+    document.getElementById('addAssetButton').addEventListener('click', openDrawer);
+    document.getElementById('closeDrawer').addEventListener('click', closeDrawer);
+    document.getElementById('drawerBackdrop').addEventListener('click', closeDrawer);
+    document.getElementById('assetForm').addEventListener('submit', addAsset);
+
+    render();
+    fetchBitcoinPrice();
+    fetchIbkrPortfolio();
+    setInterval(fetchBitcoinPrice, 120000);
+    setInterval(fetchIbkrPortfolio, 120000);
+  </script>
+</body>
+</html>

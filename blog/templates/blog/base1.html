@@ -1,467 +1,697 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
-<!-- Favicons --> 
-<link href="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/lgog_neu.png" rel="icon">
-<link href="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/lgog_neu.png" rel="apple-touch-icon">
-
-<!-- Icons boxicon -->
-<script src="https://unpkg.com/boxicons@2.0.9/dist/boxicons.js"></script>
-
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-
-
-<!-- Vendor CSS Files -->
-<link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<link href="assets/vendor/icofont/icofont.min.css" rel="stylesheet">
-<link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-<link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-<link href="assets/vendor/venobox/venobox.css" rel="stylesheet">
-<link href="assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
-<link href="assets/vendor/aos/aos.css" rel="stylesheet">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-<style>
-
-  .text-center a.btn-get-started {
-  margin-top: 20px; /* Add space above the button */
-  padding: 10px 25px; /* Increase padding for larger button */
-  font-size: 18px; /* Optional: Increase font size for better visibility */
-  border-radius: 5px; /* Optional: Adjust border-radius for aesthetic preference */
-}
-
-/* Ensure adequate space around the button, especially when viewed on smaller screens */
-@media (max-width: 768px) {
-  .text-center a.btn-get-started {
-    margin-top: 30px; /* Increase space above the button on smaller screens */
-    padding: 12px 30px; /* Adjust padding for a comfortable tap area */
-  }
-}
-
-  /* Increase the bottom margin of the last paragraph or heading above the button */
-.section-title h2, .section-title p:last-of-type {
-    margin-bottom: 1.5em; /* Adjust the value as needed */
-}
-
-/* Alternatively, increase the top margin of the button itself */
-.btn-get-started {
-    margin-top: 1.5em; /* Adjust the value as needed */
-}
-
-
-
-  .navbar {
-    position: fixed; /* Make the navbar fixed at the top of the page */
-    top: 0; /* Position the navbar at the very top of the viewport */
-    width: 100%; /* Ensure the navbar spans the full width of the viewport */
-    z-index: 1000; /* Ensure the navbar stays on top of other content */
-}
-  
-
-}
-    .bg-white {
-    background-color: #fff !important; /* Pure white background */
-}
-    #hero {
-    position: relative;
-    overflow: hidden;
-  }
-
-  #hero video {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    min-width: 100%;
-    min-height: 100%;
-    z-index: -1;
-  }
-
-
-@media (max-width: 768px) {
-    #hero video {
-        display: none; /* Hide video on small screens */
-    }
-
-
-    #hero {
-      background: url('https://sick-ventures.s3.eu-central-1.amazonaws.com/media/p2p_network_background.jpeg') no-repeat center center;
-      background-size: cover;
-    }
-    #hero::before { /* Assuming there is a pseudo-element for overlay */
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: rgba(255, 255, 255, 0.1); /* Reduce the last number to decrease opacity */
-    z-index: 0;
-}
-
-  }
-    body {
-        font-family: 'Raleway', sans-serif;
-    }
-  
-        #hero {
-            margin-top: -25px;
-            padding-top: 50px;
-        }
-
-        .section-title {
-            text-align: center;
-            width: 100%;
-        }
-
-        .icon-box {
-            margin: 0;
-            padding: 20px;
-        }
-
-        .navbar-brand {
-            margin: 0;
-        }
-
-        /* Adding styles for jumbotron */
-        .jumbotron.text-center.bg-primary.text-white {
-            color: #fff;  /* Ensuring the text color is white */
-            background-color: #007bff;  /* Ensuring the background is primary color */
-        }
-    </style>
-<head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-D23D4PMX7E"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-D23D4PMX7E');
-</script>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
-    integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
-
-  <!-- Medium Editor -->
-  <script src="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/js/medium-editor.min.js"></script>
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/css/medium-editor.min.css"
-    type="text/css" media="screen" charset="utf-8">
-
-  <!-- Custom Style -->
-  <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
-
-  {% if title %}
-  <title>Sick-Ventures {{ title }}</title>
-  {% else %}
-  <title>Sick-Ventures</title>
-  {% endif %}
-</head>
-
-<body>
-  <header class="site-header">
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white">
-        <div class="container">
-             <a class="navbar-brand mr-4" href="{% url 'index' %}">
-    <img src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/lgog_neu.png" alt="Sick Ventures Logo" style="height: 30px; margin-right: 10px;">
-    <b style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">Sick Ventures</b>
-</a>
-
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
-                aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarToggle">
-                <div class="navbar-nav mr-auto" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: #333; text-shadow: 1px 1px 1px #fff;">
-                    <a class="nav-item nav-link" href="{% url 'index' %}">Home</a>
-                    <a class="nav-item nav-link" href="{% url 'about' %}">About</a>
-                    <a class="nav-item nav-link" href="{% url 'blog' %}">Blog</a>
-                </div>
-                <!-- Navbar Right Side -->
-                <div class="navbar-nav">
-                    {% if user.is_authenticated %}
-                    <a class="nav-item nav-link" href="{% url 'resources' %}">Resources</a>
-                    <a class="nav-item nav-link" href="{% url 'dashboard' %}">Dashboard</a>
-                    <a class="nav-item nav-link" href="{% url 'post_create' %}">New Post</a>
-                    <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
-                    <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
-                    {% else %}
-                     <button class="cta-btn" data-toggle="modal" data-target="#contactModal" 
-              style="
-                background-color: #2596BE; /* Matching the background */
-                color: white; /* Text color */
-                border: 2px solid white; /* White border */
-                padding: 10px 24px; /* Padding */
-                font-size: 16px; /* Font size */
-                border-radius: 10px; /* Rounded borders */
-                outline: none; /* Remove outline */
-                cursor: pointer; /* Pointer cursor on hover */
-                box-shadow: none; /* No shadow */
-                transition: all 0.3s ease; /* Smooth transition for hover effects */
-              "
-              onmouseover="this.style.backgroundColor='#237BA0';" /* Slightly different shade on hover for a subtle effect */
-              onmouseout="this.style.backgroundColor='#2596BE';" /* Return to original color on mouse out */
-              >Contact</button>
-                     <!-- ======= <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>======= -->
-                    {% endif %}
-                </div> 
-            </div>
-        </div>
-    </nav>
-</header>
-
-  <!-- ======= Hero Section ======= -->
-  <section id="hero" class="d-flex align-items-center">
-  <video autoplay muted loop id="myVideo" style="position: absolute; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -1;">
-    <source src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/connection_-_113367+(1080p).mp4" type="video/mp4">
-    Your browser does not support HTML5 video.
-  </video>
- <div class="container position-relative" data-aos="fade-up" data-aos-delay="100" style="z-index: 1;">
-    <div class="row justify-content-center">
-      <div class="col-xl-7 col-lg-9 text-center">
-        {% for message in messages %}
-          <p class="fw-bold" style="color: red;">{{ message }}</p>
-        {% endfor %}
-        <h1>Dedicated to Preserving and Growing Wealth in a Digital Economy</h1>
-        <h2>Invest: <span class="auto-type"></span></h2>
-      </div>
-      <script src="https://unpkg.com/typed.js@2.0.132/dist/typed.umd.js"></script>
-      <script>
-        var typed = new Typed(".auto-type", {
-          strings: ["in emerging technologies.", "in the future of the internet.", "with a competent partner."],
-          typeSpeed: 120,
-          backSpeed: 90,
-          loop: true
-        });
-      </script>
-      </div>
-      <div class="text-center">
-    <i class='bx bxs-like bx-fade-down'></i>
-    <a href="{% url 'about' %}" class="btn-get-started scrollto" 
-       style="background-color: #2596BE; margin-bottom: 20px;">learn more</a>
-</div>
-
-
-
-
-
-
-</div>
-
-      </div>
-    </div>
-  </section>
-
-    
-<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance and Technology Expertise</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-4">
-        <div class="row">
-            <!-- Text Section -->
-            <div class="col-md-6">
-                <h2>Navigating the Digital Economy and Cryptocurrency Innovations</h2>
-<p>Specializing at the crossroads of finance and technology, I support your navigation through the evolving landscape of asset management, steering you past conventional financial strategies. In the domain of fintech investments and digital wealth creation, I provide insights and strategies to illustrate how a transformative journey into digital asset management can be both feasible and essential. My perspective on blockchain extends beyond its speculative aspects, recognizing it as a pivotal technology that can revolutionize numerous facets of both financial and non-financial sectors.</p>
-            </div>
-            <!-- Image Section -->
-            <div class="col-md-6">
-                <img src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/Bildschirmfoto+2024-01-30+um+22.40.12.png" class="img-fluid" alt="Finance and Technology Image">
-            </div>
-        </div>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-</body>
-</html>
-
-
-<!-- ======= Cta Section ======= -->
-<section id="cta" class="cta" style="margin-top: 20px; background-color: #2596BE;">
-  <div class="container" data-aos="zoom-in">
-    <div class="text-center">
-      <h3>Your guide in disruptive investments</h3>
-      <p>Providing clear strategies to manage risk, enhance returns, and diversify portfolios for lasting financial success.</p>
-      <!-- Trigger/Open The Modal -->
-      <button class="cta-btn" data-toggle="modal" data-target="#contactModal" 
-              style="
-                background-color: #2596BE; /* Matching the background */
-                color: white; /* Text color */
-                border: 2px solid white; /* White border */
-                padding: 10px 24px; /* Padding */
-                font-size: 16px; /* Font size */
-                border-radius: 10px; /* Rounded borders */
-                outline: none; /* Remove outline */
-                cursor: pointer; /* Pointer cursor on hover */
-                box-shadow: none; /* No shadow */
-                transition: all 0.3s ease; /* Smooth transition for hover effects */
-              "
-              onmouseover="this.style.backgroundColor='#237BA0';" /* Slightly different shade on hover for a subtle effect */
-              onmouseout="this.style.backgroundColor='#2596BE';" /* Return to original color on mouse out */
-              >Get in touch</button>
-    </div>
-  </div>
-</section>
-
-
-
-
-
-    
-<!-- End Cta Section -->
-
-    <!-- The Modal -->
-<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h5 class="modal-title" id="contactModalLabel">Get in Touch</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <!-- Remove the nested form tag and add the 'name' attribute to the inputs -->
-        <form method="post" action="{% url 'contact' %}">
-            {% csrf_token %}
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="name">Name:</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email address:</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="message">Message:</label>
-                    <textarea class="form-control" id="message" name="message" rows="3" required></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Send Message</button>
-            </div>
-        </form>
-
-    </div>
-  </div>
-</div>
-
-
-
-
-
-  <!-- ======= Footer ======= -->
-  <footer id="footer">
-
-    <div class="footer-top">
-      <div class="container">
-        <div class="row">
-
-          <div class="col-lg-3 col-md-6 footer-contact">
-            <h3>Sick Ventures </h3>
-            <p>
-            <strong>Email:</strong> info@sick-ventures.com<br>
-            </p>
-          </div>
-
-          <div class="col-lg-2 col-md-6 footer-links">
-            <h4> Links</h4>
-            <ul>
-              <li><i class="bx bx-chevron-right"></i> <a href="{% url 'index' %}">Home</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="{% url 'about' %}">About </a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="{% url 'privacy-policy' %}">Privacy policy</a></li>
-            </ul>
-          </div>
-          <div class="col-lg-3 col-md-6 footer-links">
-          </div>
-
-          
-          <div class="col-lg-4 col-md-6 footer-newsletter">
-            <h4>Sign up for the Newsletter</h4>
-            <p>To obtain a monthly overview of current market opportunities and insightful research </p>
-            <form action="/newsletter/{{newsletter.slug}}/subscribe/" method="post">
-              {% csrf_token %}
-              <input type="email" name="email"><input type="submit" value="Subscribe">
-            </form>
-          </div>
-          
-
-        </div>
-      </div>
-    </div>
-
-   <div class="container py-4">
-    <div class="footer-block" style="text-align: center; max-width: 960px; margin-left: auto; margin-right: auto;">
-      <div class="credits" style="text-align: left;">
-          The content on www.sick-ventures.com and affiliated subpages is for informational purposes only. Nothing herein is to be construed as investment advice or an endorsement of any particular investment strategy. The opinions expressed are those of the Portfolio Manager at Sick Ventures, aimed at enhancing understanding of our investment philosophy, not as personalized recommendations. Investment involves risk, including loss of principal. Past performance is not indicative of future results. There is no guarantee that any investment will achieve its objectives or avoid losses. Information provided is proprietary, intended for the recipient only, and not for unauthorized reproduction or distribution. While sourced from reliable resources, we cannot guarantee absolute accuracy or completeness. No part of this site constitutes an offer or solicitation for the purchase or sale of any financial instrument. Products and services may vary by jurisdiction and are subject to eligibility and local regulation. Sick Ventures is in the process of obtaining licensing and aims to affiliate with a Swiss self-regulatory organization. This site is not a substitute for advice from a financial services provider. Not all products or services may be available in your region and are subject to local laws.
-
-
-        </div>
-      <div class="copyright" style="text-align: left;">
-        &copy; Copyright <strong><span>Sick Ventures</span></strong>. All Rights Reserved
-      </div>
-    </div>
-  </div>
-    <div id="cookieConsentContainer" class="cookie-consent-container" style="position: fixed; bottom: 0; width: 100%; background-color: rgba(0, 0, 0, 0.7); color: white; text-align: center; padding: 10px; z-index: 1000; display: none;">
-  <p>This website uses cookies. By continuing to use the website you grant permission to deploy cookies, as detailed in the <a href="{% url 'privacy-policy' %}" style="color: #4eeaf6;">privacy and cookies policy</a>.</p>
-
-  <button id="cookieConsentButton" class="btn btn-primary btn-sm">Accept</button>
-</div>
-  </footer><!-- End Footer -->
-
-
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
-  </script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
-  </script>
-
-  <!-- Optional JavaScript -->
-  <script src="{% static 'js/main.js' %}"></script>
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script>
-  window.onload = function() {
-    if (!localStorage.getItem('cookieConsent')) {
-      document.getElementById('cookieConsentContainer').style.display = "block";
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sick Ventures{% if title %} {{ title }}{% endif %}</title>
+  <link href="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/lgog_neu.png" rel="icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <style>
+    :root {
+      --sv-ink: #123044;
+      --sv-muted: #5f7185;
+      --sv-blue: #2487ce;
+      --sv-blue-dark: #124265;
+      --sv-line: #dce5ec;
+      --sv-soft: #f4f8fb;
+      --sv-white: #ffffff;
     }
 
-    document.getElementById('cookieConsentButton').onclick = function(e) {
-      e.preventDefault();
-      document.getElementById('cookieConsentContainer').style.display = "none";
-      localStorage.setItem('cookieConsent', 'true');
-    };
-  };
-</script>
-  
+    body {
+      margin: 0;
+      background: var(--sv-white);
+      color: var(--sv-ink);
+      font-family: Inter, Arial, sans-serif;
+      letter-spacing: 0;
+    }
 
+    .sv-navbar {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid rgba(220, 229, 236, 0.9);
+      backdrop-filter: blur(12px);
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--sv-ink) !important;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .sv-navbar .nav-link {
+      color: var(--sv-muted) !important;
+      font-weight: 600;
+      padding-left: 14px !important;
+      padding-right: 14px !important;
+    }
+
+    .sv-navbar .nav-link:hover,
+    .sv-navbar .nav-link.active {
+      color: var(--sv-blue-dark) !important;
+    }
+
+    .sv-btn {
+      border: 1px solid var(--sv-blue);
+      background: var(--sv-blue);
+      color: #fff;
+      min-height: 40px;
+      padding: 9px 16px;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .sv-btn:hover {
+      color: #fff;
+      background: var(--sv-blue-dark);
+      border-color: var(--sv-blue-dark);
+      text-decoration: none;
+    }
+
+    .sv-btn.secondary {
+      background: #fff;
+      color: var(--sv-blue-dark);
+      border-color: var(--sv-line);
+    }
+
+    .sv-btn.secondary:hover {
+      color: var(--sv-blue-dark);
+      background: var(--sv-soft);
+    }
+
+    .sv-hero {
+      min-height: 92vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      padding: 118px 0 72px;
+      background: #0f2638;
+      color: #fff;
+    }
+
+    .sv-hero video,
+    .sv-hero::before {
+      position: absolute;
+      inset: 0;
+    }
+
+    .sv-hero video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.46;
+    }
+
+    .sv-hero::before {
+      content: "";
+      background: linear-gradient(90deg, rgba(15, 38, 56, 0.92), rgba(15, 38, 56, 0.72), rgba(15, 38, 56, 0.28));
+      z-index: 1;
+    }
+
+    .sv-hero .container {
+      position: relative;
+      z-index: 2;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 30px;
+      padding: 5px 11px;
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #e9f5fb;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 22px;
+    }
+
+    .sv-hero h1 {
+      max-width: 830px;
+      color: #fff;
+      font-size: clamp(40px, 6vw, 76px);
+      line-height: 1.02;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .sv-hero p {
+      max-width: 650px;
+      color: #dce9f2;
+      font-size: 19px;
+      line-height: 1.65;
+      margin: 24px 0 0;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 32px;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 56px;
+      max-width: 820px;
+    }
+
+    .metric-card {
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 17px;
+      min-height: 112px;
+    }
+
+    .metric-card strong {
+      color: #fff;
+      display: block;
+      font-size: 23px;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .metric-card span {
+      color: #c7d7e4;
+      font-size: 13px;
+    }
+
+    .sv-section {
+      padding: 76px 0;
+    }
+
+    .sv-section.soft {
+      background: var(--sv-soft);
+    }
+
+    .section-kicker {
+      color: var(--sv-blue);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      max-width: 760px;
+      margin-bottom: 34px;
+    }
+
+    .section-title h2 {
+      color: var(--sv-ink);
+      font-size: 36px;
+      line-height: 1.15;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .section-title p {
+      color: var(--sv-muted);
+      font-size: 17px;
+      line-height: 1.65;
+      margin: 16px 0 0;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .feature-card {
+      border: 1px solid var(--sv-line);
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px;
+      min-height: 220px;
+    }
+
+    .feature-card h3 {
+      color: var(--sv-ink);
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      color: var(--sv-muted);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .wealth-preview {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+      gap: 32px;
+      align-items: center;
+    }
+
+    .dashboard-preview {
+      border: 1px solid var(--sv-line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 18px;
+      box-shadow: 0 18px 50px rgba(18, 66, 101, 0.12);
+    }
+
+    .preview-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .preview-pill {
+      border-radius: 999px;
+      background: #e6f3fb;
+      color: var(--sv-blue-dark);
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .preview-value {
+      font-size: 34px;
+      line-height: 1.05;
+      font-weight: 800;
+      color: var(--sv-ink);
+    }
+
+    .preview-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 14px 0;
+      border-top: 1px solid var(--sv-line);
+      color: var(--sv-muted);
+    }
+
+    .preview-row strong {
+      color: var(--sv-ink);
+    }
+
+    .cta-band {
+      background: var(--sv-blue-dark);
+      color: #fff;
+      padding: 62px 0;
+    }
+
+    .cta-band h2 {
+      color: #fff;
+      font-size: 34px;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .cta-band p {
+      color: #d8e6ef;
+      margin: 12px 0 0;
+      max-width: 620px;
+      line-height: 1.65;
+    }
+
+    .contact-modal .modal-content {
+      border: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 24px 70px rgba(15, 38, 56, 0.24);
+    }
+
+    .contact-modal .modal-header {
+      background: var(--sv-blue-dark);
+      color: #fff;
+      border: 0;
+      padding: 24px;
+    }
+
+    .contact-modal .modal-title {
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .contact-modal .close {
+      color: #fff;
+      opacity: 1;
+      text-shadow: none;
+    }
+
+    .contact-modal .modal-body {
+      padding: 24px;
+      background: #fff;
+    }
+
+    .contact-modal label {
+      color: var(--sv-ink);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .contact-modal .form-control {
+      border: 1px solid var(--sv-line);
+      border-radius: 6px;
+      min-height: 44px;
+      box-shadow: none;
+    }
+
+    .contact-modal .form-control:focus {
+      border-color: var(--sv-blue);
+      box-shadow: 0 0 0 3px rgba(36, 135, 206, 0.14);
+    }
+
+    .contact-modal .modal-footer {
+      border: 0;
+      padding: 0 24px 24px;
+      background: #fff;
+    }
+
+    #footer {
+      background: #0f2638;
+      color: #c9d6e0;
+      padding: 54px 0 24px;
+    }
+
+    #footer h3,
+    #footer h4 {
+      color: #fff;
+      font-weight: 800;
+    }
+
+    #footer a {
+      color: #dce9f2;
+    }
+
+    .footer-newsletter form {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .footer-newsletter input[type="email"] {
+      min-width: 0;
+      flex: 1;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+
+    .footer-newsletter input[type="submit"] {
+      border: 0;
+      border-radius: 6px;
+      background: var(--sv-blue);
+      color: #fff;
+      padding: 10px 14px;
+      font-weight: 800;
+    }
+
+    .legal-copy {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 34px;
+      padding-top: 22px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #9fb1c1;
+    }
+
+    .cookie-consent-container {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      z-index: 1000;
+      max-width: 760px;
+      margin: 0 auto;
+      background: rgba(15, 38, 56, 0.96);
+      color: #fff;
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: none;
+      box-shadow: 0 18px 50px rgba(15, 38, 56, 0.22);
+    }
+
+    .cookie-consent-container p {
+      margin: 0;
+      font-size: 13px;
+    }
+
+    @media (max-width: 992px) {
+      .hero-metrics,
+      .feature-grid,
+      .wealth-preview {
+        grid-template-columns: 1fr;
+      }
+
+      .sv-hero {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .sv-hero h1 {
+        font-size: 38px;
+      }
+
+      .section-title h2,
+      .cta-band h2 {
+        font-size: 28px;
+      }
+
+      .footer-newsletter form {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="sv-navbar">
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'index' %}">
+          <span>Sick Ventures</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarToggle">
+          <div class="navbar-nav ml-auto align-items-lg-center">
+            <a class="nav-item nav-link active" href="{% url 'index' %}">Home</a>
+            <a class="nav-item nav-link" href="{% url 'about' %}">About</a>
+            <a class="nav-item nav-link" href="{% url 'blog' %}">Blog</a>
+            <a class="nav-item nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+            {% if user.is_authenticated %}
+              <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
+              <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+            {% endif %}
+            <button class="sv-btn ml-lg-3 mt-2 mt-lg-0" type="button" data-toggle="modal" data-target="#contactModal">Contact</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="sv-hero">
+      <video autoplay muted loop playsinline>
+        <source src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/connection_-_113367+(1080p).mp4" type="video/mp4">
+      </video>
+      <div class="container">
+        {% for message in messages %}
+          <div class="alert alert-info">{{ message }}</div>
+        {% endfor %}
+        <span class="eyebrow">Digital economy wealth management</span>
+        <h1>Preserving and growing wealth in a digital economy.</h1>
+        <p>Strategy, reporting, and portfolio infrastructure for investors navigating cash, listed assets, Bitcoin, and private opportunities.</p>
+        <div class="hero-actions">
+          <a class="sv-btn" href="{% url 'dashboard' %}">Open dashboard</a>
+          <button class="sv-btn secondary" type="button" data-toggle="modal" data-target="#contactModal">Start a conversation</button>
+        </div>
+        <div class="hero-metrics">
+          <div class="metric-card"><strong>Month-end</strong><span>Portfolio views anchored to reporting dates.</span></div>
+          <div class="metric-card"><strong>Bitcoin</strong><span>Live price integration with editable holdings.</span></div>
+          <div class="metric-card"><strong>Private assets</strong><span>Real estate, venture, and direct investments.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sv-section soft">
+      <div class="container">
+        <div class="wealth-preview">
+          <div>
+            <div class="section-kicker">Portfolio command center</div>
+            <div class="section-title">
+              <h2>A calmer way to see the whole balance sheet.</h2>
+              <p>The dashboard brings cash, stocks, Bitcoin, and private assets into one clean monthly view. Today it runs locally; later it can sit behind user accounts with connected data sources.</p>
+            </div>
+            <a class="sv-btn" href="{% url 'dashboard' %}">View dashboard</a>
+          </div>
+          <div class="dashboard-preview">
+            <div class="preview-top">
+              <div>
+                <div class="section-kicker mb-1">Overview</div>
+                <div class="preview-value">CHF portfolio</div>
+              </div>
+              <span class="preview-pill">31.05.2026</span>
+            </div>
+            <div class="preview-row"><strong>Cash</strong><span>Period-end position</span></div>
+            <div class="preview-row"><strong>Stocks</strong><span>IBKR-ready</span></div>
+            <div class="preview-row"><strong>Bitcoin</strong><span>CoinGecko live pricing</span></div>
+            <div class="preview-row"><strong>Private investments</strong><span>Manual valuations</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sv-section">
+      <div class="container">
+        <div class="section-title">
+          <div class="section-kicker">Focus</div>
+          <h2>Built for investors who need signal, not a busy cockpit.</h2>
+          <p>Simple portfolio views, clean reporting, and integrations where they matter.</p>
+        </div>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>Reporting</h3>
+            <p>Month-end snapshots make performance and allocation easier to discuss, archive, and compare.</p>
+          </div>
+          <div class="feature-card">
+            <h3>Integrations</h3>
+            <p>Bitcoin pricing is live now. IBKR can connect through a local Client Portal Gateway when authenticated.</p>
+          </div>
+          <div class="feature-card">
+            <h3>Private capital</h3>
+            <p>Add real estate, venture exposure, and private investments beside liquid assets without losing context.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div class="container d-flex flex-column flex-lg-row align-items-lg-center justify-content-between">
+        <div>
+          <h2>Your guide in disruptive investments.</h2>
+          <p>Clear strategy, restrained reporting, and a practical interface for tracking modern wealth.</p>
+        </div>
+        <button class="sv-btn mt-4 mt-lg-0" type="button" data-toggle="modal" data-target="#contactModal">Get in touch</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal fade contact-modal" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h5 class="modal-title" id="contactModalLabel">Get in touch</h5>
+            <p class="mb-0" style="color: #d8e6ef;">Tell me what you want to build, track, or understand.</p>
+          </div>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form method="post" action="{% url 'contact' %}">
+          {% csrf_token %}
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="contactName">Name</label>
+              <input type="text" class="form-control" id="contactName" name="name" autocomplete="name" required>
+            </div>
+            <div class="form-group">
+              <label for="contactEmail">Email</label>
+              <input type="email" class="form-control" id="contactEmail" name="email" autocomplete="email" required>
+            </div>
+            <div class="form-group mb-0">
+              <label for="contactMessage">Message</label>
+              <textarea class="form-control" id="contactMessage" name="message" rows="5" required placeholder="A few lines are enough."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="sv-btn secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="sv-btn">Send message</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer id="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4 mb-4">
+          <h3>Sick Ventures</h3>
+          <p>Digital economy wealth management, portfolio reporting, and investment strategy.</p>
+          <p><strong>Email:</strong> info@sick-ventures.com</p>
+        </div>
+        <div class="col-lg-3 mb-4">
+          <h4>Links</h4>
+          <p><a href="{% url 'index' %}">Home</a></p>
+          <p><a href="{% url 'dashboard' %}">Dashboard</a></p>
+          <p><a href="{% url 'about' %}">About</a></p>
+          <p><a href="{% url 'privacy-policy' %}">Privacy policy</a></p>
+        </div>
+        <div class="col-lg-5 footer-newsletter mb-4">
+          <h4>Monthly overview</h4>
+          <p>Research notes, market observations, and current opportunities.</p>
+          <form action="/newsletter/{{ newsletter.slug }}/subscribe/" method="post">
+            {% csrf_token %}
+            <input type="email" name="email" placeholder="Email address" required>
+            <input type="submit" value="Subscribe">
+          </form>
+        </div>
+      </div>
+      <div class="legal-copy">
+        The content on www.sick-ventures.com and affiliated subpages is for informational purposes only. Nothing herein is to be construed as investment advice or an endorsement of any particular investment strategy. Investment involves risk, including loss of principal. Past performance is not indicative of future results. No part of this site constitutes an offer or solicitation for the purchase or sale of any financial instrument.
+        <div class="mt-3">&copy; Copyright <strong>Sick Ventures</strong>. All Rights Reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="cookieConsentContainer" class="cookie-consent-container">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+      <p>This website uses cookies. By continuing, you accept the <a href="{% url 'privacy-policy' %}" style="color: #8bd3ff;">privacy and cookies policy</a>.</p>
+      <button id="cookieConsentButton" class="sv-btn mt-3 mt-md-0" type="button">Accept</button>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="{% static 'js/main.js' %}"></script>
+  <script>
+    window.addEventListener('load', function() {
+      var cookieContainer = document.getElementById('cookieConsentContainer');
+      var cookieButton = document.getElementById('cookieConsentButton');
+      if (!localStorage.getItem('cookieConsent')) {
+        cookieContainer.style.display = 'block';
+      }
+      cookieButton.addEventListener('click', function() {
+        cookieContainer.style.display = 'none';
+        localStorage.setItem('cookieConsent', 'true');
+      });
+    });
+  </script>
 </body>
-
 </html>
