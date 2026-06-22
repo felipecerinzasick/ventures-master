@@ -1,7 +1,10 @@
+import base64
 import json
 import os
 import ssl
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
+from functools import wraps
+from hmac import compare_digest
 from urllib import parse, request as urlrequest
 from urllib.error import URLError, HTTPError
 
@@ -28,11 +31,52 @@ PORTFOLIO_REPORT = {
     'cash': Decimal('5976.43'),
     'bitcoin': Decimal('19285.36'),
     'stocks': Decimal('24489.50'),
+    'bitcoin_amount': Decimal('0.39094743'),
 }
+
+PORTFOLIO_HISTORY = [
+    {
+        'date': '30.04.2026',
+        'coingecko_date': '30-04-2026',
+        'cash': Decimal('4055.42'),
+        'bitcoin': Decimal('18132.71'),
+        'stocks': Decimal('22767.77'),
+    },
+    PORTFOLIO_REPORT,
+]
+
+DASHBOARD_USERNAME = os.environ.get('HASHEN_DASHBOARD_USERNAME', 'hashen')
+DASHBOARD_PASSWORD = os.environ.get('HASHEN_DASHBOARD_PASSWORD', 'hashen123')
+
+
+def require_dashboard_auth(view_func):
+    @wraps(view_func)
+    def wrapped(request, *args, **kwargs):
+        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+        if auth_header.startswith('Basic '):
+            try:
+                encoded = auth_header.split(' ', 1)[1].strip()
+                decoded = base64.b64decode(encoded).decode('utf-8')
+                username, password = decoded.split(':', 1)
+                if (
+                    compare_digest(username, DASHBOARD_USERNAME) and
+                    compare_digest(password, DASHBOARD_PASSWORD)
+                ):
+                    return view_func(request, *args, **kwargs)
+            except (ValueError, UnicodeDecodeError):
+                pass
+        response = HttpResponse('Authentication required', status=401)
+        response['WWW-Authenticate'] = 'Basic realm="Hashen private dashboard"'
+        return response
+    return wrapped
 
 
 def portfolio_total():
     return PORTFOLIO_REPORT['cash'] + PORTFOLIO_REPORT['bitcoin'] + PORTFOLIO_REPORT['stocks']
+
+
+def period_total(period):
+    return period['cash'] + period['bitcoin'] + period['stocks']
 
 
 def chf(value):
@@ -210,10 +254,60 @@ def index(request):
     newsletter = get_default_newsletter()
     return render(request, 'blog/index.html', {'title': 'Index', 'newsletter':newsletter})
 
+@require_dashboard_auth
 def dashboard(request):
     return render(request, 'blog/dashboard.html', {'title': 'Dashboard'})
 
 
+def get_historical_bitcoin_chf(date):
+    params = parse.urlencode({
+        'date': date,
+        'localization': 'false',
+    })
+    url = 'https://api.coingecko.com/api/v3/coins/bitcoin/history?%s' % params
+    with urlrequest.urlopen(url, timeout=8) as response:
+        data = json.loads(response.read().decode('utf-8'))
+    return Decimal(str(data['market_data']['current_price']['chf']))
+
+
+@require_dashboard_auth
+def wealth_progression(request):
+    periods = []
+    for period in PORTFOLIO_HISTORY:
+        historical_price = None
+        btc_amount = None
+        if period.get('bitcoin_amount'):
+            btc_amount = period['bitcoin_amount']
+        elif period.get('coingecko_date'):
+            try:
+                historical_price = get_historical_bitcoin_chf(period['coingecko_date'])
+                btc_amount = period['bitcoin'] / historical_price
+            except (HTTPError, URLError, TimeoutError, KeyError, json.JSONDecodeError, InvalidOperation):
+                historical_price = None
+                btc_amount = None
+        periods.append({
+            'date': period['date'],
+            'cash_chf': float(period['cash']),
+            'bitcoin_chf': float(period['bitcoin']),
+            'stocks_chf': float(period['stocks']),
+            'total_chf': float(period_total(period)),
+            'bitcoin_price_chf': float(historical_price) if historical_price else None,
+            'bitcoin_amount': float(btc_amount) if btc_amount else None,
+        })
+
+    first_total = period_total(PORTFOLIO_HISTORY[0])
+    latest_total = period_total(PORTFOLIO_HISTORY[-1])
+    return JsonResponse({
+        'status': 'ok',
+        'source': 'CoinGecko',
+        'source_url': 'https://docs.coingecko.com/reference/coins-id-history',
+        'periods': periods,
+        'change_chf': float(latest_total - first_total),
+        'change_pct': float((latest_total - first_total) / first_total * Decimal('100')),
+    })
+
+
+@require_dashboard_auth
 def portfolio_report_pdf(request):
     total = portfolio_total()
     lines = [
@@ -286,6 +380,7 @@ def bitcoin_price(request):
         }, status=503)
 
 
+@require_dashboard_auth
 def ibkr_portfolio(request):
     base_url = os.environ.get('IBKR_GATEWAY_URL', 'https://localhost:5000').rstrip('/')
     context = ssl._create_unverified_context()

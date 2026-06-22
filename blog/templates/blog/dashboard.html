@@ -431,6 +431,69 @@
       white-space: nowrap;
     }
 
+    .progression-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .progression-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fff;
+    }
+
+    .progression-total {
+      font-size: 28px;
+      line-height: 1.1;
+      font-weight: 700;
+      margin: 10px 0 12px;
+    }
+
+    .progression-list {
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .progression-list div {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .progression-bars {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .progression-bar-row {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .progression-track {
+      height: 10px;
+      background: #e8edf3;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progression-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: var(--accent);
+      transition: width 180ms ease;
+    }
+
     .drawer-backdrop {
       position: fixed;
       inset: 0;
@@ -540,6 +603,10 @@
       .holdings-table {
         display: block;
         overflow-x: auto;
+      }
+
+      .progression-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -670,6 +737,18 @@
         </div>
 
         <div class="section-grid">
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>Wealth Progression</h2>
+                <p>Private month-end history protected by dashboard login.</p>
+              </div>
+              <span id="progressionChange" class="pill">Calculating</span>
+            </div>
+            <div id="progressionGrid" class="progression-grid"></div>
+            <div id="progressionBars" class="progression-bars"></div>
+          </section>
+
           <section id="reports" class="panel">
             <div class="panel-header">
               <div>
@@ -812,6 +891,7 @@
       btcStatus: 'loading',
       ibkrValue: null,
       ibkrCurrency: null,
+      progression: [],
       privateAssets: []
     };
 
@@ -907,6 +987,7 @@
       setWidth('bitcoinBar', bitcoinPct);
 
       renderHoldings();
+      renderProgression();
     }
 
     function renderHoldings() {
@@ -930,6 +1011,40 @@
           <td>${escapeHtml(row.date)}</td>
           <td class="right">${money(row.value)}</td>
         </tr>
+      `).join('');
+    }
+
+    function renderProgression() {
+      const grid = document.getElementById('progressionGrid');
+      const bars = document.getElementById('progressionBars');
+      if (!state.progression.length) {
+        grid.innerHTML = '<div class="empty-note">Loading wealth progression.</div>';
+        bars.innerHTML = '';
+        return;
+      }
+
+      const maxTotal = Math.max(...state.progression.map(period => period.total_chf));
+      grid.innerHTML = state.progression.map(period => `
+        <div class="progression-card">
+          <div class="label">${escapeHtml(period.date)}</div>
+          <div class="progression-total">${money(period.total_chf, 'CHF')}</div>
+          <div class="progression-list">
+            <div><span>Cash</span><strong>${money(period.cash_chf, 'CHF')}</strong></div>
+            <div><span>Bitcoin value</span><strong>${money(period.bitcoin_chf, 'CHF')}</strong></div>
+            <div><span>Stocks</span><strong>${money(period.stocks_chf, 'CHF')}</strong></div>
+            <div><span>BTC amount</span><strong>${Number.isFinite(period.bitcoin_amount) ? btcAmount(period.bitcoin_amount) + ' BTC' : 'CoinGecko pending'}</strong></div>
+          </div>
+        </div>
+      `).join('');
+
+      bars.innerHTML = state.progression.map(period => `
+        <div class="progression-bar-row">
+          <strong>${escapeHtml(period.date)}</strong>
+          <div class="progression-track">
+            <div class="progression-fill" style="width: ${maxTotal ? (period.total_chf / maxTotal) * 100 : 0}%"></div>
+          </div>
+          <span>${money(period.total_chf, 'CHF')}</span>
+        </div>
       `).join('');
     }
 
@@ -1034,6 +1149,22 @@
       render();
     }
 
+    async function fetchWealthProgression() {
+      try {
+        const response = await fetch('{% url "wealth_progression" %}');
+        const payload = await response.json();
+        if (!response.ok || payload.status !== 'ok') {
+          throw new Error('Progression unavailable');
+        }
+        state.progression = payload.periods;
+        setText('progressionChange', `${money(payload.change_chf, 'CHF')} / ${payload.change_pct.toFixed(2)}%`);
+      } catch (error) {
+        state.progression = [];
+        setText('progressionChange', 'Unavailable');
+      }
+      render();
+    }
+
     document.getElementById('currencySelect').addEventListener('change', event => {
       state.currency = event.target.value;
       render();
@@ -1050,6 +1181,7 @@
     render();
     fetchBitcoinPrice();
     fetchIbkrPortfolio();
+    fetchWealthProgression();
     setInterval(fetchBitcoinPrice, 120000);
     setInterval(fetchIbkrPortfolio, 120000);
   </script>
