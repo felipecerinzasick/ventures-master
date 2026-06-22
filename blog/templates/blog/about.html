@@ -1,161 +1,52 @@
-{% extends "blog/base_about.html" %}
+{% extends "blog/base1.html" %}
+{% load static %}
 
-{% block head %}
-    <!-- Inherit head content like meta tags, title, etc., from the base template -->
-    {{ block.super }}
-
-    <style>
-        .hero-section {
-            background-image: url('https://sick-ventures.s3.eu-central-1.amazonaws.com/media/banner_bg.jpg');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            text-align: center;
-            padding: 60px 0;
-        }
-
-        .content-wrapper {
-            display: flex;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-
-        .image-section, .text-section {
-            flex: 1;
-        }
-
-        .image-section {
-            max-width: 50%;
-            order: 2;
-        }
-
-        .image-section img {
-            width: 100%;
-            height: auto;
-            border-radius: 5px;
-        }
-
-        .text-section {
-            max-width: 50%;
-            padding: 0 20px;
-            order: 1;
-        }
-
-        .jumbotron.text-center.bg-primary.text-white {
-            color: #fff;
-            background-color: #007bff;
-        }
-
-        .content-section {
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin: 0 -15px;
-        }
-
-        .container-fluid {
-            padding-right: 0;
-            padding-left: 0;
-            margin-right: auto;
-            margin-left: auto;
-        }
-    </style>
-{% endblock head %}
-
-{% block content %}
-<div class="container">
-    <div class="content-wrapper" style="padding-top: 20px;">
-        <div class="text-section" style="padding-top: 20px;">
-            <p class="text-justify" style="word-wrap: break-word; hyphens: auto;">I recognize that we're at a pivotal moment in financial history—a moment that could redefine wealth management for the next generations. In an era where technology continuously reshapes our world, staying ahead is not just an option but a necessity. </p>
-            
-            <p class="text-justify" style="word-wrap: break-word; hyphens: auto;"> </p>
-            <p class="text-justify" style="word-wrap: break-word; hyphens: auto;"> </p>
-            <img src="https://sick-ventures.s3.eu-central-1.amazonaws.com/media/1626883648587.jpg" alt="About Image" style="float: right; margin-left: 10px; width: 200px; height: auto; border-radius: 5px;">
-            <p class="text-justify" style="word-wrap: break-word; hyphens: auto;"> </p>
-            <p class="text-justify" style="word-wrap: break-word; hyphens: auto;"> </p>
-            
-            <p class="text-justify" style="word-wrap: break-word; hyphens: auto;">Having studied the intricacies within the domain of financial technology I'm here to guide you beyond traditional finance.</p>
-            <p class="text-justify" style="word-wrap: break-word; hyphens: auto;">Blockchain represents a seismic shift in technological innovation with the potential to reshape the financial landscape. I believe that the essence is its empowerment, offering financial freedom away from traditional banking constraints.</p>
-            <p class="text-justify" style="word-wrap: break-word; hyphens: auto;">Invest with confidence alongside an expert in the field.</p>
-            
-        </div>
-    </div>
-</div>
-
-<!-- ======= Cta Section ======= -->
-<section id="cta" class="cta" style="margin-top: 20px; background-color: #2596BE;">
-  <div class="container" data-aos="zoom-in">
-    <div class="text-center">
-
-      <!-- Trigger/Open The Modal -->
-      <button class="cta-btn" data-toggle="modal" data-target="#contactModal" 
-              style="
-                background-color: #2596BE; /* Matching the background */
-                color: white; /* Text color */
-                border: 2px solid white; /* White border */
-                padding: 10px 24px; /* Padding */
-                font-size: 16px; /* Font size */
-                border-radius: 10px; /* Rounded borders */
-                outline: none; /* Remove outline */
-                cursor: pointer; /* Pointer cursor on hover */
-                box-shadow: none; /* No shadow */
-                transition: all 0.3s ease; /* Smooth transition for hover effects */
-              "
-              onmouseover="this.style.backgroundColor='#237BA0';" /* Slightly different shade on hover for a subtle effect */
-              onmouseout="this.style.backgroundColor='#2596BE';" /* Return to original color on mouse out */
-              >Get in touch</button>
+{% block main %}
+<section class="about-page-hero">
+  <div class="container">
+    <div class="about-hero-grid">
+      <div>
+        <div class="section-kicker">Why we exist</div>
+        <h1>Building a calmer bridge between traditional wealth and the digital economy.</h1>
+        <p>Research, reporting, treasury thinking, and practical infrastructure for investors and companies navigating a new monetary and technological layer.</p>
+      </div>
+      <div class="about-visual" aria-label="Earth horizon at sunrise over global markets"></div>
     </div>
   </div>
 </section>
 
+<section class="sv-section">
+  <div class="container">
+    <div class="why-copy">
+      <p>For decades, private wealth has been built around cash, listed securities, real estate, private companies, and traditional banking infrastructure. That world is now being reshaped by a new monetary and technological layer: Bitcoin, digital assets, programmable financial infrastructure, and global capital markets that move faster than the institutions built to serve them.</p>
 
+      <p>We exist to help investors and companies understand this shift with clarity and discipline. Through research, reporting, treasury thinking, and practical infrastructure, we build a calmer bridge between traditional wealth and the emerging digital economy.</p>
 
-    <!-- The Modal -->
-<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h5 class="modal-title" id="contactModalLabel">Get in Touch</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <!-- Remove the nested form tag and add the 'name' attribute to the inputs -->
-        <form method="post" action="{% url 'contact' %}">
-            {% csrf_token %}
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="name">Name:</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email address:</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="message">Message:</label>
-                    <textarea class="form-control" id="message" name="message" rows="3" required></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Send Message</button>
-            </div>
-        </form>
+      <p>Bitcoin is central to this view. We see it not as a short-term trade, but as a long-term monetary asset and a foundation for a new financial architecture. Around it, we see opportunities in private companies, cross-border payments, treasury strategy, and ownership structures better suited to a digital age.</p>
 
+      <p>Our goal is to help preserve and grow wealth with independence, discipline, and a long time horizon. We believe the next era of wealth management will reward those who understand digital capital early, think clearly, and build with restraint.</p>
+
+      <p>We exist to provide the tools, research, and partnerships needed to act on that understanding.</p>
     </div>
   </div>
-</div>
+</section>
 
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Bootstrap JS -->
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-
-{% endblock content %}
-
-
+<section class="sv-section soft">
+  <div class="container">
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3>Research</h3>
+        <p>Clear thinking on Bitcoin, digital assets, capital markets, and private opportunities.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Reporting</h3>
+        <p>Month-end portfolio views that make allocation, risk, and ownership easier to understand.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Infrastructure</h3>
+        <p>Practical tools and integrations for investors operating across traditional and digital capital.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock main %}

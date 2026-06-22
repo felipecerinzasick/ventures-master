@@ -1,40 +1,64 @@
-{% extends "blog/base.html" %}
-{% block content %}
-<!-- Search Form -->
-<form class="form-inline my-2 my-lg-0 pb-2">
-    <input class="form-control mr-sm-2" name="q" type="search" placeholder="Search" aria-label="Search" style="width: 400px">
-    <input class="btn btn-outline-success my-2 my-sm-0" type="submit" value="Search">
-</form>
-    {% for post in posts %}
-        <article class="media content-section">
-          <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
-          <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" href="{% url 'user_posts' post.author.username %}">{{ post.author }}</a>
-              <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
-            </div>
-          <h2><a class="article-title" href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
-            <p class="article-content">{{ post.content|safe|truncatewords:"50" }}</p>
-          </div>
-        </article>
-    {% endfor %}
-    {% if is_paginated %}
-      {% if page_obj.has_previous %}
-        <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
-        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+{% extends "blog/base1.html" %}
+
+{% block main %}
+<main>
+  <section class="blog-hero">
+    <div class="container">
+      <div class="section-kicker">Research</div>
+      <h1>Notes on digital capital, Bitcoin, and modern wealth.</h1>
+      <p>Essays, observations, and portfolio thinking for investors moving between traditional assets and the emerging digital economy.</p>
+      <form class="blog-search" method="get">
+        <input name="q" type="search" value="{{ request.GET.q }}" placeholder="Search research notes" aria-label="Search research notes">
+        <button type="submit">Search</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="sv-section">
+    <div class="container">
+      {% if posts %}
+        <div class="blog-grid">
+          {% for post in posts %}
+            <article class="research-card">
+              <div class="research-meta">
+                <span>{{ post.date_posted|date:"M d, Y" }}</span>
+                <span>{{ post.author }}</span>
+              </div>
+              <h2><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
+              <p>{{ post.content|safe|striptags|truncatewords:"34" }}</p>
+              <a class="read-link" href="{% url 'post_detail' post.pk %}">Read note</a>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-research">
+          <h2>No research notes yet</h2>
+          <p>The archive is ready for posts on Bitcoin, treasury strategy, private markets, and portfolio reporting.</p>
+        </div>
       {% endif %}
 
-      {% for num in page_obj.paginator.page_range %}
-        {% if page_obj.number == num %}
-          <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
-        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-          <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
-        {% endif %}
-      {% endfor %}
+      {% if is_paginated %}
+        <nav class="blog-pagination" aria-label="Research pagination">
+          {% if page_obj.has_previous %}
+            <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">First</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Previous</a>
+          {% endif %}
 
-      {% if page_obj.has_next %}
-        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
-        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+          {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+              <span>{{ num }}</span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+              <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a>
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Last</a>
+          {% endif %}
+        </nav>
       {% endif %}
-    {% endif %}
-{% endblock content %}
+    </div>
+  </section>
+</main>
+{% endblock main %}
