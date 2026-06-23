@@ -473,6 +473,29 @@
       background: var(--gold);
     }
 
+    .progression-tooltip {
+      position: fixed;
+      z-index: 50;
+      max-width: 260px;
+      padding: 10px 12px;
+      border: 1px solid rgba(18, 48, 68, 0.14);
+      border-radius: 8px;
+      background: rgba(15, 38, 56, 0.96);
+      color: #fff;
+      box-shadow: 0 14px 30px rgba(18, 48, 68, 0.18);
+      font-size: 12px;
+      line-height: 1.5;
+      white-space: pre-line;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-50%, -112%);
+      transition: opacity 120ms ease;
+    }
+
+    .progression-tooltip.visible {
+      opacity: 1;
+    }
+
     .legend-row {
       display: flex;
       gap: 14px;
@@ -1026,6 +1049,7 @@
       <button class="btn-local" type="submit">Add to portfolio</button>
     </form>
   </aside>
+  <div id="progressionTooltip" class="progression-tooltip" role="status" aria-live="polite"></div>
 
   <script>
     const state = {
@@ -1106,6 +1130,27 @@
       document.getElementById(id).style.width = `${Math.max(0, Math.min(100, pct))}%`;
     }
 
+    function showProgressionTooltip(event) {
+      const row = event.target.closest('[data-progression-tooltip]');
+      const tooltip = document.getElementById('progressionTooltip');
+      if (!row || !tooltip) {
+        hideProgressionTooltip();
+        return;
+      }
+
+      tooltip.textContent = row.dataset.progressionTooltip;
+      tooltip.style.left = `${event.clientX}px`;
+      tooltip.style.top = `${event.clientY - 14}px`;
+      tooltip.classList.add('visible');
+    }
+
+    function hideProgressionTooltip() {
+      const tooltip = document.getElementById('progressionTooltip');
+      if (tooltip) {
+        tooltip.classList.remove('visible');
+      }
+    }
+
     function render() {
       const cash = fromChf(state.cashChf);
       const stocks = fromChf(state.stocksChf);
@@ -1178,9 +1223,9 @@
         const cashPct = assetShare(period.cash_chf, period.total_chf);
         const bitcoinPct = assetShare(period.bitcoin_chf, period.total_chf);
         const stocksPct = assetShare(period.stocks_chf, period.total_chf);
-        const tooltip = `${period.date} | Cash ${cashPct.toFixed(1)}% | Bitcoin ${bitcoinPct.toFixed(1)}% | Stocks ${stocksPct.toFixed(1)}% | Total ${money(period.total_chf, 'CHF')}`;
+        const tooltip = `${period.date}\nCash ${cashPct.toFixed(1)}%\nBitcoin ${bitcoinPct.toFixed(1)}%\nStocks ${stocksPct.toFixed(1)}%\nTotal ${money(period.total_chf, 'CHF')}`;
         return `
-        <div class="progression-bar-row" title="${escapeHtml(tooltip)}">
+        <div class="progression-bar-row" data-progression-tooltip="${escapeHtml(tooltip)}">
           <strong>${escapeHtml(period.date)}</strong>
           <div class="progression-track">
             <div class="progression-stack" style="width: ${maxTotal ? (period.total_chf / maxTotal) * 100 : 0}%">
@@ -1479,6 +1524,8 @@
     document.getElementById('closeDrawer').addEventListener('click', closeDrawer);
     document.getElementById('drawerBackdrop').addEventListener('click', closeDrawer);
     document.getElementById('assetForm').addEventListener('submit', addAsset);
+    document.getElementById('progressionBars').addEventListener('mousemove', showProgressionTooltip);
+    document.getElementById('progressionBars').addEventListener('mouseleave', hideProgressionTooltip);
 
     render();
     fetchBitcoinPrice();
