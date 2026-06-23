@@ -544,6 +544,13 @@
       gap: 14px;
     }
 
+    .allocation-chart {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+    }
+
     .line-chart {
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -552,12 +559,14 @@
       min-width: 0;
     }
 
+    .allocation-chart h3,
     .line-chart h3 {
       font-size: 14px;
       margin: 0;
       font-weight: 700;
     }
 
+    .allocation-chart svg,
     .line-chart svg {
       display: block;
       width: 100%;
@@ -566,6 +575,11 @@
       overflow: visible;
     }
 
+    .allocation-chart svg {
+      height: 240px;
+    }
+
+    .allocation-chart .chart-meta,
     .line-chart .chart-meta {
       color: var(--muted);
       font-size: 12px;
@@ -878,6 +892,17 @@
                 <span class="pill">31.05.2026</span>
                 <a class="btn-local secondary" href="{% url 'portfolio_report_pdf' %}">Download PDF</a>
               </div>
+            </div>
+            <div class="allocation-chart">
+              <div class="asset-topline">
+                <h3>Relative Allocation</h3>
+                <div class="legend-row mb-0">
+                  <span><i class="asset-dot cash"></i> Cash</span>
+                  <span><i class="asset-dot bitcoin"></i> Bitcoin</span>
+                  <span><i class="asset-dot stocks"></i> Stocks</span>
+                </div>
+              </div>
+              <div id="relativeAllocationChart"></div>
             </div>
             <div class="chart-grid">
               <div class="line-chart">
@@ -1211,9 +1236,78 @@
     }
 
     function renderReportCharts() {
+      renderRelativeAllocationChart();
       renderLineChart('cashChart', 'Cash', 'cash_chf', 'var(--accent)');
       renderLineChart('bitcoinChart', 'Bitcoin', 'bitcoin_chf', 'var(--gold)');
       renderLineChart('stocksChart', 'Stocks', 'stocks_chf', 'var(--blue)');
+    }
+
+    function renderRelativeAllocationChart() {
+      const target = document.getElementById('relativeAllocationChart');
+      if (!target) {
+        return;
+      }
+      if (!state.progression.length) {
+        target.innerHTML = '<div class="empty-note">Loading allocation chart.</div>';
+        return;
+      }
+
+      const width = 720;
+      const height = 240;
+      const padX = 24;
+      const padY = 18;
+      const usableWidth = width - padX * 2;
+      const usableHeight = height - padY * 2;
+      const periods = state.progression.map((period, index) => {
+        const total = period.total_chf || 1;
+        const cash = assetShare(period.cash_chf, total);
+        const bitcoin = assetShare(period.bitcoin_chf, total);
+        const stocks = assetShare(period.stocks_chf, total);
+        const x = padX + (state.progression.length === 1 ? 0 : (index / (state.progression.length - 1)) * usableWidth);
+        return {
+          date: period.date,
+          x,
+          cashTop: 100 - cash,
+          bitcoinTop: 100 - cash - bitcoin,
+          stocksTop: 0,
+          cashBottom: 100,
+          bitcoinBottom: 100 - cash,
+          stocksBottom: 100 - cash - bitcoin,
+          cash,
+          bitcoin,
+          stocks
+        };
+      });
+
+      function y(percent) {
+        return padY + (percent / 100) * usableHeight;
+      }
+
+      function area(topKey, bottomKey) {
+        const top = periods.map(period => `${period.x.toFixed(1)},${y(period[topKey]).toFixed(1)}`).join(' ');
+        const bottom = [...periods].reverse().map(period => `${period.x.toFixed(1)},${y(period[bottomKey]).toFixed(1)}`).join(' ');
+        return `${top} ${bottom}`;
+      }
+
+      const first = periods[0];
+      const latest = periods[periods.length - 1];
+
+      target.innerHTML = `
+        <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Relative allocation over time">
+          <line x1="${padX}" y1="${padY}" x2="${width - padX}" y2="${padY}" stroke="#dfe5ec" stroke-width="1" />
+          <line x1="${padX}" y1="${padY + usableHeight / 2}" x2="${width - padX}" y2="${padY + usableHeight / 2}" stroke="#dfe5ec" stroke-width="1" stroke-dasharray="4 5" />
+          <line x1="${padX}" y1="${height - padY}" x2="${width - padX}" y2="${height - padY}" stroke="#dfe5ec" stroke-width="1" />
+          <polygon points="${area('stocksTop', 'stocksBottom')}" fill="var(--blue)" opacity="0.88"></polygon>
+          <polygon points="${area('bitcoinTop', 'bitcoinBottom')}" fill="var(--gold)" opacity="0.88"></polygon>
+          <polygon points="${area('cashTop', 'cashBottom')}" fill="var(--accent)" opacity="0.88"></polygon>
+          <text x="${padX - 6}" y="${padY + 4}" text-anchor="end" fill="#607285" font-size="12">100%</text>
+          <text x="${padX - 6}" y="${padY + usableHeight / 2 + 4}" text-anchor="end" fill="#607285" font-size="12">50%</text>
+          <text x="${padX - 6}" y="${height - padY + 4}" text-anchor="end" fill="#607285" font-size="12">0%</text>
+          <text x="${padX}" y="${height - 2}" fill="#607285" font-size="12">${escapeHtml(first.date)}</text>
+          <text x="${width - padX}" y="${height - 2}" text-anchor="end" fill="#607285" font-size="12">${escapeHtml(latest.date)}</text>
+        </svg>
+        <div class="chart-meta">Latest mix: ${latest.cash.toFixed(1)}% cash / ${latest.bitcoin.toFixed(1)}% Bitcoin / ${latest.stocks.toFixed(1)}% stocks</div>
+      `;
     }
 
     function renderLineChart(targetId, label, key, color) {
