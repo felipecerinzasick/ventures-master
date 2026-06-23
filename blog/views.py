@@ -531,15 +531,33 @@ def bitcoin_price(request):
         'precision': 'full',
     })
     url = 'https://api.coingecko.com/api/v3/simple/price?%s' % params
+    market_url = 'https://api.coingecko.com/api/v3/coins/markets?%s' % parse.urlencode({
+        'vs_currency': 'chf',
+        'ids': 'bitcoin',
+        'precision': 'full',
+    })
 
     try:
         with urlrequest.urlopen(url, timeout=6) as response:
             data = json.loads(response.read().decode('utf-8'))
+        market_data = {}
+        try:
+            with urlrequest.urlopen(market_url, timeout=6) as response:
+                market = json.loads(response.read().decode('utf-8'))
+            if market:
+                market_data = {
+                    'ath_chf': market[0].get('ath'),
+                    'ath_date': market[0].get('ath_date'),
+                    'ath_change_percentage': market[0].get('ath_change_percentage'),
+                }
+        except (HTTPError, URLError, TimeoutError, json.JSONDecodeError, IndexError, KeyError):
+            market_data = {}
         return JsonResponse({
             'source': 'CoinGecko',
             'source_url': 'https://docs.coingecko.com/reference/simple-price',
             'status': 'live',
             'data': data,
+            'market': market_data,
         })
     except (HTTPError, URLError, TimeoutError, json.JSONDecodeError):
         return JsonResponse({
@@ -559,6 +577,7 @@ def bitcoin_price(request):
                     'gbp_24h_change': None,
                 }
             },
+            'market': {},
         }, status=503)
 
 

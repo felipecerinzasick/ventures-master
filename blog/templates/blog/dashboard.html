@@ -749,7 +749,7 @@
       <header class="topbar">
         <div>
           <h1>Portfolio Overview</h1>
-          <p>Month-end reporting view as at <strong>31.05.2026</strong> · <a class="site-link" href="{% url 'index' %}">Hashen</a></p>
+          <p>Month-end reporting view as at <strong id="reportDateText">31.05.2026</strong> · <a class="site-link" href="{% url 'index' %}">Hashen</a></p>
         </div>
         <div class="topbar-actions">
           <select id="currencySelect" class="currency-select" aria-label="Display currency">
@@ -771,7 +771,7 @@
               <div id="totalValue" class="value-large">Loading</div>
               <p id="priceStatus" class="subtle mt-2">Fetching Bitcoin price from CoinGecko.</p>
             </div>
-            <div class="pill">Month end: 31.05.2026</div>
+            <div class="pill">Month end: <span id="summaryReportDate">31.05.2026</span></div>
           </section>
           <section class="panel">
             <div class="label">Cash</div>
@@ -836,7 +836,7 @@
             </div>
             <div class="form-grid">
               <div class="field-group">
-                <label for="cashInput">Cash position as at 31.05.2026</label>
+                <label id="cashInputLabel" for="cashInput">Cash position as at 31.05.2026</label>
                 <input id="cashInput" class="field-input" type="number" min="0" step="0.01" value="5976.43">
               </div>
               <div class="field-group">
@@ -873,14 +873,34 @@
             <div class="panel-header">
               <div>
                 <h2>Bitcoin 2030 Goal</h2>
-                <p>Live CoinGecko price against a CHF 300,000 target.</p>
+                <p>Live CoinGecko price against ATH, one BTC, and CHF 300,000 targets.</p>
               </div>
               <span class="pill">2030</span>
             </div>
             <div class="bitcoin-goal">
+              <div class="goal-stats">
+                <div class="goal-stat">
+                  <span class="subtle">Gain to ATH</span>
+                  <strong id="athGain">Loading</strong>
+                </div>
+                <div class="goal-stat">
+                  <span class="subtle">Time since ATH</span>
+                  <strong id="athDays">Loading</strong>
+                </div>
+              </div>
               <div>
                 <div class="label">Current BTC price</div>
                 <div id="goalCurrentPrice" class="goal-price">Loading</div>
+              </div>
+              <div class="goal-stats">
+                <div class="goal-stat">
+                  <span class="subtle">Current wealth in BTC</span>
+                  <strong id="wealthInBtc">Loading</strong>
+                </div>
+                <div class="goal-stat">
+                  <span class="subtle">Progress to 1 BTC</span>
+                  <strong id="oneBtcProgress">Loading</strong>
+                </div>
               </div>
               <div>
                 <div class="asset-topline">
@@ -912,7 +932,7 @@
                 <p>Reports are always anchored to month end, with monthly asset movement.</p>
               </div>
               <div class="topbar-actions">
-                <span class="pill">31.05.2026</span>
+                <span id="reportPeriodPill" class="pill">31.05.2026</span>
                 <a class="btn-local secondary" href="{% url 'portfolio_report_pdf' %}">Download PDF</a>
               </div>
             </div>
@@ -1059,11 +1079,15 @@
       btcAmount: 0.39094743,
       bitcoinReportChf: 19285.36,
       btcPrices: { CHF: null, USD: null, EUR: null, GBP: null },
+      btcAthChf: null,
+      btcAthDate: null,
+      btcAthChangePct: null,
       btcLastUpdated: null,
       btcStatus: 'loading',
       ibkrValue: null,
       ibkrCurrency: null,
       progression: [],
+      reportDateLabel: '31.05.2026',
       privateAssets: []
     };
 
@@ -1102,16 +1126,33 @@
       return value * fxFromChf[state.currency];
     }
 
+    function btcValueChf() {
+      const price = state.btcPrices.CHF;
+      if (Number.isFinite(price)) {
+        return state.btcAmount * price;
+      }
+      const impliedPrice = 0.39094743 > 0 ? 19285.36 / 0.39094743 : 0;
+      return state.btcAmount * impliedPrice;
+    }
+
     function btcValue() {
       if (state.currency === 'CHF') {
-        return state.bitcoinReportChf;
+        return btcValueChf();
       }
       const price = state.btcPrices[state.currency];
-      return Number.isFinite(price) ? state.btcAmount * price : state.bitcoinReportChf * fxFromChf[state.currency];
+      return Number.isFinite(price) ? state.btcAmount * price : btcValueChf() * fxFromChf[state.currency];
     }
 
     function privateAssetsValue() {
       return state.privateAssets.reduce((total, asset) => total + asset.valueChf, 0);
+    }
+
+    function totalValueChf() {
+      const btc = btcValueChf();
+      if (!Number.isFinite(btc)) {
+        return null;
+      }
+      return state.cashChf + state.stocksChf + privateAssetsValue() + btc;
     }
 
     function totalValue() {
@@ -1128,6 +1169,47 @@
 
     function setWidth(id, pct) {
       document.getElementById(id).style.width = `${Math.max(0, Math.min(100, pct))}%`;
+    }
+
+    function pad2(value) {
+      return String(value).padStart(2, '0');
+    }
+
+    function displayDate(date) {
+      return `${pad2(date.getDate())}.${pad2(date.getMonth() + 1)}.${date.getFullYear()}`;
+    }
+
+    function lastCompletedMonthEndLabel(today = new Date()) {
+      return displayDate(new Date(today.getFullYear(), today.getMonth(), 0));
+    }
+
+    function parseDisplayDate(value) {
+      const [day, month, year] = value.split('.').map(Number);
+      return new Date(year, month - 1, day).getTime();
+    }
+
+    function sortProgression() {
+      state.progression.sort((a, b) => parseDisplayDate(a.date) - parseDisplayDate(b.date));
+    }
+
+    function updateProgressionChange() {
+      if (!state.progression.length) {
+        setText('progressionChange', 'Unavailable');
+        return;
+      }
+      sortProgression();
+      const first = state.progression[0].total_chf;
+      const latest = state.progression[state.progression.length - 1].total_chf;
+      const change = latest - first;
+      const pct = first ? (change / first) * 100 : 0;
+      setText('progressionChange', `${money(change, 'CHF')} / ${pct.toFixed(2)}%`);
+    }
+
+    function syncReportDateLabels() {
+      setText('reportDateText', state.reportDateLabel);
+      setText('summaryReportDate', state.reportDateLabel);
+      setText('reportPeriodPill', state.reportDateLabel);
+      setText('cashInputLabel', `Cash position as at ${state.reportDateLabel}`);
     }
 
     function showProgressionTooltip(event) {
@@ -1152,6 +1234,7 @@
     }
 
     function render() {
+      syncReportDateLabels();
       const cash = fromChf(state.cashChf);
       const stocks = fromChf(state.stocksChf);
       const privateValue = fromChf(privateAssetsValue());
@@ -1188,8 +1271,8 @@
 
     function renderHoldings() {
       const rows = [
-        { name: 'Cash position', type: 'Cash', date: '31.05.2026', value: fromChf(state.cashChf) },
-        { name: 'Listed equity portfolio', type: 'Stocks', date: '31.05.2026', value: fromChf(state.stocksChf) },
+        { name: 'Cash position', type: 'Cash', date: state.reportDateLabel, value: fromChf(state.cashChf) },
+        { name: 'Listed equity portfolio', type: 'Stocks', date: state.reportDateLabel, value: fromChf(state.stocksChf) },
         ...(Number.isFinite(state.ibkrValue) ? [{ name: 'IBKR portfolio value', type: 'Brokerage', date: 'Live via local gateway', value: state.ibkrCurrency === state.currency ? state.ibkrValue : null }] : []),
         { name: 'Bitcoin wallet', type: 'Bitcoin', date: state.btcLastUpdated || 'Live price pending', value: btcValue() },
         ...state.privateAssets.map(asset => ({
@@ -1218,8 +1301,9 @@
         return;
       }
 
+      sortProgression();
       const maxTotal = Math.max(...state.progression.map(period => period.total_chf));
-      bars.innerHTML = state.progression.map(period => {
+      bars.innerHTML = [...state.progression].reverse().map(period => {
         const cashPct = assetShare(period.cash_chf, period.total_chf);
         const bitcoinPct = assetShare(period.bitcoin_chf, period.total_chf);
         const stocksPct = assetShare(period.stocks_chf, period.total_chf);
@@ -1253,6 +1337,10 @@
       const hasLivePrice = Number.isFinite(livePrice);
 
       if (!Number.isFinite(price) || price <= 0) {
+        setText('athGain', 'Unavailable');
+        setText('athDays', 'Unavailable');
+        setText('wealthInBtc', 'Unavailable');
+        setText('oneBtcProgress', 'Unavailable');
         setText('goalCurrentPrice', 'Unavailable');
         setText('goalProgressLabel', '0%');
         setText('goalGap', 'Unavailable');
@@ -1265,7 +1353,19 @@
       const progressPct = Math.min(100, (price / BITCOIN_GOAL_CHF) * 100);
       const gap = Math.max(0, BITCOIN_GOAL_CHF - price);
       const upsidePct = ((BITCOIN_GOAL_CHF / price) - 1) * 100;
+      const wealthBtc = totalValueChf() / price;
+      const athGainPct = Number.isFinite(state.btcAthChf) && state.btcAthChf > price
+        ? ((state.btcAthChf / price) - 1) * 100
+        : 0;
+      const athDate = state.btcAthDate ? new Date(state.btcAthDate) : null;
+      const athDays = athDate && !Number.isNaN(athDate.getTime())
+        ? Math.max(0, Math.round((Date.now() - athDate.getTime()) / 86400000))
+        : null;
 
+      setText('athGain', Number.isFinite(athGainPct) ? `${athGainPct.toFixed(1)}%` : 'Unavailable');
+      setText('athDays', Number.isFinite(athDays) ? `${athDays} days` : 'Unavailable');
+      setText('wealthInBtc', Number.isFinite(wealthBtc) ? `${btcAmount(wealthBtc)} BTC` : 'Unavailable');
+      setText('oneBtcProgress', Number.isFinite(wealthBtc) ? `${Math.min(100, wealthBtc * 100).toFixed(1)}%` : 'Unavailable');
       setText('goalCurrentPrice', money(price, 'CHF'));
       setText('goalProgressLabel', `${progressPct.toFixed(1)}%`);
       setText('goalGap', money(gap, 'CHF'));
@@ -1413,6 +1513,24 @@
       state.cashChf = Number(document.getElementById('cashInput').value) || 0;
       state.stocksChf = Number(document.getElementById('stocksInput').value) || 0;
       state.btcAmount = Number(document.getElementById('bitcoinInput').value) || 0;
+      state.bitcoinReportChf = btcValueChf();
+      const total = state.cashChf + state.stocksChf + state.bitcoinReportChf;
+      const period = {
+        date: state.reportDateLabel,
+        cash_chf: state.cashChf,
+        bitcoin_chf: state.bitcoinReportChf,
+        stocks_chf: state.stocksChf,
+        total_chf: total,
+        bitcoin_price_chf: Number.isFinite(state.btcPrices.CHF) ? state.btcPrices.CHF : null,
+        bitcoin_amount: state.btcAmount
+      };
+      const existingIndex = state.progression.findIndex(item => item.date === state.reportDateLabel);
+      if (existingIndex >= 0) {
+        state.progression[existingIndex] = period;
+      } else {
+        state.progression.push(period);
+      }
+      updateProgressionChange();
       render();
     }
 
@@ -1452,6 +1570,15 @@
           EUR: bitcoin.eur,
           GBP: bitcoin.gbp
         };
+        state.btcAthChf = payload.market && Number.isFinite(Number(payload.market.ath_chf))
+          ? Number(payload.market.ath_chf)
+          : null;
+        state.btcAthDate = payload.market && payload.market.ath_date
+          ? payload.market.ath_date
+          : null;
+        state.btcAthChangePct = payload.market && Number.isFinite(Number(payload.market.ath_change_percentage))
+          ? Number(payload.market.ath_change_percentage)
+          : null;
         state.btcLastUpdated = bitcoin.last_updated_at
           ? new Date(bitcoin.last_updated_at * 1000).toLocaleString()
           : 'Live';
@@ -1504,7 +1631,7 @@
           throw new Error('Progression unavailable');
         }
         state.progression = payload.periods;
-        setText('progressionChange', `${money(payload.change_chf, 'CHF')} / ${payload.change_pct.toFixed(2)}%`);
+        updateProgressionChange();
       } catch (error) {
         state.progression = [];
         setText('progressionChange', 'Unavailable');
@@ -1517,9 +1644,6 @@
       render();
     });
     document.getElementById('applyPositions').addEventListener('click', applyPositionInputs);
-    document.getElementById('bitcoinInput').addEventListener('input', applyPositionInputs);
-    document.getElementById('cashInput').addEventListener('input', applyPositionInputs);
-    document.getElementById('stocksInput').addEventListener('input', applyPositionInputs);
     document.getElementById('addAssetButton').addEventListener('click', openDrawer);
     document.getElementById('closeDrawer').addEventListener('click', closeDrawer);
     document.getElementById('drawerBackdrop').addEventListener('click', closeDrawer);
@@ -1527,6 +1651,7 @@
     document.getElementById('progressionBars').addEventListener('mousemove', showProgressionTooltip);
     document.getElementById('progressionBars').addEventListener('mouseleave', hideProgressionTooltip);
 
+    state.reportDateLabel = lastCompletedMonthEndLabel();
     render();
     fetchBitcoinPrice();
     fetchIbkrPortfolio();
