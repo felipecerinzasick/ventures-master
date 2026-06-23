@@ -873,7 +873,7 @@
             <div class="panel-header">
               <div>
                 <h2>Bitcoin 2030 Goal</h2>
-                <p>Live CoinGecko price against ATH, one BTC, and CHF 300,000 targets.</p>
+                <p>Live CoinGecko price against ATH, one BTC, and CHF 250,000 targets.</p>
               </div>
               <span class="pill">2030</span>
             </div>
@@ -882,10 +882,12 @@
                 <div class="goal-stat">
                   <span class="subtle">Gain to ATH</span>
                   <strong id="athGain">Loading</strong>
+                  <div class="goal-track mt-2"><div id="athGainBar" class="goal-fill"></div></div>
                 </div>
                 <div class="goal-stat">
                   <span class="subtle">Time since ATH</span>
                   <strong id="athDays">Loading</strong>
+                  <div class="goal-track mt-2"><div id="athDaysBar" class="goal-fill"></div></div>
                 </div>
               </div>
               <div>
@@ -904,7 +906,7 @@
               </div>
               <div>
                 <div class="asset-topline">
-                  <strong>Progress to CHF 300,000</strong>
+                  <strong>Progress to CHF 250,000</strong>
                   <span id="goalProgressLabel" class="subtle">0%</span>
                 </div>
                 <div class="goal-track"><div id="goalProgressBar" class="goal-fill"></div></div>
@@ -1091,7 +1093,7 @@
       privateAssets: []
     };
 
-    const BITCOIN_GOAL_CHF = 300000;
+    const BITCOIN_GOAL_CHF = 250000;
 
     const fxFromChf = {
       CHF: 1,
@@ -1354,6 +1356,8 @@
         setText('goalGap', 'Unavailable');
         setText('goalUpside', 'Unavailable');
         setText('goalStatus', 'CoinGecko price unavailable.');
+        setWidth('athGainBar', 0);
+        setWidth('athDaysBar', 0);
         setWidth('goalProgressBar', 0);
         return;
       }
@@ -1378,7 +1382,9 @@
       setText('goalProgressLabel', `${progressPct.toFixed(1)}%`);
       setText('goalGap', money(gap, 'CHF'));
       setText('goalUpside', `${upsidePct.toFixed(1)}%`);
-      setText('goalStatus', hasLivePrice ? 'Live CoinGecko price. Target: CHF 300,000 per BTC by 2030.' : 'Using report-implied BTC price until CoinGecko responds.');
+      setText('goalStatus', hasLivePrice ? 'Live CoinGecko price. Target: CHF 250,000 per BTC by 2030.' : 'Using report-implied BTC price until CoinGecko responds.');
+      setWidth('athGainBar', Math.min(100, athGainPct));
+      setWidth('athDaysBar', Number.isFinite(athDays) ? Math.min(100, (athDays / 365) * 100) : 0);
       setWidth('goalProgressBar', progressPct);
     }
 
