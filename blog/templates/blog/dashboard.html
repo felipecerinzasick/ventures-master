@@ -431,67 +431,145 @@
       white-space: nowrap;
     }
 
-    .progression-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .progression-card {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 16px;
-      background: #fff;
-    }
-
-    .progression-total {
-      font-size: 28px;
-      line-height: 1.1;
-      font-weight: 700;
-      margin: 10px 0 12px;
-    }
-
-    .progression-list {
-      display: grid;
-      gap: 8px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .progression-list div {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
     .progression-bars {
       display: grid;
-      gap: 10px;
-      margin-top: 16px;
+      gap: 9px;
     }
 
     .progression-bar-row {
       display: grid;
-      grid-template-columns: 92px minmax(0, 1fr) auto;
-      gap: 10px;
+      grid-template-columns: 86px minmax(0, 1fr) 92px;
+      gap: 12px;
       align-items: center;
       font-size: 13px;
       color: var(--muted);
     }
 
     .progression-track {
-      height: 10px;
+      height: 13px;
       background: #e8edf3;
       border-radius: 999px;
       overflow: hidden;
     }
 
-    .progression-fill {
+    .progression-stack {
       height: 100%;
       width: 0;
       border-radius: inherit;
-      background: var(--accent);
+      display: flex;
+      overflow: hidden;
       transition: width 180ms ease;
+    }
+
+    .progression-segment.cash {
+      background: var(--accent);
+    }
+
+    .progression-segment.stocks {
+      background: var(--blue);
+    }
+
+    .progression-segment.bitcoin {
+      background: var(--gold);
+    }
+
+    .legend-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+
+    .legend-row span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .bitcoin-goal {
+      display: grid;
+      gap: 14px;
+    }
+
+    .goal-price {
+      font-size: 30px;
+      line-height: 1.05;
+      font-weight: 700;
+    }
+
+    .goal-track {
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #e8edf3;
+    }
+
+    .goal-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--gold), #d7b35d);
+      transition: width 180ms ease;
+    }
+
+    .goal-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .goal-stat {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .goal-stat strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 16px;
+    }
+
+    .reports-panel {
+      display: grid;
+      gap: 18px;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .line-chart {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+      min-width: 0;
+    }
+
+    .line-chart h3 {
+      font-size: 14px;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .line-chart svg {
+      display: block;
+      width: 100%;
+      height: 170px;
+      margin-top: 10px;
+      overflow: visible;
+    }
+
+    .line-chart .chart-meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 8px;
     }
 
     .drawer-backdrop {
@@ -605,7 +683,8 @@
         overflow-x: auto;
       }
 
-      .progression-grid {
+      .chart-grid,
+      .goal-stats {
         grid-template-columns: 1fr;
       }
     }
@@ -741,22 +820,78 @@
             <div class="panel-header">
               <div>
                 <h2>Wealth Progression</h2>
-                <p>Private month-end history protected by dashboard login.</p>
+                <p>Private</p>
               </div>
               <span id="progressionChange" class="pill">Calculating</span>
             </div>
-            <div id="progressionGrid" class="progression-grid"></div>
+            <div class="legend-row" aria-label="Progression color legend">
+              <span><i class="asset-dot cash"></i> Cash</span>
+              <span><i class="asset-dot bitcoin"></i> Bitcoin</span>
+              <span><i class="asset-dot stocks"></i> Stocks</span>
+            </div>
             <div id="progressionBars" class="progression-bars"></div>
           </section>
 
-          <section id="reports" class="panel">
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>Bitcoin 2030 Goal</h2>
+                <p>Live CoinGecko price against a CHF 300,000 target.</p>
+              </div>
+              <span class="pill">2030</span>
+            </div>
+            <div class="bitcoin-goal">
+              <div>
+                <div class="label">Current BTC price</div>
+                <div id="goalCurrentPrice" class="goal-price">Loading</div>
+              </div>
+              <div>
+                <div class="asset-topline">
+                  <strong>Progress to CHF 300,000</strong>
+                  <span id="goalProgressLabel" class="subtle">0%</span>
+                </div>
+                <div class="goal-track"><div id="goalProgressBar" class="goal-fill"></div></div>
+              </div>
+              <div class="goal-stats">
+                <div class="goal-stat">
+                  <span class="subtle">Gap to target</span>
+                  <strong id="goalGap">Loading</strong>
+                </div>
+                <div class="goal-stat">
+                  <span class="subtle">Upside required</span>
+                  <strong id="goalUpside">Loading</strong>
+                </div>
+              </div>
+              <p id="goalStatus" class="subtle mb-0">Waiting for live Bitcoin price.</p>
+            </div>
+          </section>
+        </div>
+
+        <div class="section-grid">
+          <section id="reports" class="panel reports-panel">
             <div class="panel-header">
               <div>
                 <h2>Month-End Reports</h2>
-                <p>Reports are always anchored to month end.</p>
+                <p>Reports are always anchored to month end, with monthly asset movement.</p>
               </div>
-              <span class="pill">31.05.2026</span>
-              <a class="btn-local secondary" href="{% url 'portfolio_report_pdf' %}">Download PDF</a>
+              <div class="topbar-actions">
+                <span class="pill">31.05.2026</span>
+                <a class="btn-local secondary" href="{% url 'portfolio_report_pdf' %}">Download PDF</a>
+              </div>
+            </div>
+            <div class="chart-grid">
+              <div class="line-chart">
+                <h3>Cash</h3>
+                <div id="cashChart"></div>
+              </div>
+              <div class="line-chart">
+                <h3>Bitcoin</h3>
+                <div id="bitcoinChart"></div>
+              </div>
+              <div class="line-chart">
+                <h3>Stocks</h3>
+                <div id="stocksChart"></div>
+              </div>
             </div>
             <table class="report-table">
               <thead>
@@ -895,6 +1030,8 @@
       privateAssets: []
     };
 
+    const BITCOIN_GOAL_CHF = 300000;
+
     const fxFromChf = {
       CHF: 1,
       USD: 1.12,
@@ -986,6 +1123,7 @@
       setWidth('stocksBar', stocksPct);
       setWidth('bitcoinBar', bitcoinPct);
 
+      renderBitcoinGoal();
       renderHoldings();
       renderProgression();
     }
@@ -1015,37 +1153,113 @@
     }
 
     function renderProgression() {
-      const grid = document.getElementById('progressionGrid');
       const bars = document.getElementById('progressionBars');
       if (!state.progression.length) {
-        grid.innerHTML = '<div class="empty-note">Loading wealth progression.</div>';
-        bars.innerHTML = '';
+        bars.innerHTML = '<div class="empty-note">Loading wealth progression.</div>';
+        renderReportCharts();
         return;
       }
 
       const maxTotal = Math.max(...state.progression.map(period => period.total_chf));
-      grid.innerHTML = state.progression.map(period => `
-        <div class="progression-card">
-          <div class="label">${escapeHtml(period.date)}</div>
-          <div class="progression-total">${money(period.total_chf, 'CHF')}</div>
-          <div class="progression-list">
-            <div><span>Cash</span><strong>${money(period.cash_chf, 'CHF')}</strong></div>
-            <div><span>Bitcoin value</span><strong>${money(period.bitcoin_chf, 'CHF')}</strong></div>
-            <div><span>Stocks</span><strong>${money(period.stocks_chf, 'CHF')}</strong></div>
-            <div><span>BTC amount</span><strong>${Number.isFinite(period.bitcoin_amount) ? btcAmount(period.bitcoin_amount) + ' BTC' : 'CoinGecko pending'}</strong></div>
-          </div>
-        </div>
-      `).join('');
-
       bars.innerHTML = state.progression.map(period => `
         <div class="progression-bar-row">
           <strong>${escapeHtml(period.date)}</strong>
           <div class="progression-track">
-            <div class="progression-fill" style="width: ${maxTotal ? (period.total_chf / maxTotal) * 100 : 0}%"></div>
+            <div class="progression-stack" style="width: ${maxTotal ? (period.total_chf / maxTotal) * 100 : 0}%">
+              <div class="progression-segment cash" style="width: ${assetShare(period.cash_chf, period.total_chf)}%"></div>
+              <div class="progression-segment bitcoin" style="width: ${assetShare(period.bitcoin_chf, period.total_chf)}%"></div>
+              <div class="progression-segment stocks" style="width: ${assetShare(period.stocks_chf, period.total_chf)}%"></div>
+            </div>
           </div>
           <span>${money(period.total_chf, 'CHF')}</span>
         </div>
       `).join('');
+
+      renderReportCharts();
+    }
+
+    function assetShare(value, total) {
+      return total > 0 ? Math.max(0, Math.min(100, (value / total) * 100)) : 0;
+    }
+
+    function renderBitcoinGoal() {
+      const livePrice = state.btcPrices.CHF;
+      const fallbackPrice = state.btcAmount > 0 ? state.bitcoinReportChf / state.btcAmount : null;
+      const price = Number.isFinite(livePrice) ? livePrice : fallbackPrice;
+      const hasLivePrice = Number.isFinite(livePrice);
+
+      if (!Number.isFinite(price) || price <= 0) {
+        setText('goalCurrentPrice', 'Unavailable');
+        setText('goalProgressLabel', '0%');
+        setText('goalGap', 'Unavailable');
+        setText('goalUpside', 'Unavailable');
+        setText('goalStatus', 'CoinGecko price unavailable.');
+        setWidth('goalProgressBar', 0);
+        return;
+      }
+
+      const progressPct = Math.min(100, (price / BITCOIN_GOAL_CHF) * 100);
+      const gap = Math.max(0, BITCOIN_GOAL_CHF - price);
+      const upsidePct = ((BITCOIN_GOAL_CHF / price) - 1) * 100;
+
+      setText('goalCurrentPrice', money(price, 'CHF'));
+      setText('goalProgressLabel', `${progressPct.toFixed(1)}%`);
+      setText('goalGap', money(gap, 'CHF'));
+      setText('goalUpside', `${upsidePct.toFixed(1)}%`);
+      setText('goalStatus', hasLivePrice ? 'Live CoinGecko price. Target: CHF 300,000 per BTC by 2030.' : 'Using report-implied BTC price until CoinGecko responds.');
+      setWidth('goalProgressBar', progressPct);
+    }
+
+    function renderReportCharts() {
+      renderLineChart('cashChart', 'Cash', 'cash_chf', 'var(--accent)');
+      renderLineChart('bitcoinChart', 'Bitcoin', 'bitcoin_chf', 'var(--gold)');
+      renderLineChart('stocksChart', 'Stocks', 'stocks_chf', 'var(--blue)');
+    }
+
+    function renderLineChart(targetId, label, key, color) {
+      const target = document.getElementById(targetId);
+      if (!target) {
+        return;
+      }
+      if (!state.progression.length) {
+        target.innerHTML = '<div class="empty-note">Loading chart.</div>';
+        return;
+      }
+
+      const values = state.progression.map(period => Number(period[key]) || 0);
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      const range = max - min || 1;
+      const width = 640;
+      const height = 170;
+      const padX = 18;
+      const padY = 18;
+      const usableWidth = width - padX * 2;
+      const usableHeight = height - padY * 2;
+      const points = values.map((value, index) => {
+        const x = padX + (values.length === 1 ? 0 : (index / (values.length - 1)) * usableWidth);
+        const y = padY + usableHeight - ((value - min) / range) * usableHeight;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(' ');
+      const areaPoints = `${padX},${height - padY} ${points} ${width - padX},${height - padY}`;
+      const first = state.progression[0];
+      const latest = state.progression[state.progression.length - 1];
+
+      target.innerHTML = `
+        <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(label)} month-by-month line chart">
+          <line x1="${padX}" y1="${height - padY}" x2="${width - padX}" y2="${height - padY}" stroke="#dfe5ec" stroke-width="1" />
+          <line x1="${padX}" y1="${padY}" x2="${padX}" y2="${height - padY}" stroke="#dfe5ec" stroke-width="1" />
+          <polygon points="${areaPoints}" fill="${color}" opacity="0.10"></polygon>
+          <polyline points="${points}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+          ${values.map((value, index) => {
+            const [x, y] = points.split(' ')[index].split(',');
+            return `<circle cx="${x}" cy="${y}" r="3.5" fill="#fff" stroke="${color}" stroke-width="2"></circle>`;
+          }).join('')}
+          <text x="${padX}" y="${height - 2}" fill="#607285" font-size="12">${escapeHtml(first.date)}</text>
+          <text x="${width - padX}" y="${height - 2}" text-anchor="end" fill="#607285" font-size="12">${escapeHtml(latest.date)}</text>
+        </svg>
+        <div class="chart-meta">${money(values[0], 'CHF')} to ${money(values[values.length - 1], 'CHF')}</div>
+      `;
     }
 
     function formatDate(dateValue) {

@@ -108,9 +108,9 @@ PORTFOLIO_HISTORY = [
     {
         'date': '30.11.2024',
         'cash': Decimal('850.76'),
-        'bitcoin': Decimal('27891.44'),
+        'bitcoin': Decimal('26956.29'),
         'stocks': Decimal('22621.59'),
-        'bitcoin_amount': Decimal('0.3282695408930436'),
+        'bitcoin_amount': Decimal('0.3172632643403502'),
     },
     {
         'date': '31.12.2024',
