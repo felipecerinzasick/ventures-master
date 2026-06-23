@@ -1186,19 +1186,25 @@
       }
 
       const maxTotal = Math.max(...state.progression.map(period => period.total_chf));
-      bars.innerHTML = state.progression.map(period => `
-        <div class="progression-bar-row">
+      bars.innerHTML = state.progression.map(period => {
+        const cashPct = assetShare(period.cash_chf, period.total_chf);
+        const bitcoinPct = assetShare(period.bitcoin_chf, period.total_chf);
+        const stocksPct = assetShare(period.stocks_chf, period.total_chf);
+        const tooltip = `${period.date} | Cash ${cashPct.toFixed(1)}% | Bitcoin ${bitcoinPct.toFixed(1)}% | Stocks ${stocksPct.toFixed(1)}% | Total ${money(period.total_chf, 'CHF')}`;
+        return `
+        <div class="progression-bar-row" title="${escapeHtml(tooltip)}">
           <strong>${escapeHtml(period.date)}</strong>
           <div class="progression-track">
             <div class="progression-stack" style="width: ${maxTotal ? (period.total_chf / maxTotal) * 100 : 0}%">
-              <div class="progression-segment cash" style="width: ${assetShare(period.cash_chf, period.total_chf)}%"></div>
-              <div class="progression-segment bitcoin" style="width: ${assetShare(period.bitcoin_chf, period.total_chf)}%"></div>
-              <div class="progression-segment stocks" style="width: ${assetShare(period.stocks_chf, period.total_chf)}%"></div>
+              <div class="progression-segment cash" style="width: ${cashPct}%"></div>
+              <div class="progression-segment bitcoin" style="width: ${bitcoinPct}%"></div>
+              <div class="progression-segment stocks" style="width: ${stocksPct}%"></div>
             </div>
           </div>
           <span>${money(period.total_chf, 'CHF')}</span>
         </div>
-      `).join('');
+      `;
+      }).join('');
 
       renderReportCharts();
     }
