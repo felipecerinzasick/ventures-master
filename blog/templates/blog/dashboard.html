@@ -1212,25 +1212,33 @@
       setText('cashInputLabel', `Cash position as at ${state.reportDateLabel}`);
     }
 
-    function showProgressionTooltip(event) {
-      const row = event.target.closest('[data-progression-tooltip]');
+    function showDashboardTooltip(event, selector, dataKey) {
+      const row = event.target.closest(selector);
       const tooltip = document.getElementById('progressionTooltip');
       if (!row || !tooltip) {
-        hideProgressionTooltip();
+        hideDashboardTooltip();
         return;
       }
 
-      tooltip.textContent = row.dataset.progressionTooltip;
+      tooltip.textContent = row.dataset[dataKey];
       tooltip.style.left = `${event.clientX}px`;
       tooltip.style.top = `${event.clientY - 14}px`;
       tooltip.classList.add('visible');
     }
 
-    function hideProgressionTooltip() {
+    function hideDashboardTooltip() {
       const tooltip = document.getElementById('progressionTooltip');
       if (tooltip) {
         tooltip.classList.remove('visible');
       }
+    }
+
+    function showProgressionTooltip(event) {
+      showDashboardTooltip(event, '[data-progression-tooltip]', 'progressionTooltip');
+    }
+
+    function showChartTooltip(event) {
+      showDashboardTooltip(event, '[data-chart-tooltip]', 'chartTooltip');
     }
 
     function render() {
@@ -1439,6 +1447,13 @@
           <polygon points="${area('stocksTop', 'stocksBottom')}" fill="var(--blue)" opacity="0.88"></polygon>
           <polygon points="${area('bitcoinTop', 'bitcoinBottom')}" fill="var(--gold)" opacity="0.88"></polygon>
           <polygon points="${area('cashTop', 'cashBottom')}" fill="var(--accent)" opacity="0.88"></polygon>
+          ${periods.map((period, index) => {
+            const source = state.progression[index];
+            const previousX = index === 0 ? padX : (period.x + periods[index - 1].x) / 2;
+            const nextX = index === periods.length - 1 ? width - padX : (period.x + periods[index + 1].x) / 2;
+            const tooltip = `${period.date}\nCash ${period.cash.toFixed(1)}% - ${money(source.cash_chf, 'CHF')}\nBitcoin ${period.bitcoin.toFixed(1)}% - ${money(source.bitcoin_chf, 'CHF')}\nStocks ${period.stocks.toFixed(1)}% - ${money(source.stocks_chf, 'CHF')}\nTotal ${money(source.total_chf, 'CHF')}`;
+            return `<rect x="${previousX.toFixed(1)}" y="${padY}" width="${Math.max(2, nextX - previousX).toFixed(1)}" height="${usableHeight}" fill="transparent" data-chart-tooltip="${escapeHtml(tooltip)}"></rect>`;
+          }).join('')}
           <text x="${padX - 6}" y="${padY + 4}" text-anchor="end" fill="#607285" font-size="12">100%</text>
           <text x="${padX - 6}" y="${padY + usableHeight / 2 + 4}" text-anchor="end" fill="#607285" font-size="12">50%</text>
           <text x="${padX - 6}" y="${height - padY + 4}" text-anchor="end" fill="#607285" font-size="12">0%</text>
@@ -1477,6 +1492,10 @@
       const areaPoints = `${padX},${height - padY} ${points} ${width - padX},${height - padY}`;
       const first = state.progression[0];
       const latest = state.progression[state.progression.length - 1];
+      const coordinates = points.split(' ').map(point => {
+        const [x, y] = point.split(',').map(Number);
+        return { x, y };
+      });
 
       target.innerHTML = `
         <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(label)} month-by-month line chart">
@@ -1485,8 +1504,15 @@
           <polygon points="${areaPoints}" fill="${color}" opacity="0.10"></polygon>
           <polyline points="${points}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
           ${values.map((value, index) => {
-            const [x, y] = points.split(' ')[index].split(',');
+            const { x, y } = coordinates[index];
             return `<circle cx="${x}" cy="${y}" r="3.5" fill="#fff" stroke="${color}" stroke-width="2"></circle>`;
+          }).join('')}
+          ${values.map((value, index) => {
+            const { x } = coordinates[index];
+            const previousX = index === 0 ? padX : (x + coordinates[index - 1].x) / 2;
+            const nextX = index === values.length - 1 ? width - padX : (x + coordinates[index + 1].x) / 2;
+            const tooltip = `${state.progression[index].date}\n${label} ${money(value, 'CHF')}`;
+            return `<rect x="${previousX.toFixed(1)}" y="${padY}" width="${Math.max(2, nextX - previousX).toFixed(1)}" height="${usableHeight}" fill="transparent" data-chart-tooltip="${escapeHtml(tooltip)}"></rect>`;
           }).join('')}
           <text x="${padX}" y="${height - 2}" fill="#607285" font-size="12">${escapeHtml(first.date)}</text>
           <text x="${width - padX}" y="${height - 2}" text-anchor="end" fill="#607285" font-size="12">${escapeHtml(latest.date)}</text>
@@ -1649,7 +1675,12 @@
     document.getElementById('drawerBackdrop').addEventListener('click', closeDrawer);
     document.getElementById('assetForm').addEventListener('submit', addAsset);
     document.getElementById('progressionBars').addEventListener('mousemove', showProgressionTooltip);
-    document.getElementById('progressionBars').addEventListener('mouseleave', hideProgressionTooltip);
+    document.getElementById('progressionBars').addEventListener('mouseleave', hideDashboardTooltip);
+    ['relativeAllocationChart', 'cashChart', 'bitcoinChart', 'stocksChart'].forEach(id => {
+      const chart = document.getElementById(id);
+      chart.addEventListener('mousemove', showChartTooltip);
+      chart.addEventListener('mouseleave', hideDashboardTooltip);
+    });
 
     state.reportDateLabel = lastCompletedMonthEndLabel();
     render();
