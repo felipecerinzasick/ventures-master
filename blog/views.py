@@ -36,6 +36,27 @@ PORTFOLIO_REPORT = {
 
 PORTFOLIO_HISTORY = [
     {
+        'date': '31.12.2025',
+        'cash': Decimal('4183.23'),
+        'bitcoin': Decimal('19637.38'),
+        'stocks': Decimal('25608.66'),
+        'bitcoin_amount': Decimal('0.2804621057210911'),
+    },
+    {
+        'date': '31.01.2026',
+        'cash': Decimal('3054.89'),
+        'bitcoin': Decimal('18233.63'),
+        'stocks': Decimal('15978.94'),
+        'bitcoin_amount': Decimal('0.2804621057210911'),
+    },
+    {
+        'date': '28.02.2026',
+        'cash': Decimal('6473.79'),
+        'bitcoin': Decimal('15999.41'),
+        'stocks': Decimal('13270.44'),
+        'bitcoin_amount': Decimal('0.31562533'),
+    },
+    {
         'date': '31.03.2026',
         'cash': Decimal('626.71'),
         'bitcoin': Decimal('16470.45'),
