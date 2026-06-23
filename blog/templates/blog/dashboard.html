@@ -757,6 +757,7 @@
             <option value="USD">USD</option>
             <option value="EUR">EUR</option>
             <option value="GBP">GBP</option>
+            <option value="BTC">BTC</option>
           </select>
           <a class="btn-local secondary" href="{% url 'portfolio_report_pdf' %}">Download PDF</a>
           <button id="addAssetButton" class="btn-local" type="button">Add asset</button>
@@ -893,16 +894,6 @@
               <div>
                 <div class="label">Current BTC price</div>
                 <div id="goalCurrentPrice" class="goal-price">Loading</div>
-              </div>
-              <div class="goal-stats">
-                <div class="goal-stat">
-                  <span class="subtle">Current wealth in BTC</span>
-                  <strong id="wealthInBtc">Loading</strong>
-                </div>
-                <div class="goal-stat">
-                  <span class="subtle">Progress to 1 BTC</span>
-                  <strong id="oneBtcProgress">Loading</strong>
-                </div>
               </div>
               <div>
                 <div class="asset-topline">
@@ -1099,19 +1090,24 @@
       CHF: 1,
       USD: 1.12,
       EUR: 1.05,
-      GBP: 0.89
+      GBP: 0.89,
+      BTC: null
     };
 
     const currencyLocales = {
       CHF: 'de-CH',
       USD: 'en-US',
       EUR: 'de-DE',
-      GBP: 'en-GB'
+      GBP: 'en-GB',
+      BTC: 'de-CH'
     };
 
     function money(value, currency = state.currency) {
       if (!Number.isFinite(value)) {
         return 'Unavailable';
+      }
+      if (currency === 'BTC') {
+        return `${value.toFixed(4).replace('.', ',')} BTC`;
       }
       return new Intl.NumberFormat(currencyLocales[currency], {
         style: 'currency',
@@ -1125,6 +1121,12 @@
     }
 
     function fromChf(value) {
+      if (state.currency === 'BTC') {
+        const price = state.btcPrices.CHF;
+        const fallbackPrice = 0.39094743 > 0 ? 19285.36 / 0.39094743 : null;
+        const chfPerBtc = Number.isFinite(price) ? price : fallbackPrice;
+        return Number.isFinite(chfPerBtc) && chfPerBtc > 0 ? value / chfPerBtc : null;
+      }
       return value * fxFromChf[state.currency];
     }
 
@@ -1138,6 +1140,9 @@
     }
 
     function btcValue() {
+      if (state.currency === 'BTC') {
+        return state.btcAmount;
+      }
       if (state.currency === 'CHF') {
         return btcValueChf();
       }
@@ -1349,8 +1354,6 @@
       if (!Number.isFinite(price) || price <= 0) {
         setText('athGain', 'Unavailable');
         setText('athDays', 'Unavailable');
-        setText('wealthInBtc', 'Unavailable');
-        setText('oneBtcProgress', 'Unavailable');
         setText('goalCurrentPrice', 'Unavailable');
         setText('goalProgressLabel', '0%');
         setText('goalGap', 'Unavailable');
@@ -1365,7 +1368,6 @@
       const progressPct = Math.min(100, (price / BITCOIN_GOAL_CHF) * 100);
       const gap = Math.max(0, BITCOIN_GOAL_CHF - price);
       const upsidePct = ((BITCOIN_GOAL_CHF / price) - 1) * 100;
-      const wealthBtc = totalValueChf() / price;
       const athGainPct = Number.isFinite(state.btcAthChf) && state.btcAthChf > price
         ? ((state.btcAthChf / price) - 1) * 100
         : 0;
@@ -1376,8 +1378,6 @@
 
       setText('athGain', Number.isFinite(athGainPct) ? `${athGainPct.toFixed(1)}%` : 'Unavailable');
       setText('athDays', Number.isFinite(athDays) ? `${athDays} days` : 'Unavailable');
-      setText('wealthInBtc', Number.isFinite(wealthBtc) ? `${btcAmount(wealthBtc)} BTC` : 'Unavailable');
-      setText('oneBtcProgress', Number.isFinite(wealthBtc) ? `${Math.min(100, wealthBtc * 100).toFixed(1)}%` : 'Unavailable');
       setText('goalCurrentPrice', money(price, 'CHF'));
       setText('goalProgressLabel', `${progressPct.toFixed(1)}%`);
       setText('goalGap', money(gap, 'CHF'));
