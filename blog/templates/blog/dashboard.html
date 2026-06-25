@@ -772,7 +772,7 @@
               <div id="totalValue" class="value-large">Loading</div>
               <p id="priceStatus" class="subtle mt-2">Fetching Bitcoin price from CoinGecko.</p>
             </div>
-            <div class="pill">Month end: <span id="summaryReportDate">31.05.2026</span></div>
+            <div class="pill">Latest locked close: <span id="summaryReportDate">31.05.2026</span></div>
           </section>
           <section class="panel">
             <div class="label">Cash</div>
@@ -832,12 +832,12 @@
             <div class="panel-header">
               <div>
                 <h2>Edit Positions</h2>
-                <p>Local inputs for the next account-backed version.</p>
+                <p>Current working values before the next month-end lock.</p>
               </div>
             </div>
             <div class="form-grid">
               <div class="field-group">
-                <label id="cashInputLabel" for="cashInput">Cash position as at 31.05.2026</label>
+                <label id="cashInputLabel" for="cashInput">Current cash position toward 30.06.2026 close</label>
                 <input id="cashInput" class="field-input" type="number" min="0" step="0.01" value="5976.43">
               </div>
               <div class="field-group">
@@ -848,7 +848,7 @@
                 <label for="bitcoinInput">Bitcoin amount</label>
                 <input id="bitcoinInput" class="field-input" type="number" min="0" step="0.00000001" value="0.39094743">
               </div>
-              <button id="applyPositions" class="btn-local secondary" type="button">Update overview</button>
+              <button id="applyPositions" class="btn-local secondary" type="button">Update current overview</button>
             </div>
           </section>
         </div>
@@ -1080,7 +1080,8 @@
       ibkrValue: null,
       ibkrCurrency: null,
       progression: [],
-      reportDateLabel: '31.05.2026',
+      lockedReportDateLabel: '31.05.2026',
+      currentCloseDateLabel: '30.06.2026',
       privateAssets: []
     };
 
@@ -1190,6 +1191,10 @@
       return displayDate(new Date(today.getFullYear(), today.getMonth(), 0));
     }
 
+    function currentMonthEndLabel(today = new Date()) {
+      return displayDate(new Date(today.getFullYear(), today.getMonth() + 1, 0));
+    }
+
     function parseDisplayDate(value) {
       const [day, month, year] = value.split('.').map(Number);
       return new Date(year, month - 1, day).getTime();
@@ -1213,10 +1218,10 @@
     }
 
     function syncReportDateLabels() {
-      setText('reportDateText', state.reportDateLabel);
-      setText('summaryReportDate', state.reportDateLabel);
-      setText('reportPeriodPill', state.reportDateLabel);
-      setText('cashInputLabel', `Cash position as at ${state.reportDateLabel}`);
+      setText('reportDateText', state.lockedReportDateLabel);
+      setText('summaryReportDate', state.lockedReportDateLabel);
+      setText('reportPeriodPill', state.lockedReportDateLabel);
+      setText('cashInputLabel', `Current cash position toward ${state.currentCloseDateLabel} close`);
     }
 
     function showDashboardTooltip(event, selector, dataKey) {
@@ -1286,8 +1291,8 @@
 
     function renderHoldings() {
       const rows = [
-        { name: 'Cash position', type: 'Cash', date: state.reportDateLabel, value: fromChf(state.cashChf) },
-        { name: 'Listed equity portfolio', type: 'Stocks', date: state.reportDateLabel, value: fromChf(state.stocksChf) },
+        { name: 'Cash position', type: 'Cash', date: `Current toward ${state.currentCloseDateLabel}`, value: fromChf(state.cashChf) },
+        { name: 'Listed equity portfolio', type: 'Stocks', date: `Current toward ${state.currentCloseDateLabel}`, value: fromChf(state.stocksChf) },
         ...(Number.isFinite(state.ibkrValue) ? [{ name: 'IBKR portfolio value', type: 'Brokerage', date: 'Live via local gateway', value: state.ibkrCurrency === state.currency ? state.ibkrValue : null }] : []),
         { name: 'Bitcoin wallet', type: 'Bitcoin', date: state.btcLastUpdated || 'Live price pending', value: btcValue() },
         ...state.privateAssets.map(asset => ({
@@ -1546,23 +1551,6 @@
       state.stocksChf = Number(document.getElementById('stocksInput').value) || 0;
       state.btcAmount = Number(document.getElementById('bitcoinInput').value) || 0;
       state.bitcoinReportChf = btcValueChf();
-      const total = state.cashChf + state.stocksChf + state.bitcoinReportChf;
-      const period = {
-        date: state.reportDateLabel,
-        cash_chf: state.cashChf,
-        bitcoin_chf: state.bitcoinReportChf,
-        stocks_chf: state.stocksChf,
-        total_chf: total,
-        bitcoin_price_chf: Number.isFinite(state.btcPrices.CHF) ? state.btcPrices.CHF : null,
-        bitcoin_amount: state.btcAmount
-      };
-      const existingIndex = state.progression.findIndex(item => item.date === state.reportDateLabel);
-      if (existingIndex >= 0) {
-        state.progression[existingIndex] = period;
-      } else {
-        state.progression.push(period);
-      }
-      updateProgressionChange();
       render();
     }
 
@@ -1688,7 +1676,8 @@
       chart.addEventListener('mouseleave', hideDashboardTooltip);
     });
 
-    state.reportDateLabel = lastCompletedMonthEndLabel();
+    state.lockedReportDateLabel = lastCompletedMonthEndLabel();
+    state.currentCloseDateLabel = currentMonthEndLabel();
     render();
     fetchBitcoinPrice();
     fetchIbkrPortfolio();
