@@ -561,6 +561,54 @@
       gap: 18px;
     }
 
+    .full-section {
+      display: grid;
+      gap: 18px;
+    }
+
+    .mstr-workbench {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 0.42fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .thesis-copy {
+      display: grid;
+      gap: 12px;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .thesis-copy p {
+      margin: 0;
+    }
+
+    .thesis-copy strong {
+      color: var(--blue);
+    }
+
+    .scenario-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .scenario-table th,
+    .scenario-table td {
+      padding: 11px 8px;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+      vertical-align: top;
+    }
+
+    .scenario-table th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
     .chart-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -685,6 +733,7 @@
 
       .summary-grid,
       .section-grid,
+      .mstr-workbench,
       .allocation {
         grid-template-columns: 1fr;
       }
@@ -918,8 +967,8 @@
           </section>
         </div>
 
-        <div id="mstr" class="section-grid">
-          <section class="panel">
+        <div id="mstr" class="full-section">
+          <section class="panel full-section">
             <div class="panel-header">
               <div>
                 <h2>MSTR Investment Thesis</h2>
@@ -927,19 +976,58 @@
               </div>
               <span class="pill">MSTR / BTC</span>
             </div>
-            <div class="empty-note">
-              Thesis placeholder: add the long-form view on MicroStrategy as a Bitcoin treasury company, operating business, capital markets vehicle, and leveraged expression of Bitcoin adoption.
-            </div>
-            <div class="goal-stats mt-3">
-              <div class="goal-stat">
-                <span class="subtle">Current sats per share</span>
-                <strong id="mstrSats">Loading</strong>
+            <div class="mstr-workbench">
+              <div class="thesis-copy">
+                <p><strong>BTC is the core asset. MSTR is the high-beta Bitcoin equity wrapper.</strong></p>
+                <p>The thesis is not "MSTR goes up in dollars." The thesis is: MSTR should outperform BTC in BTC terms over the next two years because its current BTC-denominated price is depressed, while Strategy continues to accumulate BTC and may regain an mNAV premium if BTC recovers.</p>
+                <p>Current baseline: MSTR $84.82 / BTC $59,980 = 0.001414 BTC per MSTR share, or about 141,400 sats/share. That is the number to monitor. If it rises, MSTR beats BTC. If it falls, BTC was the better hold.</p>
+                <p>Strategy currently holds about 847,363 BTC, with total cost around $64.1B and average cost around $75.6k/BTC. Bitcointreasuries shows the stock trading below raw BTC NAV on basic/diluted equity mNAV, but near or above NAV once enterprise value and the capital stack are considered.</p>
+                <p>Your allocation rule: assuming "2 pieces BTC / 1 piece MSTR" means equal cash chunks, this is 67% BTC / 33% MSTR. BTC remains the fortress, while MSTR is the satellite bet. The risk is not that MSTR fails to rise in USD. The risk is that it rises less than BTC.</p>
+                <p>Buy BTC as the monetary base layer. Buy MSTR as a capped, high-beta Saylor warrant. Monitor it in sats/share for two years. If MSTR/BTC rises from ~141k sats to 200k-250k sats, the strategy worked. If it stays flat, BTC alone was enough. If it falls below 100k sats, MSTR is consuming risk budget without delivering BTC-denominated alpha.</p>
               </div>
-              <div class="goal-stat">
-                <span class="subtle">BTC per share</span>
-                <strong id="mstrBtcPerShare">Loading</strong>
+              <div class="form-grid">
+                <div class="goal-stats">
+                  <div class="goal-stat">
+                    <span class="subtle">Current sats per share</span>
+                    <strong id="mstrSats">Loading</strong>
+                  </div>
+                  <div class="goal-stat">
+                    <span class="subtle">BTC per share</span>
+                    <strong id="mstrBtcPerShare">Loading</strong>
+                  </div>
+                </div>
+                <div class="field-group">
+                  <label for="mstrBtcTargetInput">BTC 2030 price assumption</label>
+                  <input id="mstrBtcTargetInput" class="field-input" type="number" min="1" step="1000" value="250000">
+                </div>
+                <div class="goal-stat">
+                  <span class="subtle">Current baseline</span>
+                  <strong id="mstrBaseline">141,400 sats/share</strong>
+                </div>
               </div>
             </div>
+          </section>
+
+          <section class="panel reports-panel">
+            <div class="panel-header">
+              <div>
+                <h2>MSTR Scenario Model</h2>
+                <p>Implied MSTR price at the selected Bitcoin price assumption.</p>
+              </div>
+              <span id="mstrScenarioTarget" class="pill">BTC $250,000</span>
+            </div>
+            <table class="scenario-table">
+              <thead>
+                <tr>
+                  <th>Scenario</th>
+                  <th class="right">MSTR/BTC ratio</th>
+                  <th class="right">Implied MSTR price</th>
+                  <th class="right">Return from ~$84.84</th>
+                  <th class="right">Result vs BTC</th>
+                </tr>
+              </thead>
+              <tbody id="mstrScenarioBody"></tbody>
+            </table>
           </section>
 
           <section class="panel reports-panel">
@@ -956,6 +1044,36 @@
                 <span class="subtle">Higher means MSTR is outperforming BTC.</span>
               </div>
               <div id="mstrBtcChart"></div>
+            </div>
+          </section>
+
+          <section class="panel reports-panel">
+            <div class="panel-header">
+              <div>
+                <h2>MSTR Sell Rules</h2>
+                <p>Rules to rotate BTC-denominated alpha back into the base asset.</p>
+              </div>
+              <span class="pill">Rules</span>
+            </div>
+            <table class="scenario-table">
+              <thead>
+                <tr>
+                  <th>Trigger</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Monthly close above 200k sats/share</td><td>Sell/convert 10-15% of MSTR into BTC.</td></tr>
+                <tr><td>Monthly close above 250k sats/share</td><td>Sell/convert another 15-20% into BTC.</td></tr>
+                <tr><td>Monthly close above 400k sats/share</td><td>Sell/convert 30-50% of remaining tradable MSTR into BTC.</td></tr>
+                <tr><td>MSTR becomes &gt;45% of BTC+MSTR sleeve</td><td>Rebalance back toward the 67% BTC / 33% MSTR target.</td></tr>
+                <tr><td>MSTR becomes &gt;50% of the sleeve</td><td>Mandatory trim, no debate.</td></tr>
+                <tr><td>BTC up 20%+ in 14 days and MSTR/BTC up 15%+ in 14 days</td><td>Trim 10% of MSTR into BTC to harvest premium expansion.</td></tr>
+              </tbody>
+            </table>
+            <div class="thesis-copy">
+              <p>Separate investment MSTR from gift-to-Saylor MSTR: 80-90% alpha sleeve governed by rules, 10-20% mission sleeve held to 2031.</p>
+              <p>DCA rule for the next 4-6 months: 2 units BTC / 1 unit MSTR. Do not sell BTC to buy MSTR. Only buy MSTR from new cash.</p>
             </div>
           </section>
         </div>
@@ -1170,6 +1288,17 @@
         return 'Unavailable';
       }
       return `${Math.round(value).toLocaleString('en-US')} sats`;
+    }
+
+    function usd(value) {
+      if (!Number.isFinite(value)) {
+        return 'Unavailable';
+      }
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+      }).format(value);
     }
 
     function fromChf(value) {
@@ -1508,6 +1637,35 @@
       `;
     }
 
+    function renderMstrScenarioModel() {
+      const target = Number(document.getElementById('mstrBtcTargetInput').value) || 250000;
+      const startPrice = 84.84;
+      const currentBtc = 59980;
+      const btcReturn = (target / currentBtc) - 1;
+      const scenarios = [
+        { name: 'Tracks BTC', ratio: 141000 },
+        { name: 'Base outperform', ratio: 200000 },
+        { name: 'Sell/trim trigger', ratio: 250000 },
+        { name: 'Re-rating / premium returns', ratio: 400000 },
+      ];
+
+      setText('mstrScenarioTarget', `BTC ${usd(target)}`);
+      document.getElementById('mstrScenarioBody').innerHTML = scenarios.map(scenario => {
+        const implied = target * (scenario.ratio / 100000000);
+        const mstrReturn = (implied / startPrice) - 1;
+        const resultVsBtc = ((1 + mstrReturn) / (1 + btcReturn) - 1) * 100;
+        return `
+          <tr>
+            <td>${escapeHtml(scenario.name)}</td>
+            <td class="right">${sats(scenario.ratio)}</td>
+            <td class="right">${usd(implied)}</td>
+            <td class="right">${(mstrReturn * 100).toFixed(0)}%</td>
+            <td class="right">${resultVsBtc >= 0 ? '+' : ''}${resultVsBtc.toFixed(0)}% vs BTC</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
     function renderRelativeAllocationChart() {
       const target = document.getElementById('relativeAllocationChart');
       if (!target) {
@@ -1792,6 +1950,7 @@
       render();
     });
     document.getElementById('applyPositions').addEventListener('click', applyPositionInputs);
+    document.getElementById('mstrBtcTargetInput').addEventListener('input', renderMstrScenarioModel);
     document.getElementById('addAssetButton').addEventListener('click', openDrawer);
     document.getElementById('closeDrawer').addEventListener('click', closeDrawer);
     document.getElementById('drawerBackdrop').addEventListener('click', closeDrawer);
@@ -1806,6 +1965,7 @@
 
     state.lockedReportDateLabel = lastCompletedMonthEndLabel();
     state.currentCloseDateLabel = currentMonthEndLabel();
+    renderMstrScenarioModel();
     render();
     fetchBitcoinPrice();
     fetchIbkrPortfolio();
