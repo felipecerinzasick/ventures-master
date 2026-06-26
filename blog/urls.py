@@ -24,6 +24,7 @@ urlpatterns = [
     path('contact/', contact_view, name='contact'),
     path('blog/', PostListView.as_view(), name='blog'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('dashboard/mstr/', views.mstr_dashboard, name='mstr_dashboard'),
     path('dashboard/report.pdf', views.portfolio_report_pdf, name='portfolio_report_pdf'),
     path('api/wealth-progression/', views.wealth_progression, name='wealth_progression'),
     path('api/bitcoin-price/', views.bitcoin_price, name='bitcoin_price'),

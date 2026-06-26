@@ -444,6 +444,11 @@ def dashboard(request):
     return render(request, 'blog/dashboard.html', {'title': 'Dashboard'})
 
 
+@require_dashboard_auth
+def mstr_dashboard(request):
+    return render(request, 'blog/mstr_dashboard.html', {'title': 'MSTR'})
+
+
 def get_historical_bitcoin_chf(date):
     params = parse.urlencode({
         'date': date,
