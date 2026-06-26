@@ -40,9 +40,13 @@ STOCK_HOLDINGS = [
     {'name': 'Strategy', 'ticker': 'MSTR', 'symbol': 'MSTR', 'shares': Decimal('51'), 'average_price': Decimal('153.69'), 'cost_currency': 'USD', 'fallback_value': Decimal('4284'), 'fallback_currency': 'USD'},
     {'name': 'PayPal', 'ticker': 'PYPL', 'symbol': 'PYPL', 'shares': Decimal('10'), 'average_price': Decimal('56.23'), 'cost_currency': 'USD', 'fallback_value': Decimal('441.60'), 'fallback_currency': 'USD'},
     {'name': 'Riot Platforms', 'ticker': 'RIOT', 'symbol': 'RIOT', 'shares': Decimal('20'), 'average_price': Decimal('11.16'), 'cost_currency': 'USD', 'fallback_value': Decimal('561'), 'fallback_currency': 'USD'},
-    {'name': 'SHM', 'ticker': 'SHM', 'symbol': 'SHM.DE', 'shares': Decimal('5'), 'average_price': Decimal('172.40'), 'cost_currency': 'EUR', 'fallback_value': Decimal('475.75'), 'fallback_currency': 'EUR'},
+    {'name': 'Shimano', 'ticker': 'SHM', 'symbol': 'SHM.F', 'shares': Decimal('5'), 'average_price': Decimal('172.40'), 'cost_currency': 'EUR', 'fallback_value': Decimal('475.75'), 'fallback_currency': 'EUR'},
+    {'name': 'Strategy Preferred STRD', 'ticker': 'STRD', 'symbol': 'STRD', 'shares': Decimal('5'), 'average_price': Decimal('61.64'), 'cost_currency': 'USD', 'fallback_value': Decimal('267.40'), 'fallback_currency': 'USD'},
     {'name': 'STRC', 'ticker': 'STRC', 'symbol': 'STRC', 'shares': Decimal('5.5'), 'average_price': Decimal('88.69'), 'cost_currency': 'USD', 'fallback_value': Decimal('405.82'), 'fallback_currency': 'USD'},
     {'name': 'TeraWulf', 'ticker': 'WULF', 'symbol': 'WULF', 'shares': Decimal('25'), 'average_price': Decimal('6.77'), 'cost_currency': 'USD', 'fallback_value': Decimal('651.25'), 'fallback_currency': 'USD'},
+    {'name': 'Canaan', 'ticker': 'CAN', 'symbol': 'CAN', 'shares': Decimal('231'), 'average_price': Decimal('2.60'), 'cost_currency': 'USD', 'fallback_value': Decimal('71.26'), 'fallback_currency': 'USD'},
+    {'name': 'Argo Blockchain', 'ticker': '0XP', 'symbol': '0XP.DU', 'shares': Decimal('1100'), 'average_price': Decimal('0.23'), 'cost_currency': 'EUR', 'fallback_value': Decimal('13.20'), 'fallback_currency': 'EUR'},
+    {'name': 'The Smarter Web Company', 'ticker': '3M8', 'symbol': '3M8.F', 'shares': Decimal('100'), 'average_price': Decimal('1.08'), 'cost_currency': 'EUR', 'fallback_value': Decimal('29.85'), 'fallback_currency': 'EUR'},
     {'name': 'Y6G0', 'ticker': 'Y6G0', 'symbol': 'Y6G0.F', 'shares': Decimal('120'), 'average_price': Decimal('21.146'), 'cost_currency': 'EUR', 'fallback_value': Decimal('1431'), 'fallback_currency': 'EUR'},
 ]
 
