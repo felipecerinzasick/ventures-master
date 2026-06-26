@@ -1,0 +1,781 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hashen {{ stock.name }} Treasury Stock</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <style>
+    :root {
+      --ink: #123044;
+      --muted: #607285;
+      --line: #dfe5ec;
+      --page: #f5f8fb;
+      --accent: #2487ce;
+      --gold: #b68a35;
+      --blue: #124265;
+      --red: #b84a4a;
+      --green: #2f8f5b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Inter, Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .dashboard-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      background: #0f2638;
+      color: #f8fafc;
+      padding: 28px 22px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 34px;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      background: #f8fafc;
+      color: var(--blue);
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .brand span {
+      color: #aab4c3;
+      font-size: 12px;
+    }
+
+    .nav-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav-link-local {
+      color: #d8dee9;
+      padding: 10px 12px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .nav-link-local.active,
+    .nav-link-local:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+      text-decoration: none;
+    }
+
+    .content {
+      min-width: 0;
+    }
+
+    .topbar {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 16px 32px;
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar h1 {
+      font-size: 22px;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .topbar p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .btn-local {
+      border: 1px solid var(--line);
+      min-height: 38px;
+      border-radius: 6px;
+      padding: 8px 13px;
+      background: #fff;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .btn-local:hover {
+      color: var(--ink);
+      text-decoration: none;
+      filter: brightness(0.97);
+    }
+
+    .main-grid {
+      padding: 28px 32px 40px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      min-width: 0;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .panel-header h2 {
+      font-size: 17px;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .panel-header p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #e6f3fb;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .stock-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .stock-tab {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 11px;
+      color: var(--ink);
+      background: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .stock-tab.active,
+    .stock-tab:hover {
+      color: #fff;
+      background: var(--blue);
+      border-color: var(--blue);
+      text-decoration: none;
+    }
+
+    .workbench {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 0.38fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .copy {
+      display: grid;
+      gap: 12px;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .copy p {
+      margin: 0;
+    }
+
+    .copy strong {
+      color: var(--blue);
+    }
+
+    .form-grid,
+    .metric-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .metric-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #f8fbfd;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .metric strong {
+      font-size: 17px;
+      color: var(--blue);
+    }
+
+    .field-group {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field-group label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .field-input {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 10px;
+      color: var(--ink);
+      background: #fff;
+      font-weight: 700;
+    }
+
+    .risk-rail {
+      display: grid;
+      gap: 8px;
+    }
+
+    .risk-row {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .risk-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+    }
+
+    .risk-step {
+      height: 8px;
+      border-radius: 999px;
+      background: #dfe5ec;
+    }
+
+    .risk-step.active {
+      background: var(--gold);
+    }
+
+    .chart-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+    }
+
+    .chart-topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .chart-topline h3 {
+      font-size: 14px;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      min-height: 380px;
+      overflow: visible;
+    }
+
+    .chart-meta {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .scenario-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .scenario-table th,
+    .scenario-table td {
+      border-bottom: 1px solid var(--line);
+      padding: 12px 10px;
+      text-align: left;
+    }
+
+    .scenario-table th {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .right {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .tooltip {
+      position: fixed;
+      z-index: 50;
+      max-width: 280px;
+      padding: 10px 12px;
+      border: 1px solid rgba(18, 48, 68, 0.14);
+      border-radius: 8px;
+      background: rgba(15, 38, 56, 0.96);
+      color: #fff;
+      box-shadow: 0 14px 30px rgba(18, 48, 68, 0.18);
+      font-size: 12px;
+      line-height: 1.5;
+      white-space: pre-line;
+      pointer-events: none;
+      transform: translate(-50%, -100%);
+      opacity: 0;
+    }
+
+    .tooltip.visible {
+      opacity: 1;
+    }
+
+    @media (max-width: 1100px) {
+      .dashboard-shell,
+      .workbench {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 16px 20px;
+      }
+
+      .main-grid {
+        padding: 20px;
+      }
+
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">H</div>
+        <div>
+          <strong>Hashen</strong>
+          <span>Private wealth console</span>
+        </div>
+      </div>
+      <nav class="nav-list">
+        <a class="nav-link-local" href="{% url 'dashboard' %}"><span>Overview</span><span>01</span></a>
+        <a class="nav-link-local active" href="{% url 'stocks_dashboard' %}"><span>Stocks</span><span>02</span></a>
+        <a class="nav-link-local" href="{% url 'mstr_dashboard' %}"><span>MSTR</span><span>03</span></a>
+        <a class="nav-link-local" href="{% url 'index' %}"><span>Landing page</span><span>H</span></a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <h1>{{ stock.name }}</h1>
+          <p>{{ stock.ticker }} priced against {{ stock.benchmark_name }} as a treasury-stock sleeve.</p>
+        </div>
+        <a class="btn-local" href="{% url 'stocks_dashboard' %}">Back to stocks</a>
+      </header>
+
+      <section class="main-grid">
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Treasury Stocks</h2>
+              <p>Risk spectrum: MSTR, Metaplanet, ASST, BitMine.</p>
+            </div>
+          </div>
+          <div class="stock-tabs">
+            <a class="stock-tab" href="{% url 'mstr_dashboard' %}">MSTR</a>
+            <a class="stock-tab {% if slug == 'metaplanet' %}active{% endif %}" href="{% url 'treasury_stock_dashboard' 'metaplanet' %}">Metaplanet</a>
+            <a class="stock-tab {% if slug == 'asst' %}active{% endif %}" href="{% url 'treasury_stock_dashboard' 'asst' %}">ASST</a>
+            <a class="stock-tab {% if slug == 'bitmine' %}active{% endif %}" href="{% url 'treasury_stock_dashboard' 'bitmine' %}">BitMine</a>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>{{ stock.name }} Thesis</h2>
+              <p>{{ stock.premium_label }}.</p>
+            </div>
+            <span class="pill">Risk {{ stock.risk_rank }} / 4</span>
+          </div>
+          <div class="workbench">
+            <div class="copy">
+              <p><strong>{{ stock.name }} is treated as leveraged {{ stock.benchmark_name }} exposure.</strong></p>
+              <p>{{ stock.thesis }}</p>
+              <p>{{ stock.baseline_note }}</p>
+              <p>{{ stock.risk_label }}</p>
+            </div>
+            <div class="form-grid">
+              <div class="metric-grid">
+                <div class="metric">
+                  <span>Current units/share</span>
+                  <strong id="unitsPerShare">Loading</strong>
+                </div>
+                <div class="metric">
+                  <span>Benchmark per share</span>
+                  <strong id="benchmarkPerShare">Loading</strong>
+                </div>
+              </div>
+              <div class="field-group">
+                <label for="targetPriceInput">{{ stock.benchmark_unit }} 2030 price assumption</label>
+                <input id="targetPriceInput" class="field-input" type="number" min="1" step="1000" value="{{ stock.target_price }}">
+              </div>
+              <div class="metric">
+                <span>Risk rail</span>
+                <div class="risk-rail">
+                  <div class="risk-row"><span>MSTR</span><div class="risk-bar"><i class="risk-step active"></i><i class="risk-step"></i><i class="risk-step"></i><i class="risk-step"></i></div></div>
+                  <div class="risk-row"><span>Metaplanet</span><div class="risk-bar"><i class="risk-step active"></i><i class="risk-step active"></i><i class="risk-step"></i><i class="risk-step"></i></div></div>
+                  <div class="risk-row"><span>ASST</span><div class="risk-bar"><i class="risk-step active"></i><i class="risk-step active"></i><i class="risk-step active"></i><i class="risk-step"></i></div></div>
+                  <div class="risk-row"><span>BitMine</span><div class="risk-bar"><i class="risk-step active"></i><i class="risk-step active"></i><i class="risk-step active"></i><i class="risk-step active"></i></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>{{ stock.ticker }} / {{ stock.benchmark_unit }}</h2>
+              <p>Month-end stock price divided by {{ stock.benchmark_name }} price. Higher means the stock is outperforming its treasury benchmark.</p>
+            </div>
+            <span id="dataStatus" class="pill">Loading</span>
+          </div>
+          <div class="chart-card">
+            <div class="chart-topline">
+              <h3>Relative Treasury Equity Value</h3>
+              <span class="pill">{{ stock.symbol }} / {{ stock.benchmark_symbol }}</span>
+            </div>
+            <div id="treasuryChart"></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Scenario Model</h2>
+              <p>Implied price if {{ stock.benchmark_unit }} reaches the selected 2030 assumption and the current treasury ratio re-rates.</p>
+            </div>
+            <span id="scenarioTarget" class="pill">Loading</span>
+          </div>
+          <table class="scenario-table">
+            <thead>
+              <tr>
+                <th>Scenario</th>
+                <th class="right">Ratio multiple</th>
+                <th class="right">Implied price</th>
+                <th class="right">Return from latest</th>
+              </tr>
+            </thead>
+            <tbody id="scenarioBody"></tbody>
+          </table>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div id="chartTooltip" class="tooltip" role="status" aria-live="polite"></div>
+
+  <script>
+    const CONFIG = {{ stock_json|safe }};
+    const state = {
+      points: []
+    };
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function usd(value) {
+      if (!Number.isFinite(value)) {
+        return 'Unavailable';
+      }
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: value >= 100 ? 0 : 2
+      }).format(value);
+    }
+
+    function units(value) {
+      if (!Number.isFinite(value)) {
+        return 'Unavailable';
+      }
+      return `${Math.round(value).toLocaleString('en-US')} units`;
+    }
+
+    function benchmarkAmount(value) {
+      if (!Number.isFinite(value)) {
+        return 'Unavailable';
+      }
+      return `${value.toFixed(8)} ${CONFIG.benchmark_unit}`;
+    }
+
+    function setText(id, value) {
+      document.getElementById(id).textContent = value;
+    }
+
+    function latestPoint() {
+      return state.points[state.points.length - 1] || null;
+    }
+
+    function renderScenarios() {
+      const latest = latestPoint();
+      const targetPrice = Number(document.getElementById('targetPriceInput').value) || CONFIG.target_price;
+      setText('scenarioTarget', `${CONFIG.benchmark_unit} ${usd(targetPrice)}`);
+      if (!latest) {
+        document.getElementById('scenarioBody').innerHTML = '<tr><td colspan="4">Waiting for market data.</td></tr>';
+        return;
+      }
+      document.getElementById('scenarioBody').innerHTML = CONFIG.scenarios.map(scenario => {
+        const implied = targetPrice * latest.benchmark_per_share * scenario.multiple;
+        const priceReturn = (implied / latest.stock_price - 1) * 100;
+        return `
+          <tr>
+            <td>${escapeHtml(scenario.name)}</td>
+            <td class="right">${scenario.multiple.toFixed(1)}x</td>
+            <td class="right">${usd(implied)}</td>
+            <td class="right">${priceReturn >= 0 ? '+' : ''}${priceReturn.toFixed(0)}%</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function showChartTooltip(event) {
+      const row = event.target.closest('[data-chart-tooltip]');
+      const tooltip = document.getElementById('chartTooltip');
+      if (!row || !tooltip) {
+        hideChartTooltip();
+        return;
+      }
+      tooltip.textContent = row.dataset.chartTooltip;
+      tooltip.style.left = `${event.clientX}px`;
+      tooltip.style.top = `${event.clientY - 14}px`;
+      tooltip.classList.add('visible');
+    }
+
+    function hideChartTooltip() {
+      document.getElementById('chartTooltip').classList.remove('visible');
+    }
+
+    function renderChart() {
+      const target = document.getElementById('treasuryChart');
+      const latest = latestPoint();
+      if (!latest) {
+        target.innerHTML = '<div class="chart-meta">Loading treasury stock chart.</div>';
+        return;
+      }
+
+      setText('unitsPerShare', units(latest.units_per_share));
+      setText('benchmarkPerShare', benchmarkAmount(latest.benchmark_per_share));
+
+      const width = 980;
+      const height = 380;
+      const padX = 56;
+      const padY = 28;
+      const usableWidth = width - padX * 2;
+      const usableHeight = height - padY * 2;
+      const targetPrice = Number(document.getElementById('targetPriceInput').value) || CONFIG.target_price;
+      const values = state.points.map(point => point.units_per_share);
+      const benchmarkValues = state.points.map(point => point.benchmark_price).concat([targetPrice]);
+      const maxScenario = Math.max(...CONFIG.scenarios.map(scenario => latest.units_per_share * scenario.multiple));
+      const maxUnits = Math.max(...values, maxScenario) * 1.12 || 1;
+      const minBenchmark = Math.min(...benchmarkValues);
+      const maxBenchmark = Math.max(...benchmarkValues);
+      const benchmarkRange = maxBenchmark - minBenchmark || 1;
+      const startDate = new Date(`${state.points[0].date}T00:00:00Z`);
+      const latestDate = new Date(`${latest.date}T00:00:00Z`);
+      const projectionDate = new Date('2030-12-31T00:00:00Z');
+      const timeRange = projectionDate.getTime() - startDate.getTime();
+
+      function xForDate(date) {
+        return padX + ((date.getTime() - startDate.getTime()) / timeRange) * usableWidth;
+      }
+
+      function yUnits(value) {
+        return padY + usableHeight - (value / maxUnits) * usableHeight;
+      }
+
+      function yBenchmark(value) {
+        return padY + usableHeight - ((value - minBenchmark) / benchmarkRange) * usableHeight;
+      }
+
+      const unitCoords = state.points.map(point => ({
+        x: xForDate(new Date(`${point.date}T00:00:00Z`)),
+        y: yUnits(point.units_per_share)
+      }));
+      const benchmarkCoords = state.points.map(point => ({
+        x: xForDate(new Date(`${point.date}T00:00:00Z`)),
+        y: yBenchmark(point.benchmark_price)
+      }));
+      const unitPoints = unitCoords.map(point => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(' ');
+      const benchmarkPoints = benchmarkCoords.map(point => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(' ');
+      const latestX = xForDate(latestDate);
+      const projectionX = xForDate(projectionDate);
+      const benchmarkProjection = `${latestX.toFixed(1)},${yBenchmark(latest.benchmark_price).toFixed(1)} ${projectionX.toFixed(1)},${yBenchmark(targetPrice).toFixed(1)}`;
+      const yearTicks = [];
+      for (let year = startDate.getUTCFullYear(); year <= 2030; year += 1) {
+        const tickDate = new Date(`${year}-01-01T00:00:00Z`);
+        if (tickDate >= startDate && tickDate <= projectionDate) {
+          yearTicks.push({ year, x: xForDate(tickDate) });
+        }
+      }
+      target.innerHTML = `
+        <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(CONFIG.ticker)} priced against ${escapeHtml(CONFIG.benchmark_unit)}">
+          ${yearTicks.map(tick => `<line x1="${tick.x.toFixed(1)}" y1="${padY}" x2="${tick.x.toFixed(1)}" y2="${height - padY}" stroke="#dfe5ec" stroke-width="1" opacity="0.65"></line>
+            <text x="${tick.x.toFixed(1)}" y="${height - 3}" text-anchor="middle" fill="#607285" font-size="11">${tick.year}</text>`).join('')}
+          <line x1="${padX}" y1="${height - padY}" x2="${width - padX}" y2="${height - padY}" stroke="#dfe5ec" stroke-width="1" />
+          <line x1="${padX}" y1="${padY}" x2="${padX}" y2="${height - padY}" stroke="#dfe5ec" stroke-width="1" />
+          <line x1="${latestX.toFixed(1)}" y1="${padY}" x2="${latestX.toFixed(1)}" y2="${height - padY}" stroke="#607285" stroke-width="1" stroke-dasharray="4 6" />
+          <polyline points="${benchmarkPoints}" fill="none" stroke="var(--blue)" stroke-width="2.4" opacity="0.45" stroke-linecap="round" stroke-linejoin="round"></polyline>
+          <polyline points="${benchmarkProjection}" fill="none" stroke="var(--blue)" stroke-width="2.4" stroke-dasharray="7 7" opacity="0.78"></polyline>
+          <polyline points="${unitPoints}" fill="none" stroke="var(--gold)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+          ${CONFIG.scenarios.map(scenario => {
+            const scenarioUnits = latest.units_per_share * scenario.multiple;
+            const y = yUnits(Math.min(scenarioUnits, maxUnits));
+            return `<line x1="${padX}" y1="${y.toFixed(1)}" x2="${projectionX.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="5 7" opacity="0.72"></line>
+              <text x="${projectionX - 2}" y="${(y - 4).toFixed(1)}" text-anchor="end" fill="#607285" font-size="11">${escapeHtml(scenario.name)} ${scenario.multiple}x</text>`;
+          }).join('')}
+          ${unitCoords.map((point, index) => {
+            const source = state.points[index];
+            const previousX = index === 0 ? padX : (point.x + unitCoords[index - 1].x) / 2;
+            const nextX = index === unitCoords.length - 1 ? latestX : (point.x + unitCoords[index + 1].x) / 2;
+            const tooltip = `${source.label}\n${CONFIG.ticker} ${usd(source.stock_price)}\n${CONFIG.benchmark_unit} ${usd(source.benchmark_price)}\n${units(source.units_per_share)} per share`;
+            return `<rect x="${previousX.toFixed(1)}" y="${padY}" width="${Math.max(2, nextX - previousX).toFixed(1)}" height="${usableHeight}" fill="transparent" data-chart-tooltip="${escapeHtml(tooltip)}"></rect>`;
+          }).join('')}
+          <rect x="${latestX.toFixed(1)}" y="${padY}" width="${(projectionX - latestX).toFixed(1)}" height="${usableHeight}" fill="transparent" data-chart-tooltip="${escapeHtml(`2030 model\n${CONFIG.benchmark_unit} target ${usd(targetPrice)}\nHighest scenario is ${Math.round(maxScenario).toLocaleString('en-US')} units/share`)}"></rect>
+          <text x="${latestX.toFixed(1)}" y="${padY - 8}" text-anchor="middle" fill="#607285" font-size="11">today</text>
+          <text x="${projectionX}" y="${height - 3}" text-anchor="end" fill="#607285" font-size="12">2030</text>
+          <text x="${padX - 8}" y="${padY + 4}" text-anchor="end" fill="#607285" font-size="11">${Math.round(maxUnits).toLocaleString('en-US')}</text>
+          <text x="${width - padX + 8}" y="${padY + 4}" fill="#607285" font-size="11">${usd(maxBenchmark)}</text>
+          <text x="${width - padX + 8}" y="${height - padY + 4}" fill="#607285" font-size="11">${usd(minBenchmark)}</text>
+        </svg>
+        <div class="chart-meta">${CONFIG.ticker} is at ${units(latest.units_per_share)} per share versus ${CONFIG.benchmark_name}. The scenario lines scale from today&apos;s ratio, so the target becomes more aggressive as the premium multiple rises.</div>
+      `;
+    }
+
+    async function fetchTreasuryData() {
+      try {
+        const response = await fetch('{% url "treasury_stock_data" slug %}');
+        const payload = await response.json();
+        if (!response.ok || payload.status !== 'ok') {
+          throw new Error(payload.error || 'Treasury data unavailable');
+        }
+        state.points = payload.points || [];
+        setText('dataStatus', payload.source || 'Loaded');
+        renderChart();
+        renderScenarios();
+      } catch (error) {
+        state.points = [];
+        setText('dataStatus', 'Unavailable');
+        document.getElementById('treasuryChart').innerHTML = '<div class="chart-meta">Treasury stock data is unavailable. Check the market data connection and refresh.</div>';
+        renderScenarios();
+      }
+    }
+
+    document.getElementById('targetPriceInput').addEventListener('input', () => {
+      renderChart();
+      renderScenarios();
+    });
+    document.getElementById('treasuryChart').addEventListener('mousemove', showChartTooltip);
+    document.getElementById('treasuryChart').addEventListener('mouseleave', hideChartTooltip);
+
+    renderScenarios();
+    fetchTreasuryData();
+  </script>
+</body>
+</html>

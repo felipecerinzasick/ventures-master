@@ -248,6 +248,59 @@
       align-items: start;
     }
 
+    .treasury-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .treasury-card {
+      display: grid;
+      gap: 8px;
+      min-height: 158px;
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 15px;
+      background: #fff;
+    }
+
+    .treasury-card:hover {
+      color: var(--ink);
+      text-decoration: none;
+      border-color: rgba(36, 135, 206, 0.42);
+      transform: translateY(-1px);
+    }
+
+    .treasury-card strong {
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    .treasury-card span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .risk-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      align-self: end;
+    }
+
+    .risk-step {
+      height: 6px;
+      border-radius: 999px;
+      background: #dfe5ec;
+    }
+
+    .risk-step.active {
+      background: var(--gold);
+    }
+
     .table-wrap {
       overflow-x: auto;
     }
@@ -385,6 +438,7 @@
       }
 
       .summary-grid,
+      .treasury-grid,
       .portfolio-layout {
         grid-template-columns: 1fr 1fr;
       }
@@ -407,6 +461,7 @@
       }
 
       .summary-grid,
+      .treasury-grid,
       .portfolio-layout {
         grid-template-columns: 1fr;
       }
@@ -476,6 +531,45 @@
             <div class="label">Live coverage</div>
             <div id="liveCoverage" class="metric-value">Loading</div>
             <p id="lastUpdated" class="subtle">Waiting for quotes.</p>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Treasury Stocks</h2>
+              <p>Bitcoin and Ethereum treasury equities treated as leveraged monetary exposure.</p>
+            </div>
+          </div>
+          <div class="treasury-grid">
+            <a class="treasury-card" href="{% url 'mstr_dashboard' %}">
+              <strong>MSTR</strong>
+              <span>Lowest risk in the sleeve. Core Bitcoin treasury equity benchmark.</span>
+              <div class="risk-bar" aria-label="Risk rank 1 of 4">
+                <i class="risk-step active"></i><i class="risk-step"></i><i class="risk-step"></i><i class="risk-step"></i>
+              </div>
+            </a>
+            <a class="treasury-card" href="{% url 'treasury_stock_dashboard' 'metaplanet' %}">
+              <strong>Metaplanet</strong>
+              <span>Japan-listed Bitcoin treasury with higher market and jurisdiction risk.</span>
+              <div class="risk-bar" aria-label="Risk rank 2 of 4">
+                <i class="risk-step active"></i><i class="risk-step active"></i><i class="risk-step"></i><i class="risk-step"></i>
+              </div>
+            </a>
+            <a class="treasury-card" href="{% url 'treasury_stock_dashboard' 'asst' %}">
+              <strong>ASST</strong>
+              <span>Smaller treasury wrapper. Higher premium target, higher fragility.</span>
+              <div class="risk-bar" aria-label="Risk rank 3 of 4">
+                <i class="risk-step active"></i><i class="risk-step active"></i><i class="risk-step active"></i><i class="risk-step"></i>
+              </div>
+            </a>
+            <a class="treasury-card" href="{% url 'treasury_stock_dashboard' 'bitmine' %}">
+              <strong>BitMine</strong>
+              <span>Highest risk. Ethereum treasury premium and operating execution exposure.</span>
+              <div class="risk-bar" aria-label="Risk rank 4 of 4">
+                <i class="risk-step active"></i><i class="risk-step active"></i><i class="risk-step active"></i><i class="risk-step active"></i>
+              </div>
+            </a>
           </div>
         </section>
 

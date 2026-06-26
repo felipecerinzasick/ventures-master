@@ -50,6 +50,71 @@ STOCK_HOLDINGS = [
     {'name': 'Y6G0', 'ticker': 'Y6G0', 'symbol': 'Y6G0.F', 'shares': Decimal('120'), 'average_price': Decimal('21.146'), 'cost_currency': 'EUR', 'fallback_value': Decimal('1431'), 'fallback_currency': 'EUR'},
 ]
 
+TREASURY_STOCKS = {
+    'metaplanet': {
+        'name': 'Metaplanet',
+        'ticker': 'DN3',
+        'symbol': 'DN3.F',
+        'benchmark_symbol': 'BTC-USD',
+        'benchmark_name': 'Bitcoin',
+        'benchmark_unit': 'BTC',
+        'target_price': 250000,
+        'start': '2024-01-01',
+        'risk_rank': 2,
+        'risk_label': 'Higher risk than MSTR: Japan-listed Bitcoin treasury with local market and liquidity risk.',
+        'premium_label': 'BTC treasury re-rating',
+        'baseline_note': 'Metaplanet is treated as a Bitcoin treasury equity with operating, jurisdiction, and Japan-market structure risk.',
+        'thesis': 'Metaplanet is the closest non-US Bitcoin treasury analogue in this portfolio. The thesis is that it can compound BTC exposure through capital markets access, but the Japanese market introduces extra liquidity, governance, FX, and market-structure risks compared with MSTR.',
+        'scenarios': [
+            {'name': 'Tracks Bitcoin', 'multiple': 1.0},
+            {'name': 'Treasury premium returns', 'multiple': 2.0},
+            {'name': 'Japan re-rating', 'multiple': 4.0},
+        ],
+    },
+    'asst': {
+        'name': 'Asset Entities',
+        'ticker': 'ASST',
+        'symbol': 'ASST',
+        'benchmark_symbol': 'BTC-USD',
+        'benchmark_name': 'Bitcoin',
+        'benchmark_unit': 'BTC',
+        'target_price': 250000,
+        'start': '2024-01-01',
+        'risk_rank': 3,
+        'risk_label': 'Microcap treasury wrapper: smaller size means larger upside premium but materially higher execution risk.',
+        'premium_label': 'Microcap BTC premium',
+        'baseline_note': 'ASST demands a larger premium than Metaplanet because size and liquidity create more convexity and more fragility.',
+        'thesis': 'ASST is treated as a smaller, higher-beta treasury stock. If the market rewards Bitcoin balance-sheet leverage, a smaller vehicle can re-rate harder than Metaplanet, but the same size advantage also makes drawdowns, dilution, and liquidity risk more severe.',
+        'scenarios': [
+            {'name': 'Tracks Bitcoin', 'multiple': 1.0},
+            {'name': 'Small-cap premium', 'multiple': 3.0},
+            {'name': 'Convex re-rating', 'multiple': 6.0},
+            {'name': 'Extreme treasury premium', 'multiple': 10.0},
+        ],
+    },
+    'bitmine': {
+        'name': 'BitMine Immersion',
+        'ticker': 'BMNR',
+        'symbol': 'BMNR',
+        'benchmark_symbol': 'ETH-USD',
+        'benchmark_name': 'Ethereum',
+        'benchmark_unit': 'ETH',
+        'target_price': 25000,
+        'start': '2024-01-01',
+        'risk_rank': 4,
+        'risk_label': 'Highest risk in the treasury-stock sleeve: Ethereum treasury premium, operating risk, and more volatile market trust.',
+        'premium_label': 'ETH treasury premium',
+        'baseline_note': 'BitMine needs a very high target premium because Ethereum treasury equities demand a larger premium and carry more narrative and execution risk than Bitcoin treasury equities.',
+        'thesis': 'BitMine is treated as the highest-beta treasury equity in this set. The target price assumptions should be aggressive because the market generally demands a larger premium for Ethereum-linked treasury exposure than for Bitcoin-linked balance-sheet exposure. This is not the fortress asset; it is the outer risk sleeve.',
+        'scenarios': [
+            {'name': 'Tracks Ethereum', 'multiple': 1.0},
+            {'name': 'High premium returns', 'multiple': 5.0},
+            {'name': 'ETH treasury mania', 'multiple': 10.0},
+            {'name': 'Extreme premium', 'multiple': 20.0},
+        ],
+    },
+}
+
 PORTFOLIO_REPORT = {
     'date': '31.05.2026',
     'cash': Decimal('5976.43'),
@@ -475,6 +540,21 @@ def stocks_dashboard(request):
     return render(request, 'blog/stocks_dashboard.html', {'title': 'Stocks'})
 
 
+@require_dashboard_auth
+def treasury_stock_dashboard(request, slug):
+    config = TREASURY_STOCKS.get(slug)
+    if not config:
+        return redirect('stocks_dashboard')
+    context = {
+        'title': config['name'],
+        'stock': config,
+        'stock_json': json.dumps(config),
+        'slug': slug,
+        'treasury_stocks': TREASURY_STOCKS,
+    }
+    return render(request, 'blog/treasury_stock_dashboard.html', context)
+
+
 def get_historical_bitcoin_chf(date):
     params = parse.urlencode({
         'date': date,
@@ -781,6 +861,51 @@ def stock_portfolio(request):
         },
         'holdings': holdings,
     })
+
+
+@require_dashboard_auth
+def treasury_stock_data(request, slug):
+    config = TREASURY_STOCKS.get(slug)
+    if not config:
+        return JsonResponse({
+            'status': 'not_found',
+            'error': 'Unknown treasury stock',
+            'points': [],
+        }, status=404)
+
+    start = request.GET.get('start', config.get('start', '2024-01-01'))
+    try:
+        stock_months = _month_end_points(_fetch_yahoo_daily_series(config['symbol'], start))
+        benchmark_months = _month_end_points(_fetch_yahoo_daily_series(config['benchmark_symbol'], start))
+        points = []
+        for month in sorted(set(stock_months) & set(benchmark_months)):
+            stock_point = stock_months[month]
+            benchmark_point = benchmark_months[month]
+            benchmark_per_share = stock_point['close'] / benchmark_point['close']
+            points.append({
+                'date': stock_point['date'].strftime('%Y-%m-%d'),
+                'label': stock_point['date'].strftime('%b %Y'),
+                'stock_price': round(stock_point['close'], 4),
+                'benchmark_price': round(benchmark_point['close'], 2),
+                'benchmark_per_share': round(benchmark_per_share, 10),
+                'units_per_share': round(benchmark_per_share * SATOSHIS_PER_BTC),
+            })
+        return JsonResponse({
+            'status': 'ok',
+            'source': 'Yahoo Finance',
+            'stock': config,
+            'symbol': '%s/%s' % (config['symbol'], config['benchmark_symbol']),
+            'formula': '%s adjusted close / %s close * 100,000,000' % (config['symbol'], config['benchmark_symbol']),
+            'points': points,
+        })
+    except (HTTPError, URLError, TimeoutError, KeyError, IndexError, ValueError, json.JSONDecodeError) as exc:
+        return JsonResponse({
+            'status': 'unavailable',
+            'source': 'Yahoo Finance',
+            'error': 'Could not build treasury stock chart data',
+            'detail': str(exc),
+            'points': [],
+        }, status=503)
 
 
 @require_dashboard_auth
