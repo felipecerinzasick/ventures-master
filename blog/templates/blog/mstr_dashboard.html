@@ -483,6 +483,16 @@
                 <span>Current baseline</span>
                 <strong id="mstrBaseline">141,400 sats/share</strong>
               </div>
+              <div class="goal-stats">
+                <div class="goal-stat">
+                  <span>Valuation band</span>
+                  <strong id="mstrBand">Loading</strong>
+                </div>
+                <div class="goal-stat">
+                  <span>Distance to first trim</span>
+                  <strong id="mstrTrimDistance">Loading</strong>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -491,7 +501,7 @@
           <div class="panel-header">
             <div>
               <h2>MSTR Priced In Bitcoin</h2>
-              <p>Sats/share with BTC price as background and 2030 scenario projection lines.</p>
+              <p>Time-proportional sats/share chart with BTC price overlay, valuation bands, and 2030 scenario markers.</p>
             </div>
             <span id="mstrStatus" class="pill">Loading</span>
           </div>
@@ -501,7 +511,7 @@
               <div class="legend-row">
                 <span><i class="legend-dot gold"></i>MSTR sats/share</span>
                 <span><i class="legend-dot blue"></i>BTC price</span>
-                <span><i class="legend-dot accent"></i>2030 scenarios</span>
+                <span><i class="legend-dot accent"></i>Valuation bands</span>
               </div>
             </div>
             <div id="mstrBtcChart"></div>
@@ -577,6 +587,14 @@
       { name: 'Re-rating / premium returns', ratio: 400000 }
     ];
 
+    const BANDS = [
+      { name: 'Deep value', min: 0, max: 100000, fill: '#e6f3fb', note: 'MSTR very cheap versus BTC' },
+      { name: 'Attractive', min: 100000, max: 150000, fill: '#edf6ee', note: 'Accumulation zone' },
+      { name: 'Neutral', min: 150000, max: 200000, fill: '#fbf6e8', note: 'Thesis working but no trim yet' },
+      { name: 'First trim', min: 200000, max: 250000, fill: '#f7ead6', note: 'Begin rotating alpha into BTC' },
+      { name: 'Premium', min: 250000, max: 450000, fill: '#f5e1df', note: 'Re-rating zone' }
+    ];
+
     function sats(value) {
       if (!Number.isFinite(value)) {
         return 'Unavailable';
@@ -597,6 +615,11 @@
         currency: 'USD',
         maximumFractionDigits: 0
       }).format(value);
+    }
+
+    function bandForSats(value) {
+      const band = BANDS.find(item => value >= item.min && value < item.max) || BANDS[BANDS.length - 1];
+      return band;
     }
 
     function setText(id, text) {
@@ -665,30 +688,34 @@
       const latest = state.mstrBtc[state.mstrBtc.length - 1];
       setText('mstrSats', sats(latest.sats_per_share));
       setText('mstrBtcPerShare', `${btcAmount(latest.btc_per_share)} BTC`);
+      const currentBand = bandForSats(latest.sats_per_share);
+      const trimDistance = ((200000 / latest.sats_per_share) - 1) * 100;
+      setText('mstrBand', `${currentBand.name}: ${currentBand.note}`);
+      setText('mstrTrimDistance', trimDistance > 0 ? `${trimDistance.toFixed(1)}% to 200k sats` : 'In trim zone');
 
       const btcTarget = Number(document.getElementById('mstrBtcTargetInput').value) || 250000;
-      const projectionLabel = 'Dec 2030';
+      const projectionDate = new Date('2030-12-31T00:00:00Z');
       const width = 980;
       const height = 430;
-      const padX = 46;
+      const padX = 58;
       const padY = 28;
       const usableWidth = width - padX * 2;
       const usableHeight = height - padY * 2;
       const values = state.mstrBtc.map(point => point.sats_per_share);
-      const projectedRatios = SCENARIOS.map(scenario => scenario.ratio);
+      const bandCeiling = Math.max(...BANDS.map(band => band.max));
       const btcValues = state.mstrBtc.map(point => point.btc_usd).concat([btcTarget]);
-      const minSats = Math.min(...values, ...projectedRatios);
-      const maxSats = Math.max(...values, ...projectedRatios);
+      const minSats = 0;
+      const maxSats = Math.max(...values, bandCeiling);
       const satsRange = maxSats - minSats || 1;
       const minBtc = Math.min(...btcValues);
       const maxBtc = Math.max(...btcValues);
       const btcRange = maxBtc - minBtc || 1;
-      const projectionStartX = padX + usableWidth * 0.82;
-      const projectionEndX = width - padX;
-      const historyWidth = projectionStartX - padX;
+      const startDate = new Date(`${state.mstrBtc[0].date}T00:00:00Z`);
+      const latestDate = new Date(`${latest.date}T00:00:00Z`);
+      const timeRange = projectionDate.getTime() - startDate.getTime();
 
-      function xFor(index) {
-        return padX + (state.mstrBtc.length === 1 ? 0 : (index / (state.mstrBtc.length - 1)) * historyWidth);
+      function xForDate(date) {
+        return padX + ((date.getTime() - startDate.getTime()) / timeRange) * usableWidth;
       }
 
       function ySats(value) {
@@ -699,47 +726,65 @@
         return padY + usableHeight - ((value - minBtc) / btcRange) * usableHeight;
       }
 
-      const satsCoords = values.map((value, index) => ({ x: xFor(index), y: ySats(value) }));
-      const btcCoords = state.mstrBtc.map((point, index) => ({ x: xFor(index), y: yBtc(point.btc_usd) }));
+      const satsCoords = state.mstrBtc.map((point, index) => ({ x: xForDate(new Date(`${point.date}T00:00:00Z`)), y: ySats(values[index]) }));
+      const btcCoords = state.mstrBtc.map(point => ({ x: xForDate(new Date(`${point.date}T00:00:00Z`)), y: yBtc(point.btc_usd) }));
       const satsPoints = satsCoords.map(point => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(' ');
       const btcPoints = btcCoords.map(point => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(' ');
-      const btcArea = `${padX},${height - padY} ${btcPoints} ${projectionStartX},${height - padY}`;
-      const btcProjection = `${projectionStartX.toFixed(1)},${yBtc(latest.btc_usd).toFixed(1)} ${projectionEndX.toFixed(1)},${yBtc(btcTarget).toFixed(1)}`;
+      const latestX = xForDate(latestDate);
+      const projectionEndX = xForDate(projectionDate);
+      const btcArea = `${padX},${height - padY} ${btcPoints} ${latestX.toFixed(1)},${height - padY}`;
+      const btcProjection = `${latestX.toFixed(1)},${yBtc(latest.btc_usd).toFixed(1)} ${projectionEndX.toFixed(1)},${yBtc(btcTarget).toFixed(1)}`;
       const first = state.mstrBtc[0];
+      const yearTicks = [];
+      for (let year = startDate.getUTCFullYear(); year <= 2030; year += 1) {
+        const tickDate = new Date(`${year}-01-01T00:00:00Z`);
+        if (tickDate >= startDate && tickDate <= projectionDate) {
+          yearTicks.push({ year, x: xForDate(tickDate) });
+        }
+      }
 
       target.innerHTML = `
         <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="MSTR sats per share with BTC price overlay">
+          ${BANDS.map(band => {
+            const yTop = ySats(band.max);
+            const yBottom = ySats(band.min);
+            return `<rect x="${padX}" y="${yTop.toFixed(1)}" width="${usableWidth}" height="${Math.max(0, yBottom - yTop).toFixed(1)}" fill="${band.fill}" opacity="0.62"></rect>
+              <text x="${padX + 8}" y="${(yTop + 14).toFixed(1)}" fill="#607285" font-size="11">${escapeHtml(band.name)}</text>`;
+          }).join('')}
+          ${yearTicks.map(tick => `<line x1="${tick.x.toFixed(1)}" y1="${padY}" x2="${tick.x.toFixed(1)}" y2="${height - padY}" stroke="#dfe5ec" stroke-width="1" opacity="0.65"></line>
+            <text x="${tick.x.toFixed(1)}" y="${height - 3}" text-anchor="middle" fill="#607285" font-size="11">${tick.year}</text>`).join('')}
           <line x1="${padX}" y1="${height - padY}" x2="${width - padX}" y2="${height - padY}" stroke="#dfe5ec" stroke-width="1" />
           <line x1="${padX}" y1="${padY}" x2="${padX}" y2="${height - padY}" stroke="#dfe5ec" stroke-width="1" />
           <line x1="${width - padX}" y1="${padY}" x2="${width - padX}" y2="${height - padY}" stroke="#dfe5ec" stroke-width="1" />
-          <line x1="${projectionStartX}" y1="${padY}" x2="${projectionStartX}" y2="${height - padY}" stroke="#dfe5ec" stroke-width="1" stroke-dasharray="4 6" />
+          <line x1="${latestX.toFixed(1)}" y1="${padY}" x2="${latestX.toFixed(1)}" y2="${height - padY}" stroke="#607285" stroke-width="1" stroke-dasharray="4 6" />
           <polygon points="${btcArea}" fill="var(--blue)" opacity="0.10"></polygon>
           <polyline points="${btcPoints}" fill="none" stroke="var(--blue)" stroke-width="2.5" opacity="0.45" stroke-linecap="round" stroke-linejoin="round"></polyline>
           <polyline points="${btcProjection}" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-dasharray="7 7" opacity="0.75"></polyline>
           <polyline points="${satsPoints}" fill="none" stroke="var(--gold)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
           ${SCENARIOS.map(scenario => {
-            const start = `${projectionStartX.toFixed(1)},${ySats(latest.sats_per_share).toFixed(1)}`;
-            const end = `${projectionEndX.toFixed(1)},${ySats(scenario.ratio).toFixed(1)}`;
-            return `<polyline points="${start} ${end}" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-dasharray="5 6" opacity="0.82"></polyline>
-              <text x="${projectionEndX + 5}" y="${ySats(scenario.ratio).toFixed(1)}" fill="#607285" font-size="11">${sats(scenario.ratio)}</text>`;
+            const y = ySats(scenario.ratio);
+            return `<line x1="${padX}" y1="${y.toFixed(1)}" x2="${projectionEndX.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="5 7" opacity="0.78"></line>
+              <circle cx="${projectionEndX.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="var(--accent)"></circle>
+              <text x="${projectionEndX + 5}" y="${(y + 4).toFixed(1)}" fill="#607285" font-size="11">${sats(scenario.ratio)}</text>`;
           }).join('')}
           ${satsCoords.map((point, index) => {
             const source = state.mstrBtc[index];
             const previousX = index === 0 ? padX : (point.x + satsCoords[index - 1].x) / 2;
-            const nextX = index === satsCoords.length - 1 ? projectionStartX : (point.x + satsCoords[index + 1].x) / 2;
+            const nextX = index === satsCoords.length - 1 ? latestX : (point.x + satsCoords[index + 1].x) / 2;
             const tooltip = `${source.label}\n${sats(source.sats_per_share)} per share\n${btcAmount(source.btc_per_share)} BTC per share\nMSTR ${usd(source.mstr_usd)}\nBTC ${usd(source.btc_usd)}`;
             return `<rect x="${previousX.toFixed(1)}" y="${padY}" width="${Math.max(2, nextX - previousX).toFixed(1)}" height="${usableHeight}" fill="transparent" data-chart-tooltip="${escapeHtml(tooltip)}"></rect>`;
           }).join('')}
-          <rect x="${projectionStartX.toFixed(1)}" y="${padY}" width="${(projectionEndX - projectionStartX).toFixed(1)}" height="${usableHeight}" fill="transparent" data-chart-tooltip="${escapeHtml(`2030 model\nBTC target ${usd(btcTarget)}\nScenario lines show sats/share targets\nImplied prices update in the table`)}"></rect>
-          <text x="${padX}" y="${height - 3}" fill="#607285" font-size="12">${escapeHtml(first.label)}</text>
-          <text x="${projectionStartX}" y="${height - 3}" text-anchor="middle" fill="#607285" font-size="12">${escapeHtml(latest.label)}</text>
-          <text x="${projectionEndX}" y="${height - 3}" text-anchor="end" fill="#607285" font-size="12">${projectionLabel}</text>
-          <text x="${padX - 8}" y="${padY + 4}" text-anchor="end" fill="#607285" font-size="11">${sats(maxSats)}</text>
-          <text x="${padX - 8}" y="${height - padY + 4}" text-anchor="end" fill="#607285" font-size="11">${sats(minSats)}</text>
+          <rect x="${latestX.toFixed(1)}" y="${padY}" width="${(projectionEndX - latestX).toFixed(1)}" height="${usableHeight}" fill="transparent" data-chart-tooltip="${escapeHtml(`2030 model\nBTC target ${usd(btcTarget)}\nHorizontal bands show valuation zones\nScenario markers show possible 2030 sats/share outcomes`)}"></rect>
+          <text x="${latestX.toFixed(1)}" y="${padY - 8}" text-anchor="middle" fill="#607285" font-size="11">today</text>
+          <text x="${projectionEndX}" y="${height - 3}" text-anchor="end" fill="#607285" font-size="12">2030</text>
+          <text x="${padX - 8}" y="${ySats(400000) + 4}" text-anchor="end" fill="#607285" font-size="11">400k</text>
+          <text x="${padX - 8}" y="${ySats(250000) + 4}" text-anchor="end" fill="#607285" font-size="11">250k</text>
+          <text x="${padX - 8}" y="${ySats(200000) + 4}" text-anchor="end" fill="#607285" font-size="11">200k</text>
+          <text x="${padX - 8}" y="${ySats(100000) + 4}" text-anchor="end" fill="#607285" font-size="11">100k</text>
           <text x="${width - padX + 8}" y="${padY + 4}" fill="#607285" font-size="11">${usd(maxBtc)}</text>
           <text x="${width - padX + 8}" y="${height - padY + 4}" fill="#607285" font-size="11">${usd(minBtc)}</text>
         </svg>
-        <div class="chart-meta">${sats(first.sats_per_share)} to ${sats(latest.sats_per_share)}; BTC overlay projects to ${usd(btcTarget)} by 2030.</div>
+        <div class="chart-meta">${sats(latest.sats_per_share)} is currently in the ${currentBand.name.toLowerCase()} band. A move to 200k sats/share is the first trim zone; BTC overlay projects to ${usd(btcTarget)} by 2030.</div>
       `;
     }
 
