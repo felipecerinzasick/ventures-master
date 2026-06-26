@@ -33,7 +33,7 @@ STOCK_HOLDINGS = [
     {'name': 'Asset Entities', 'ticker': 'ASST', 'symbol': 'ASST', 'shares': Decimal('180'), 'average_price': Decimal('18.03'), 'cost_currency': 'USD', 'fallback_value': Decimal('2005'), 'fallback_currency': 'USD'},
     {'name': 'Cipher Mining', 'ticker': 'CFR', 'symbol': 'CIFR', 'shares': Decimal('40'), 'average_price': Decimal('7.15'), 'cost_currency': 'USD', 'fallback_value': Decimal('1016'), 'fallback_currency': 'USD'},
     {'name': 'CleanSpark', 'ticker': 'CLSK', 'symbol': 'CLSK', 'shares': Decimal('96'), 'average_price': Decimal('15.30'), 'cost_currency': 'USD', 'fallback_value': Decimal('1543'), 'fallback_currency': 'USD'},
-    {'name': 'Metaplanet', 'ticker': 'Metaplanet', 'symbol': 'D7G.F', 'shares': Decimal('2850'), 'average_price': Decimal('2.3117'), 'cost_currency': 'EUR', 'fallback_value': Decimal('3081'), 'fallback_currency': 'EUR'},
+    {'name': 'Metaplanet', 'ticker': 'DN3', 'symbol': 'DN3.F', 'shares': Decimal('2850'), 'average_price': Decimal('2.3117'), 'cost_currency': 'EUR', 'fallback_value': Decimal('3140'), 'fallback_currency': 'EUR'},
     {'name': 'IREN', 'ticker': 'IREN', 'symbol': 'IREN', 'shares': Decimal('30'), 'average_price': Decimal('11.99'), 'cost_currency': 'USD', 'fallback_value': Decimal('1399'), 'fallback_currency': 'USD'},
     {'name': 'The Keel', 'ticker': 'KEEL', 'symbol': 'KEEL', 'shares': Decimal('710'), 'average_price': Decimal('2.39'), 'cost_currency': 'USD', 'fallback_value': Decimal('4264'), 'fallback_currency': 'USD'},
     {'name': 'MARA Holdings', 'ticker': 'MARA', 'symbol': 'MARA', 'shares': Decimal('164'), 'average_price': Decimal('19.76'), 'cost_currency': 'USD', 'fallback_value': Decimal('2364'), 'fallback_currency': 'USD'},

@@ -37,6 +37,10 @@
       font: inherit;
     }
 
+    select {
+      font: inherit;
+    }
+
     .dashboard-shell {
       min-height: 100vh;
       display: grid;
@@ -157,6 +161,24 @@
       filter: brightness(0.97);
     }
 
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .currency-select {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 34px 8px 11px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
     .main-grid {
       padding: 28px 32px 40px;
       display: grid;
@@ -254,6 +276,32 @@
       white-space: nowrap;
     }
 
+    th.sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    th.sortable::after {
+      content: "";
+      display: inline-block;
+      width: 0;
+      height: 0;
+      margin-left: 6px;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 5px solid rgba(96, 114, 133, 0.55);
+      vertical-align: middle;
+    }
+
+    th.sortable.sorted-asc::after {
+      border-top: 0;
+      border-bottom: 5px solid var(--accent);
+    }
+
+    th.sortable.sorted-desc::after {
+      border-top-color: var(--accent);
+    }
+
     td strong {
       display: block;
       color: var(--ink);
@@ -349,6 +397,11 @@
         padding: 16px 20px;
       }
 
+      .topbar-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
       .main-grid {
         padding: 20px;
       }
@@ -385,7 +438,16 @@
           <h1>Stock Portfolio</h1>
           <p>Live listed holdings for the current period · <a class="site-link" href="{% url 'dashboard' %}">Back to overview</a></p>
         </div>
-        <button id="refreshButton" class="btn-local" type="button">Refresh prices</button>
+        <div class="topbar-actions">
+          <select id="currencySelect" class="currency-select" aria-label="Display currency">
+            <option value="CHF" selected>CHF</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="BTC">BTC</option>
+          </select>
+          <button id="refreshButton" class="btn-local" type="button">Refresh prices</button>
+        </div>
       </header>
 
       <div class="main-grid">
@@ -429,13 +491,13 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Holding</th>
-                    <th class="right">Shares</th>
-                    <th class="right">Price</th>
-                    <th class="right">Market value</th>
-                    <th class="right">Value CHF</th>
-                    <th class="right">Avg cost</th>
-                    <th class="right">Unrealized CHF</th>
+                    <th class="sortable" data-sort="ticker">Holding</th>
+                    <th class="right sortable" data-sort="shares">Shares</th>
+                    <th class="right sortable" data-sort="price">Price</th>
+                    <th class="right sortable" data-sort="value">Market value</th>
+                    <th id="convertedValueHeader" class="right sortable" data-sort="value_chf">Value CHF</th>
+                    <th class="right sortable" data-sort="average_price">Avg cost</th>
+                    <th id="unrealizedHeader" class="right sortable" data-sort="unrealized_chf">Unrealized CHF</th>
                     <th>Status</th>
                   </tr>
                 </thead>
@@ -466,7 +528,7 @@
               </div>
               <div class="note-row">
                 <strong>Symbol mapping</strong>
-                <span>CFR is currently mapped to CIFR, Metaplanet to D7G.F, SHM to SHM.DE, and Y6G0 to Y6G0.F.</span>
+                <span>CFR is currently mapped to CIFR, Metaplanet to DN3.F, SHM to SHM.DE, and Y6G0 to Y6G0.F.</span>
               </div>
             </div>
           </aside>
@@ -476,16 +538,61 @@
   </div>
 
   <script>
+    const state = {
+      currency: 'CHF',
+      portfolio: null,
+      sortKey: 'value_chf',
+      sortDirection: 'desc',
+      btcChf: null
+    };
+
+    const fxFromChf = {
+      CHF: 1,
+      USD: 1.12,
+      EUR: 1.05,
+      GBP: 0.89,
+      BTC: null
+    };
+
+    const currencyDecimals = {
+      CHF: 2,
+      USD: 2,
+      EUR: 2,
+      GBP: 2,
+      BTC: 4
+    };
+
     const numberFormatter = new Intl.NumberFormat('de-CH', { maximumFractionDigits: 2 });
+
+    function formatterFor(currency) {
+      const decimals = currencyDecimals[currency] || 2;
+      return new Intl.NumberFormat('de-CH', {
+        minimumFractionDigits: currency === 'BTC' ? 4 : 0,
+        maximumFractionDigits: decimals
+      });
+    }
+
+    function fromChf(value) {
+      if (!Number.isFinite(Number(value))) {
+        return null;
+      }
+      if (state.currency === 'BTC') {
+        return state.btcChf ? Number(value) / state.btcChf : null;
+      }
+      return Number(value) * fxFromChf[state.currency];
+    }
 
     function money(value, currency) {
       if (!Number.isFinite(Number(value))) {
         return 'Unavailable';
       }
-      if (currency === 'CHF') {
-        return `CHF ${numberFormatter.format(value)}`;
-      }
-      return `${currency} ${numberFormatter.format(value)}`;
+      const formatter = formatterFor(currency);
+      return `${currency} ${formatter.format(value)}`;
+    }
+
+    function displayMoneyFromChf(valueChf) {
+      const value = fromChf(valueChf);
+      return money(value, state.currency);
     }
 
     function shares(value) {
@@ -499,6 +606,43 @@
       }
     }
 
+    function sortValue(holding, key) {
+      if (key === 'ticker') {
+        return holding.ticker;
+      }
+      if (key === 'value') {
+        return holding.value;
+      }
+      return holding[key];
+    }
+
+    function sortedHoldings() {
+      if (!state.portfolio) {
+        return [];
+      }
+      return [...state.portfolio.holdings].sort((a, b) => {
+        const left = sortValue(a, state.sortKey);
+        const right = sortValue(b, state.sortKey);
+        if (typeof left === 'string' || typeof right === 'string') {
+          return state.sortDirection === 'asc'
+            ? String(left).localeCompare(String(right))
+            : String(right).localeCompare(String(left));
+        }
+        return state.sortDirection === 'asc'
+          ? Number(left) - Number(right)
+          : Number(right) - Number(left);
+      });
+    }
+
+    function updateSortHeaders() {
+      document.querySelectorAll('th.sortable').forEach(header => {
+        header.classList.remove('sorted-asc', 'sorted-desc');
+        if (header.dataset.sort === state.sortKey) {
+          header.classList.add(state.sortDirection === 'asc' ? 'sorted-asc' : 'sorted-desc');
+        }
+      });
+    }
+
     function renderHoldingRow(holding) {
       const row = document.createElement('tr');
       const pnlClass = holding.unrealized_chf >= 0 ? 'gain' : 'loss';
@@ -507,12 +651,47 @@
         <td class="right">${shares(holding.shares)}</td>
         <td class="right">${money(holding.price, holding.currency)}</td>
         <td class="right">${money(holding.value, holding.currency)}</td>
-        <td class="right">${money(holding.value_chf, 'CHF')}</td>
+        <td class="right">${displayMoneyFromChf(holding.value_chf)}</td>
         <td class="right">${money(holding.average_price, holding.cost_currency)}</td>
-        <td class="right ${pnlClass}">${money(holding.unrealized_chf, 'CHF')}</td>
+        <td class="right ${pnlClass}">${displayMoneyFromChf(holding.unrealized_chf)}</td>
         <td><span class="status-pill ${holding.live ? '' : 'fallback'}">${holding.live ? 'Live' : 'Fallback'}</span></td>
       `;
       return row;
+    }
+
+    function renderPortfolio() {
+      if (!state.portfolio) {
+        return;
+      }
+      const payload = state.portfolio;
+      setText('totalChf', displayMoneyFromChf(payload.total_chf));
+      setText('unrealizedChf', displayMoneyFromChf(payload.unrealized_chf));
+      document.getElementById('unrealizedChf').className = `metric-value ${payload.unrealized_chf >= 0 ? 'gain' : 'loss'}`;
+      setText('totalUsd', money(payload.totals.USD, 'USD'));
+      setText('totalEur', money(payload.totals.EUR, 'EUR'));
+      setText('liveCoverage', `${payload.live_count}/${payload.total_count}`);
+      setText('quoteStatus', `${payload.source}. ${payload.live_count} holdings priced live.`);
+      setText('convertedValueHeader', `Value ${state.currency}`);
+      setText('unrealizedHeader', `Unrealized ${state.currency}`);
+      updateSortHeaders();
+
+      const table = document.getElementById('holdingsTable');
+      table.innerHTML = '';
+      sortedHoldings().forEach(holding => table.appendChild(renderHoldingRow(holding)));
+    }
+
+    async function fetchBitcoinPrice() {
+      try {
+        const response = await fetch('{% url "bitcoin_price" %}?currencies=chf');
+        const payload = await response.json();
+        if (response.ok && payload.data && payload.data.bitcoin && payload.data.bitcoin.chf) {
+          state.btcChf = Number(payload.data.bitcoin.chf);
+          fxFromChf.BTC = state.btcChf ? 1 / state.btcChf : null;
+          renderPortfolio();
+        }
+      } catch (error) {
+        state.btcChf = null;
+      }
     }
 
     async function fetchPortfolio() {
@@ -524,26 +703,35 @@
           throw new Error('Stock portfolio unavailable');
         }
 
-        setText('totalChf', money(payload.total_chf, 'CHF'));
-        setText('unrealizedChf', money(payload.unrealized_chf, 'CHF'));
-        document.getElementById('unrealizedChf').className = `metric-value ${payload.unrealized_chf >= 0 ? 'gain' : 'loss'}`;
-        setText('totalUsd', money(payload.totals.USD, 'USD'));
-        setText('totalEur', money(payload.totals.EUR, 'EUR'));
-        setText('liveCoverage', `${payload.live_count}/${payload.total_count}`);
-        setText('quoteStatus', `${payload.source}. ${payload.live_count} holdings priced live.`);
+        state.portfolio = payload;
         setText('lastUpdated', `Updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
-
-        const table = document.getElementById('holdingsTable');
-        table.innerHTML = '';
-        payload.holdings.forEach(holding => table.appendChild(renderHoldingRow(holding)));
+        renderPortfolio();
       } catch (error) {
         setText('quoteStatus', 'Live prices unavailable. Showing stored fallback values after refresh.');
         setText('lastUpdated', 'Refresh failed');
       }
     }
 
+    document.getElementById('currencySelect').addEventListener('change', event => {
+      state.currency = event.target.value;
+      renderPortfolio();
+    });
     document.getElementById('refreshButton').addEventListener('click', fetchPortfolio);
+    document.querySelectorAll('th.sortable').forEach(header => {
+      header.addEventListener('click', () => {
+        const nextKey = header.dataset.sort;
+        if (state.sortKey === nextKey) {
+          state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+          state.sortKey = nextKey;
+          state.sortDirection = nextKey === 'ticker' ? 'asc' : 'desc';
+        }
+        renderPortfolio();
+      });
+    });
+    fetchBitcoinPrice();
     fetchPortfolio();
+    setInterval(fetchBitcoinPrice, 120000);
     setInterval(fetchPortfolio, 120000);
   </script>
 </body>
