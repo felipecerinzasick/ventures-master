@@ -788,9 +788,10 @@
       </div>
       <nav class="nav-list">
         <a class="nav-link-local active" href="{% url 'dashboard' %}"><span>Overview</span><span>01</span></a>
-        <a class="nav-link-local" href="#reports"><span>Reports</span><span>02</span></a>
-        <a class="nav-link-local" href="{% url 'mstr_dashboard' %}"><span>MSTR</span><span>03</span></a>
-        <a class="nav-link-local" href="#integrations"><span>Integrations</span><span>04</span></a>
+        <a class="nav-link-local" href="{% url 'stocks_dashboard' %}"><span>Stocks</span><span>02</span></a>
+        <a class="nav-link-local" href="#reports"><span>Reports</span><span>03</span></a>
+        <a class="nav-link-local" href="{% url 'mstr_dashboard' %}"><span>MSTR</span><span>04</span></a>
+        <a class="nav-link-local" href="#integrations"><span>Integrations</span><span>05</span></a>
         <a class="nav-link-local" href="{% url 'index' %}"><span>Landing page</span><span>H</span></a>
       </nav>
     </aside>
@@ -1049,8 +1050,8 @@
                 <span id="coingeckoDot" class="status-dot pending"></span>
               </div>
               <div class="integration-row">
-                <div><strong>Interactive Brokers</strong><span id="ibkrStatus">Checking local gateway</span></div>
-                <div class="integration-value" id="ibkrValue">Pending</div>
+                <div><strong>Live listed equity quotes</strong><span id="stockQuoteStatus">Loading Yahoo Finance prices</span></div>
+                <div class="integration-value" id="stockQuoteValue">Pending</div>
               </div>
             </div>
           </section>
@@ -1127,8 +1128,7 @@
       btcAthChangePct: null,
       btcLastUpdated: null,
       btcStatus: 'loading',
-      ibkrValue: null,
-      ibkrCurrency: null,
+      stockQuoteStatus: 'loading',
       progression: [],
       lockedReportDateLabel: '31.05.2026',
       currentCloseDateLabel: '30.06.2026',
@@ -1342,8 +1342,7 @@
     function renderHoldings() {
       const rows = [
         { name: 'Cash position', type: 'Cash', date: `Current toward ${state.currentCloseDateLabel}`, value: fromChf(state.cashChf) },
-        { name: 'Listed equity portfolio', type: 'Stocks', date: `Current toward ${state.currentCloseDateLabel}`, value: fromChf(state.stocksChf) },
-        ...(Number.isFinite(state.ibkrValue) ? [{ name: 'IBKR portfolio value', type: 'Brokerage', date: 'Live via local gateway', value: state.ibkrCurrency === state.currency ? state.ibkrValue : null }] : []),
+        { name: 'Listed equity portfolio', type: 'Stocks', date: state.stockQuoteStatus === 'live' ? 'Live quotes via stock page' : `Current toward ${state.currentCloseDateLabel}`, value: fromChf(state.stocksChf) },
         { name: 'Bitcoin wallet', type: 'Bitcoin', date: state.btcLastUpdated || 'Live price pending', value: btcValue() },
         ...state.privateAssets.map(asset => ({
           name: asset.name,
@@ -1668,27 +1667,25 @@
       render();
     }
 
-    async function fetchIbkrPortfolio() {
+    async function fetchStockPortfolio() {
       try {
-        const response = await fetch('{% url "ibkr_portfolio" %}');
+        const response = await fetch('{% url "stock_portfolio" %}');
         const payload = await response.json();
-        if (!response.ok || payload.status !== 'connected') {
-          throw new Error(payload.message || 'IBKR unavailable');
+        if (!response.ok || payload.status !== 'ok') {
+          throw new Error('Stock quotes unavailable');
         }
-        const value = Number(payload.net_liquidation);
-        state.ibkrCurrency = (payload.currency || '').toUpperCase() || null;
-        state.ibkrValue = Number.isFinite(value) ? value : null;
-        if (Number.isFinite(value) && state.ibkrCurrency && fxFromChf[state.ibkrCurrency]) {
-          state.stocksChf = value / fxFromChf[state.ibkrCurrency];
-          document.getElementById('stocksInput').value = Math.round(state.stocksChf);
+        const value = Number(payload.total_chf);
+        if (Number.isFinite(value)) {
+          state.stocksChf = value;
+          document.getElementById('stocksInput').value = value.toFixed(2);
         }
-        setText('ibkrStatus', `Connected account ${payload.account_id}`);
-        setText('ibkrValue', Number.isFinite(value) && state.ibkrCurrency ? money(value, state.ibkrCurrency) : 'Connected');
+        state.stockQuoteStatus = payload.live_count > 0 ? 'live' : 'fallback';
+        setText('stockQuoteStatus', `${payload.live_count}/${payload.total_count} holdings priced live`);
+        setText('stockQuoteValue', Number.isFinite(value) ? money(value, 'CHF') : 'Loaded');
       } catch (error) {
-        state.ibkrValue = null;
-        state.ibkrCurrency = null;
-        setText('ibkrStatus', 'Start and authenticate IBKR Client Portal Gateway');
-        setText('ibkrValue', 'Not connected');
+        state.stockQuoteStatus = 'fallback';
+        setText('stockQuoteStatus', 'Using saved holding values');
+        setText('stockQuoteValue', money(state.stocksChf, 'CHF'));
       }
       render();
     }
@@ -1730,10 +1727,10 @@
     state.currentCloseDateLabel = currentMonthEndLabel();
     render();
     fetchBitcoinPrice();
-    fetchIbkrPortfolio();
+    fetchStockPortfolio();
     fetchWealthProgression();
     setInterval(fetchBitcoinPrice, 120000);
-    setInterval(fetchIbkrPortfolio, 120000);
+    setInterval(fetchStockPortfolio, 120000);
   </script>
 </body>
 </html>

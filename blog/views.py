@@ -29,6 +29,23 @@ from django.views.generic import (
 
 SATOSHIS_PER_BTC = 100000000
 
+STOCK_HOLDINGS = [
+    {'name': 'Asset Entities', 'ticker': 'ASST', 'symbol': 'ASST', 'shares': Decimal('180'), 'average_price': Decimal('18.03'), 'cost_currency': 'USD', 'fallback_value': Decimal('2005'), 'fallback_currency': 'USD'},
+    {'name': 'Cipher Mining', 'ticker': 'CFR', 'symbol': 'CIFR', 'shares': Decimal('40'), 'average_price': Decimal('7.15'), 'cost_currency': 'USD', 'fallback_value': Decimal('1016'), 'fallback_currency': 'USD'},
+    {'name': 'CleanSpark', 'ticker': 'CLSK', 'symbol': 'CLSK', 'shares': Decimal('96'), 'average_price': Decimal('15.30'), 'cost_currency': 'USD', 'fallback_value': Decimal('1543'), 'fallback_currency': 'USD'},
+    {'name': 'Metaplanet', 'ticker': 'Metaplanet', 'symbol': 'D7G.F', 'shares': Decimal('2850'), 'average_price': Decimal('2.3117'), 'cost_currency': 'EUR', 'fallback_value': Decimal('3081'), 'fallback_currency': 'EUR'},
+    {'name': 'IREN', 'ticker': 'IREN', 'symbol': 'IREN', 'shares': Decimal('30'), 'average_price': Decimal('11.99'), 'cost_currency': 'USD', 'fallback_value': Decimal('1399'), 'fallback_currency': 'USD'},
+    {'name': 'The Keel', 'ticker': 'KEEL', 'symbol': 'KEEL', 'shares': Decimal('710'), 'average_price': Decimal('2.39'), 'cost_currency': 'USD', 'fallback_value': Decimal('4264'), 'fallback_currency': 'USD'},
+    {'name': 'MARA Holdings', 'ticker': 'MARA', 'symbol': 'MARA', 'shares': Decimal('164'), 'average_price': Decimal('19.76'), 'cost_currency': 'USD', 'fallback_value': Decimal('2364'), 'fallback_currency': 'USD'},
+    {'name': 'Strategy', 'ticker': 'MSTR', 'symbol': 'MSTR', 'shares': Decimal('51'), 'average_price': Decimal('153.69'), 'cost_currency': 'USD', 'fallback_value': Decimal('4284'), 'fallback_currency': 'USD'},
+    {'name': 'PayPal', 'ticker': 'PYPL', 'symbol': 'PYPL', 'shares': Decimal('10'), 'average_price': Decimal('56.23'), 'cost_currency': 'USD', 'fallback_value': Decimal('441.60'), 'fallback_currency': 'USD'},
+    {'name': 'Riot Platforms', 'ticker': 'RIOT', 'symbol': 'RIOT', 'shares': Decimal('20'), 'average_price': Decimal('11.16'), 'cost_currency': 'USD', 'fallback_value': Decimal('561'), 'fallback_currency': 'USD'},
+    {'name': 'SHM', 'ticker': 'SHM', 'symbol': 'SHM.DE', 'shares': Decimal('5'), 'average_price': Decimal('172.40'), 'cost_currency': 'EUR', 'fallback_value': Decimal('475.75'), 'fallback_currency': 'EUR'},
+    {'name': 'STRC', 'ticker': 'STRC', 'symbol': 'STRC', 'shares': Decimal('5.5'), 'average_price': Decimal('88.69'), 'cost_currency': 'USD', 'fallback_value': Decimal('405.82'), 'fallback_currency': 'USD'},
+    {'name': 'TeraWulf', 'ticker': 'WULF', 'symbol': 'WULF', 'shares': Decimal('25'), 'average_price': Decimal('6.77'), 'cost_currency': 'USD', 'fallback_value': Decimal('651.25'), 'fallback_currency': 'USD'},
+    {'name': 'Y6G0', 'ticker': 'Y6G0', 'symbol': 'Y6G0.F', 'shares': Decimal('120'), 'average_price': Decimal('21.146'), 'cost_currency': 'EUR', 'fallback_value': Decimal('1431'), 'fallback_currency': 'EUR'},
+]
+
 PORTFOLIO_REPORT = {
     'date': '31.05.2026',
     'cash': Decimal('5976.43'),
@@ -449,6 +466,11 @@ def mstr_dashboard(request):
     return render(request, 'blog/mstr_dashboard.html', {'title': 'MSTR'})
 
 
+@require_dashboard_auth
+def stocks_dashboard(request):
+    return render(request, 'blog/stocks_dashboard.html', {'title': 'Stocks'})
+
+
 def get_historical_bitcoin_chf(date):
     params = parse.urlencode({
         'date': date,
@@ -632,6 +654,129 @@ def _month_end_points(points):
     for point in points:
         months[point['date'].strftime('%Y-%m')] = point
     return months
+
+
+def _fetch_yahoo_quote(symbol):
+    params = parse.urlencode({
+        'range': '1d',
+        'interval': '1m',
+    })
+    url = 'https://query1.finance.yahoo.com/v8/finance/chart/%s?%s' % (parse.quote(symbol), params)
+    req = urlrequest.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    with urlrequest.urlopen(req, timeout=8) as response:
+        payload = json.loads(response.read().decode('utf-8'))
+    result = payload['chart']['result'][0]
+    meta = result.get('meta', {})
+    quote = result.get('indicators', {}).get('quote', [{}])[0]
+    closes = [price for price in quote.get('close', []) if price is not None]
+    price = meta.get('regularMarketPrice') or meta.get('previousClose') or (closes[-1] if closes else None)
+    if price is None:
+        raise ValueError('No price returned for %s' % symbol)
+    return {
+        'price': Decimal(str(price)),
+        'currency': (meta.get('currency') or 'USD').upper(),
+        'exchange': meta.get('exchangeName') or meta.get('fullExchangeName') or '',
+        'time': meta.get('regularMarketTime'),
+    }
+
+
+def _fx_rate_to_chf(currency):
+    currency = (currency or 'CHF').upper()
+    if currency == 'CHF':
+        return Decimal('1')
+    if currency == 'USD':
+        symbol = 'USDCHF=X'
+    elif currency == 'EUR':
+        symbol = 'EURCHF=X'
+    else:
+        symbol = '%sCHF=X' % currency
+    return _fetch_yahoo_quote(symbol)['price']
+
+
+@require_dashboard_auth
+def stock_portfolio(request):
+    fx_cache = {}
+    holdings = []
+    totals = {
+        'USD': Decimal('0'),
+        'EUR': Decimal('0'),
+        'CHF': Decimal('0'),
+        'cost_chf': Decimal('0'),
+    }
+    live_count = 0
+
+    for holding in STOCK_HOLDINGS:
+        error = None
+        try:
+            quote = _fetch_yahoo_quote(holding['symbol'])
+            price = quote['price']
+            currency = quote['currency']
+            value = price * holding['shares']
+            live = True
+            live_count += 1
+        except (HTTPError, URLError, TimeoutError, KeyError, IndexError, ValueError, json.JSONDecodeError) as exc:
+            price = holding['fallback_value'] / holding['shares']
+            currency = holding['fallback_currency']
+            value = holding['fallback_value']
+            live = False
+            error = str(exc)
+
+        fx_key = currency
+        if fx_key not in fx_cache:
+            try:
+                fx_cache[fx_key] = _fx_rate_to_chf(fx_key)
+            except (HTTPError, URLError, TimeoutError, KeyError, IndexError, ValueError, json.JSONDecodeError):
+                fx_cache[fx_key] = Decimal('0.89') if fx_key == 'EUR' else Decimal('0.80') if fx_key == 'USD' else Decimal('1')
+
+        cost_currency = holding['cost_currency']
+        if cost_currency not in fx_cache:
+            try:
+                fx_cache[cost_currency] = _fx_rate_to_chf(cost_currency)
+            except (HTTPError, URLError, TimeoutError, KeyError, IndexError, ValueError, json.JSONDecodeError):
+                fx_cache[cost_currency] = Decimal('0.89') if cost_currency == 'EUR' else Decimal('0.80') if cost_currency == 'USD' else Decimal('1')
+
+        value_chf = value * fx_cache[fx_key]
+        cost_value = holding['shares'] * holding['average_price']
+        cost_chf = cost_value * fx_cache[cost_currency]
+        unrealized_chf = value_chf - cost_chf
+        totals['CHF'] += value_chf
+        totals['cost_chf'] += cost_chf
+        if currency in totals:
+            totals[currency] += value
+
+        holdings.append({
+            'name': holding['name'],
+            'ticker': holding['ticker'],
+            'symbol': holding['symbol'],
+            'shares': float(holding['shares']),
+            'price': float(price),
+            'currency': currency,
+            'value': float(value),
+            'value_chf': float(value_chf),
+            'average_price': float(holding['average_price']),
+            'cost_currency': holding['cost_currency'],
+            'cost_value': float(cost_value),
+            'cost_chf': float(cost_chf),
+            'unrealized_chf': float(unrealized_chf),
+            'live': live,
+            'error': error,
+        })
+
+    return JsonResponse({
+        'status': 'ok',
+        'source': 'Yahoo Finance',
+        'live_count': live_count,
+        'total_count': len(STOCK_HOLDINGS),
+        'total_chf': float(totals['CHF']),
+        'total_cost_chf': float(totals['cost_chf']),
+        'unrealized_chf': float(totals['CHF'] - totals['cost_chf']),
+        'totals': {
+            'USD': float(totals['USD']),
+            'EUR': float(totals['EUR']),
+            'CHF': float(totals['CHF']),
+        },
+        'holdings': holdings,
+    })
 
 
 @require_dashboard_auth

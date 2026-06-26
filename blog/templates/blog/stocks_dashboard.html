@@ -1,0 +1,550 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hashen Stock Portfolio</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <style>
+    :root {
+      --ink: #123044;
+      --muted: #607285;
+      --line: #dfe5ec;
+      --panel: #ffffff;
+      --page: #f5f8fb;
+      --accent: #2487ce;
+      --blue: #124265;
+      --gold: #b68a35;
+      --green: #2f8f5b;
+      --red: #b84a4a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Inter, Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .dashboard-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      background: #0f2638;
+      color: #f8fafc;
+      padding: 28px 22px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 34px;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      background: #f8fafc;
+      color: var(--blue);
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .brand span {
+      color: #aab4c3;
+      font-size: 12px;
+    }
+
+    .nav-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav-link-local {
+      color: #d8dee9;
+      padding: 10px 12px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .nav-link-local.active,
+    .nav-link-local:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+      text-decoration: none;
+    }
+
+    .content {
+      min-width: 0;
+    }
+
+    .topbar {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 16px 32px;
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar h1 {
+      font-size: 22px;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .topbar p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .site-link {
+      color: var(--accent);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .btn-local {
+      border: 1px solid var(--line);
+      min-height: 38px;
+      border-radius: 6px;
+      padding: 8px 13px;
+      background: #fff;
+      color: var(--ink);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .btn-local:hover {
+      color: var(--ink);
+      text-decoration: none;
+      filter: brightness(0.97);
+    }
+
+    .main-grid {
+      padding: 28px 32px 40px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      min-width: 0;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .panel-header h2 {
+      font-size: 17px;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .panel-header p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .metric-value {
+      margin-top: 6px;
+      font-size: 23px;
+      font-weight: 700;
+      color: var(--blue);
+      line-height: 1.15;
+    }
+
+    .subtle {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 6px 0 0;
+    }
+
+    .portfolio-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.32fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 940px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 12px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    td strong {
+      display: block;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    td span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .right {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #eaf7ef;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .status-pill.fallback {
+      background: #fff3dd;
+      color: #9a6a16;
+    }
+
+    .gain {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .loss {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .note-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .note-row {
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+    }
+
+    .note-row:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .note-row strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .note-row span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1100px) {
+      .dashboard-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+      }
+
+      .summary-grid,
+      .portfolio-layout {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 16px 20px;
+      }
+
+      .main-grid {
+        padding: 20px;
+      }
+
+      .summary-grid,
+      .portfolio-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">H</div>
+        <div>
+          <strong>Hashen</strong>
+          <span>Private wealth console</span>
+        </div>
+      </div>
+      <nav class="nav-list">
+        <a class="nav-link-local" href="{% url 'dashboard' %}"><span>Overview</span><span>01</span></a>
+        <a class="nav-link-local active" href="{% url 'stocks_dashboard' %}"><span>Stocks</span><span>02</span></a>
+        <a class="nav-link-local" href="{% url 'mstr_dashboard' %}"><span>MSTR</span><span>03</span></a>
+        <a class="nav-link-local" href="{% url 'portfolio_report_pdf' %}"><span>Report PDF</span><span>PDF</span></a>
+        <a class="nav-link-local" href="{% url 'index' %}"><span>Landing page</span><span>H</span></a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <h1>Stock Portfolio</h1>
+          <p>Live listed holdings for the current period · <a class="site-link" href="{% url 'dashboard' %}">Back to overview</a></p>
+        </div>
+        <button id="refreshButton" class="btn-local" type="button">Refresh prices</button>
+      </header>
+
+      <div class="main-grid">
+        <section class="summary-grid" aria-label="Stock portfolio summary">
+          <div class="panel">
+            <div class="label">Total value</div>
+            <div id="totalChf" class="metric-value">Loading</div>
+            <p id="quoteStatus" class="subtle">Fetching live prices.</p>
+          </div>
+          <div class="panel">
+            <div class="label">Unrealized P/L</div>
+            <div id="unrealizedChf" class="metric-value">Loading</div>
+            <p class="subtle">Against stored average cost.</p>
+          </div>
+          <div class="panel">
+            <div class="label">USD exposure</div>
+            <div id="totalUsd" class="metric-value">Loading</div>
+            <p class="subtle">Native market value.</p>
+          </div>
+          <div class="panel">
+            <div class="label">EUR exposure</div>
+            <div id="totalEur" class="metric-value">Loading</div>
+            <p class="subtle">Native market value.</p>
+          </div>
+          <div class="panel">
+            <div class="label">Live coverage</div>
+            <div id="liveCoverage" class="metric-value">Loading</div>
+            <p id="lastUpdated" class="subtle">Waiting for quotes.</p>
+          </div>
+        </section>
+
+        <section class="portfolio-layout">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>Holdings</h2>
+                <p>Values refresh automatically and fall back to the last supplied figures when a symbol is unavailable.</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Holding</th>
+                    <th class="right">Shares</th>
+                    <th class="right">Price</th>
+                    <th class="right">Market value</th>
+                    <th class="right">Value CHF</th>
+                    <th class="right">Avg cost</th>
+                    <th class="right">Unrealized CHF</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="holdingsTable">
+                  <tr>
+                    <td colspan="8">Loading holdings.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <aside class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>Month-End Freeze</h2>
+                <p>Current values feed the live view now. The next step is storing a month-end snapshot for reports.</p>
+              </div>
+            </div>
+            <div class="note-list">
+              <div class="note-row">
+                <strong>Quote source</strong>
+                <span>Yahoo Finance chart prices for Nasdaq and Frankfurt symbols, with USD/EUR to CHF conversion.</span>
+              </div>
+              <div class="note-row">
+                <strong>Stored fallback</strong>
+                <span>The supplied portfolio values remain available if a live quote cannot be fetched.</span>
+              </div>
+              <div class="note-row">
+                <strong>Symbol mapping</strong>
+                <span>CFR is currently mapped to CIFR, Metaplanet to D7G.F, SHM to SHM.DE, and Y6G0 to Y6G0.F.</span>
+              </div>
+            </div>
+          </aside>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const numberFormatter = new Intl.NumberFormat('de-CH', { maximumFractionDigits: 2 });
+
+    function money(value, currency) {
+      if (!Number.isFinite(Number(value))) {
+        return 'Unavailable';
+      }
+      if (currency === 'CHF') {
+        return `CHF ${numberFormatter.format(value)}`;
+      }
+      return `${currency} ${numberFormatter.format(value)}`;
+    }
+
+    function shares(value) {
+      return numberFormatter.format(value);
+    }
+
+    function setText(id, value) {
+      const element = document.getElementById(id);
+      if (element) {
+        element.textContent = value;
+      }
+    }
+
+    function renderHoldingRow(holding) {
+      const row = document.createElement('tr');
+      const pnlClass = holding.unrealized_chf >= 0 ? 'gain' : 'loss';
+      row.innerHTML = `
+        <td><strong>${holding.ticker}</strong><span>${holding.name} · ${holding.symbol}</span></td>
+        <td class="right">${shares(holding.shares)}</td>
+        <td class="right">${money(holding.price, holding.currency)}</td>
+        <td class="right">${money(holding.value, holding.currency)}</td>
+        <td class="right">${money(holding.value_chf, 'CHF')}</td>
+        <td class="right">${money(holding.average_price, holding.cost_currency)}</td>
+        <td class="right ${pnlClass}">${money(holding.unrealized_chf, 'CHF')}</td>
+        <td><span class="status-pill ${holding.live ? '' : 'fallback'}">${holding.live ? 'Live' : 'Fallback'}</span></td>
+      `;
+      return row;
+    }
+
+    async function fetchPortfolio() {
+      setText('quoteStatus', 'Fetching live prices.');
+      try {
+        const response = await fetch('{% url "stock_portfolio" %}');
+        const payload = await response.json();
+        if (!response.ok || payload.status !== 'ok') {
+          throw new Error('Stock portfolio unavailable');
+        }
+
+        setText('totalChf', money(payload.total_chf, 'CHF'));
+        setText('unrealizedChf', money(payload.unrealized_chf, 'CHF'));
+        document.getElementById('unrealizedChf').className = `metric-value ${payload.unrealized_chf >= 0 ? 'gain' : 'loss'}`;
+        setText('totalUsd', money(payload.totals.USD, 'USD'));
+        setText('totalEur', money(payload.totals.EUR, 'EUR'));
+        setText('liveCoverage', `${payload.live_count}/${payload.total_count}`);
+        setText('quoteStatus', `${payload.source}. ${payload.live_count} holdings priced live.`);
+        setText('lastUpdated', `Updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
+
+        const table = document.getElementById('holdingsTable');
+        table.innerHTML = '';
+        payload.holdings.forEach(holding => table.appendChild(renderHoldingRow(holding)));
+      } catch (error) {
+        setText('quoteStatus', 'Live prices unavailable. Showing stored fallback values after refresh.');
+        setText('lastUpdated', 'Refresh failed');
+      }
+    }
+
+    document.getElementById('refreshButton').addEventListener('click', fetchPortfolio);
+    fetchPortfolio();
+    setInterval(fetchPortfolio, 120000);
+  </script>
+</body>
+</html>
