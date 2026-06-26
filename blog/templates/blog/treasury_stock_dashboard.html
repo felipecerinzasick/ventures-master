@@ -590,6 +590,44 @@
             <tbody id="scenarioBody"></tbody>
           </table>
         </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Accumulation And Trim Zones</h2>
+              <p>Monthly discipline for leveraged {{ stock.benchmark_name }} exposure. The aim is to harvest premium expansion instead of reacting emotionally.</p>
+            </div>
+            <span id="decisionSignal" class="pill">Waiting</span>
+          </div>
+          <div class="metric-grid mb-3">
+            <div class="metric">
+              <span>{{ stock.ticker }} monthly move</span>
+              <strong id="stockMove">Loading</strong>
+            </div>
+            <div class="metric">
+              <span>{{ stock.benchmark_unit }} monthly move</span>
+              <strong id="benchmarkMove">Loading</strong>
+            </div>
+            <div class="metric">
+              <span>Relative move</span>
+              <strong id="relativeMove">Loading</strong>
+            </div>
+            <div class="metric">
+              <span>Current zone</span>
+              <strong id="currentZone">Loading</strong>
+            </div>
+          </div>
+          <table class="scenario-table">
+            <thead>
+              <tr>
+                <th>Zone</th>
+                <th>Trigger</th>
+                <th>Rule</th>
+              </tr>
+            </thead>
+            <tbody id="rulesBody"></tbody>
+          </table>
+        </section>
       </section>
     </main>
   </div>
@@ -644,6 +682,17 @@
       return state.points[state.points.length - 1] || null;
     }
 
+    function previousPoint() {
+      return state.points.length > 1 ? state.points[state.points.length - 2] : null;
+    }
+
+    function pct(value) {
+      if (!Number.isFinite(value)) {
+        return 'Unavailable';
+      }
+      return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;
+    }
+
     function renderScenarios() {
       const latest = latestPoint();
       const targetPrice = Number(document.getElementById('targetPriceInput').value) || CONFIG.target_price;
@@ -664,6 +713,67 @@
           </tr>
         `;
       }).join('');
+    }
+
+    function zoneForMoves(stockMove, benchmarkMove, ratioMove) {
+      if (stockMove >= 100 || ratioMove >= 75) {
+        return {
+          name: 'Major trim',
+          detail: 'Premium expansion is extreme; rotate 30-40% of the tradable sleeve back into the base asset.'
+        };
+      }
+      if (stockMove >= 50 || ratioMove >= 30 || (benchmarkMove >= 20 && ratioMove >= 15)) {
+        return {
+          name: 'First trim',
+          detail: 'A 50% monthly stock move, or strong relative outperformance, allows a 20% trim.'
+        };
+      }
+      if (benchmarkMove <= -20 && ratioMove <= -35) {
+        return {
+          name: 'Risk review',
+          detail: 'The base asset is falling and the equity wrapper is underperforming; reduce or pause until the thesis is revalidated.'
+        };
+      }
+      if (benchmarkMove <= -15 && (stockMove <= -25 || ratioMove <= -20)) {
+        return {
+          name: 'Accumulation',
+          detail: 'If the thesis is intact, add slowly while the treasury wrapper is de-rating versus the base asset.'
+        };
+      }
+      return {
+        name: 'Hold',
+        detail: 'No forced action. Keep watching relative performance versus the base asset.'
+      };
+    }
+
+    function renderDecisionRules() {
+      const latest = latestPoint();
+      const previous = previousPoint();
+      if (!latest || !previous) {
+        setText('stockMove', 'Unavailable');
+        setText('benchmarkMove', 'Unavailable');
+        setText('relativeMove', 'Unavailable');
+        setText('currentZone', 'Waiting');
+        document.getElementById('rulesBody').innerHTML = '<tr><td colspan="3">Waiting for enough monthly data.</td></tr>';
+        return;
+      }
+      const stockMove = ((latest.stock_price / previous.stock_price) - 1) * 100;
+      const benchmarkMove = ((latest.benchmark_price / previous.benchmark_price) - 1) * 100;
+      const ratioMove = ((latest.units_per_share / previous.units_per_share) - 1) * 100;
+      const zone = zoneForMoves(stockMove, benchmarkMove, ratioMove);
+      setText('stockMove', pct(stockMove));
+      setText('benchmarkMove', pct(benchmarkMove));
+      setText('relativeMove', pct(ratioMove));
+      setText('currentZone', zone.name);
+      setText('decisionSignal', zone.name);
+      document.getElementById('rulesBody').innerHTML = `
+        <tr><td>Accumulation</td><td>${CONFIG.benchmark_unit} down 15%+ and ${CONFIG.ticker} de-rates 20%+ versus the base asset.</td><td>Add gradually only if the treasury thesis remains intact.</td></tr>
+        <tr><td>Hold</td><td>Relative move between -20% and +30% without a major base-asset shock.</td><td>No forced action. Let the position work.</td></tr>
+        <tr><td>First trim</td><td>${CONFIG.ticker} rises 50%+ in one month, or beats ${CONFIG.benchmark_unit} by 30%+.</td><td>Trim about 20% of the tradable sleeve into ${CONFIG.benchmark_unit} or cash.</td></tr>
+        <tr><td>Major trim</td><td>${CONFIG.ticker} rises 100%+ in one month, or the relative ratio expands 75%+.</td><td>Trim 30-40%; this is premium expansion, not permanent alpha until harvested.</td></tr>
+        <tr><td>Risk review</td><td>${CONFIG.benchmark_unit} falls 20%+ and ${CONFIG.ticker} underperforms by 35%+.</td><td>Pause accumulation and reassess liquidity, dilution, and capital-stack risk.</td></tr>
+        <tr><td>Current read</td><td>${CONFIG.ticker} ${pct(stockMove)} vs ${CONFIG.benchmark_unit} ${pct(benchmarkMove)}; relative ${pct(ratioMove)}.</td><td>${escapeHtml(zone.detail)}</td></tr>
+      `;
     }
 
     function showChartTooltip(event) {
@@ -790,17 +900,20 @@
         setText('dataStatus', payload.source || 'Loaded');
         renderChart();
         renderScenarios();
+        renderDecisionRules();
       } catch (error) {
         state.points = [];
         setText('dataStatus', 'Unavailable');
         document.getElementById('treasuryChart').innerHTML = '<div class="chart-meta">Treasury stock data is unavailable. Check the market data connection and refresh.</div>';
         renderScenarios();
+        renderDecisionRules();
       }
     }
 
     document.getElementById('targetPriceInput').addEventListener('input', () => {
       renderChart();
       renderScenarios();
+      renderDecisionRules();
     });
     document.getElementById('treasuryChart').addEventListener('mousemove', showChartTooltip);
     document.getElementById('treasuryChart').addEventListener('mouseleave', hideChartTooltip);

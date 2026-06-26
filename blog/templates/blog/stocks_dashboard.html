@@ -587,27 +587,7 @@
             <div class="ownership-note">
               <strong id="selectedTicker">Why I Own This</strong>
               <span id="selectedCategory">Click a holding row to view the reminder.</span>
-              <textarea id="selectedWhy" readonly>Choose a stock from the table.</textarea>
-            </div>
-            <div class="panel-header">
-              <div>
-                <h2>Month-End Freeze</h2>
-                <p>Current values feed the live view now. The next step is storing a month-end snapshot for reports.</p>
-              </div>
-            </div>
-            <div class="note-list">
-              <div class="note-row">
-                <strong>Quote source</strong>
-                <span>Yahoo Finance chart prices for Nasdaq and Frankfurt symbols, with USD/EUR to CHF conversion.</span>
-              </div>
-              <div class="note-row">
-                <strong>Stored fallback</strong>
-                <span>The supplied portfolio values remain available if a live quote cannot be fetched.</span>
-              </div>
-              <div class="note-row">
-                <strong>Symbol mapping</strong>
-                <span>CFR is mapped to CIFR, Metaplanet to DN3.F, SHM to SHM.F, 0XP to 0XP.DU, 3M8 to 3M8.F, and Y6G0 to Y6G0.F.</span>
-              </div>
+              <textarea id="selectedWhy">Choose a stock from the table.</textarea>
             </div>
           </aside>
         </section>
@@ -622,6 +602,7 @@
       sortKey: 'value_chf',
       sortDirection: 'desc',
       selectedTicker: null,
+      noteOverrides: JSON.parse(localStorage.getItem('hashenStockNotes') || '{}'),
       btcChf: null
     };
 
@@ -729,7 +710,7 @@
       row.title = holding.category || holding.why_own || 'Click to view ownership note';
       row.addEventListener('click', () => selectHolding(holding));
       row.innerHTML = `
-        <td><strong>${holding.ticker}</strong><span>${holding.name} · ${holding.symbol}${holding.category ? ` · ${holding.category}` : ''}</span></td>
+        <td><strong>${holding.ticker}</strong><span>${holding.name}</span></td>
         <td class="right">${shares(holding.shares)}</td>
         <td class="right">${money(holding.price, holding.currency)}</td>
         <td class="right">${money(holding.value, holding.currency)}</td>
@@ -745,7 +726,7 @@
       state.selectedTicker = holding.ticker;
       setText('selectedTicker', `${holding.ticker} · ${holding.name}`);
       setText('selectedCategory', holding.category || 'Ownership reminder');
-      document.getElementById('selectedWhy').value = holding.why_own || 'No ownership note stored yet.';
+      document.getElementById('selectedWhy').value = state.noteOverrides[holding.ticker] || holding.why_own || 'No ownership note stored yet.';
       renderPortfolio();
     }
 
@@ -816,6 +797,13 @@
     document.getElementById('currencySelect').addEventListener('change', event => {
       state.currency = event.target.value;
       renderPortfolio();
+    });
+    document.getElementById('selectedWhy').addEventListener('input', event => {
+      if (!state.selectedTicker) {
+        return;
+      }
+      state.noteOverrides[state.selectedTicker] = event.target.value;
+      localStorage.setItem('hashenStockNotes', JSON.stringify(state.noteOverrides));
     });
     document.getElementById('refreshButton').addEventListener('click', fetchPortfolio);
     document.querySelectorAll('th.sortable').forEach(header => {
