@@ -50,6 +50,81 @@ STOCK_HOLDINGS = [
     {'name': 'Y6G0', 'ticker': 'Y6G0', 'symbol': 'Y6G0.F', 'shares': Decimal('120'), 'average_price': Decimal('21.146'), 'cost_currency': 'EUR', 'fallback_value': Decimal('1431'), 'fallback_currency': 'EUR'},
 ]
 
+STOCK_NOTES = {
+    'ASST': {
+        'category': 'Bitcoin-first asset-manager treasury bet',
+        'why': 'Strive / Asset Entities is the Bitcoin-first asset-manager treasury bet. The uniqueness is Vivek/Strive\'s idea of using Bitcoin as the hurdle rate for capital allocation, not just holding BTC passively.',
+    },
+    'CFR': {
+        'category': 'AI/HPC power conversion',
+        'why': 'Hyperscale data-center developer born from Bitcoin mining. Cipher\'s value is increasingly about power sourcing, construction, and long-term HPC/data-center capacity rather than pure mining.',
+    },
+    'CLSK': {
+        'category': 'Bitcoin mining scale',
+        'why': 'Energy-backed Bitcoin miner pivoting into large-scale AI compute infrastructure. CleanSpark\'s edge is execution at scale across energy, mining, and data-center campuses.',
+    },
+    'DN3': {
+        'category': 'Japan MSTR',
+        'why': 'Japan\'s premier Bitcoin treasury company. Metaplanet is basically the Japanese MSTR play: BTC as reserve asset, BTC Yield as KPI, and capital markets used to grow Bitcoin per share.',
+    },
+    'IREN': {
+        'category': 'AI/HPC power conversion',
+        'why': 'Power-secured AI/HPC data-center platform with Bitcoin-mining roots. The uniqueness is huge renewable-powered infrastructure and the ability to convert mining sites into high-density compute.',
+    },
+    'KEEL': {
+        'category': 'AI power infrastructure',
+        'why': 'Former Bitfarms turned AI/HPC infrastructure play. The thesis is not just Bitcoin mining anymore; it is scarce power, grid interconnections, and data-center capacity for AI workloads.',
+    },
+    'MARA': {
+        'category': 'Bitcoin mining scale',
+        'why': 'One of the largest public Bitcoin miners and a major corporate BTC holder. MARA is a scale miner evolving into digital energy, compute, and infrastructure rather than just a hash-rate stock.',
+    },
+    'MSTR': {
+        'category': 'Bitcoin treasury king',
+        'why': 'The original and largest Bitcoin treasury company. MSTR is a high-beta Bitcoin capital-markets machine: the equity should be judged in sats/share, not dollars.',
+    },
+    'PYPL': {
+        'category': 'Non-crypto real-business anchor',
+        'why': 'Global digital payments infrastructure at a depressed valuation. PayPal is not a crypto beta stock; it is a mature money-movement network across roughly 200 markets with optionality in checkout, Venmo, and digital wallets.',
+    },
+    'RIOT': {
+        'category': 'Bitcoin mining scale',
+        'why': 'Vertically integrated Bitcoin miner with data-center upside. Riot combines mining, engineering, and large-scale data-center development, with the AI/HPC option layered on top.',
+    },
+    'SHM': {
+        'category': 'Non-crypto real-business anchor',
+        'why': 'The non-crypto quality anchor. Shimano is a century-old picks-and-shovels company for cycling and fishing: real products, real brand, global niche dominance.',
+    },
+    'STRC': {
+        'category': 'Strategy credit stack',
+        'why': 'Strategy credit exposure, not Strategy common equity. STRC is a variable-rate perpetual preferred designed to trade around $100 par and pay high cash dividends; the risk is Strategy\'s capital stack, not MSTR upside.',
+    },
+    'STRD': {
+        'category': 'Strategy credit stack',
+        'why': 'Long-duration high-yield Strategy preferred. STRD is a fixed 10% perpetual preferred: more income/security-stack exposure than upside participation.',
+    },
+    'WULF': {
+        'category': 'AI/HPC power conversion',
+        'why': 'Power-first AI/HPC infrastructure company. TeraWulf is a bet that scarce, scalable power sites become more valuable than the Bitcoin mining machines sitting on them.',
+    },
+    'CAN': {
+        'category': 'High-risk mining-cycle option',
+        'why': 'ASIC mining hardware call option. Canaan is one of the original Avalon ASIC miner makers; the turnaround thesis is mining hardware recovery plus self-mining/energy pivot, but it is much riskier than MSTR.',
+    },
+    '0XP': {
+        'category': 'High-risk mining-cycle option',
+        'why': 'Distressed legacy Bitcoin miner lottery ticket. Argo is not a core holding; it is a tiny survival/recovery option on a former UK-listed Bitcoin miner.',
+    },
+    '3M8': {
+        'category': 'UK-listed Bitcoin treasury proxy',
+        'why': 'UK-listed Bitcoin treasury proxy. The uniqueness is a small web-services company transformed into one of the UK\'s most visible Bitcoin treasury vehicles.',
+    },
+    'Y6G0': {
+        'category': 'Ethereum treasury king',
+        'why': 'The clearest public Ethereum treasury play. BitMine is trying to maximize ETH per share and become the institutional equity wrapper for Ethereum, staking, and the ETH monetary thesis.',
+    },
+}
+
 TREASURY_STOCKS = {
     'metaplanet': {
         'name': 'Metaplanet',
@@ -791,6 +866,7 @@ def stock_portfolio(request):
 
     for holding in STOCK_HOLDINGS:
         error = None
+        note = STOCK_NOTES.get(holding['ticker'], {})
         try:
             quote = _fetch_yahoo_quote(holding['symbol'])
             price = quote['price']
@@ -844,6 +920,8 @@ def stock_portfolio(request):
             'unrealized_chf': float(unrealized_chf),
             'live': live,
             'error': error,
+            'category': note.get('category', ''),
+            'why_own': note.get('why', ''),
         })
 
     return JsonResponse({
