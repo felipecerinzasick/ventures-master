@@ -1,4 +1,5 @@
 import base64
+from datetime import datetime, timedelta, timezone
 import json
 import os
 import ssl
@@ -25,6 +26,8 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
+
+SATOSHIS_PER_BTC = 100000000
 
 PORTFOLIO_REPORT = {
     'date': '31.05.2026',
@@ -578,6 +581,87 @@ def bitcoin_price(request):
                 }
             },
             'market': {},
+        }, status=503)
+
+
+def _unix_date(value):
+    parsed = datetime.strptime(value, '%Y-%m-%d')
+    return int(parsed.replace(tzinfo=timezone.utc).timestamp())
+
+
+def _fetch_yahoo_daily_series(symbol, start):
+    period1 = _unix_date(start)
+    period2 = int((datetime.now(timezone.utc) + timedelta(days=1)).timestamp())
+    params = parse.urlencode({
+        'period1': period1,
+        'period2': period2,
+        'interval': '1d',
+        'events': 'history',
+        'includeAdjustedClose': 'true',
+    })
+    url = 'https://query1.finance.yahoo.com/v8/finance/chart/%s?%s' % (parse.quote(symbol), params)
+    req = urlrequest.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    with urlrequest.urlopen(req, timeout=8) as response:
+        payload = json.loads(response.read().decode('utf-8'))
+
+    result = payload['chart']['result'][0]
+    timestamps = result.get('timestamp') or []
+    quote = result['indicators']['quote'][0]
+    closes = quote.get('close') or []
+    adjusted = result.get('indicators', {}).get('adjclose', [{}])[0].get('adjclose') or closes
+    points = []
+    for timestamp, close in zip(timestamps, adjusted):
+        if close is None:
+            continue
+        points.append({
+            'date': datetime.fromtimestamp(timestamp, tz=timezone.utc).date(),
+            'close': float(close),
+        })
+    if not points:
+        raise ValueError('No Yahoo Finance data returned for %s' % symbol)
+    return points
+
+
+def _month_end_points(points):
+    months = {}
+    for point in points:
+        months[point['date'].strftime('%Y-%m')] = point
+    return months
+
+
+@require_dashboard_auth
+def mstr_btc(request):
+    start = request.GET.get('start', '2021-06-01')
+    try:
+        mstr_months = _month_end_points(_fetch_yahoo_daily_series('MSTR', start))
+        btc_months = _month_end_points(_fetch_yahoo_daily_series('BTC-USD', start))
+        points = []
+        for month in sorted(set(mstr_months) & set(btc_months)):
+            mstr_point = mstr_months[month]
+            btc_point = btc_months[month]
+            btc_per_share = mstr_point['close'] / btc_point['close']
+            points.append({
+                'date': mstr_point['date'].strftime('%Y-%m-%d'),
+                'label': mstr_point['date'].strftime('%b %Y'),
+                'mstr_usd': round(mstr_point['close'], 2),
+                'btc_usd': round(btc_point['close'], 2),
+                'btc_per_share': round(btc_per_share, 8),
+                'sats_per_share': round(btc_per_share * SATOSHIS_PER_BTC),
+            })
+        return JsonResponse({
+            'status': 'ok',
+            'source': 'Yahoo Finance',
+            'symbol': 'MSTR/BTC',
+            'formula': 'MSTR adjusted close / BTC-USD close * 100,000,000',
+            'points': points,
+        })
+    except (HTTPError, URLError, TimeoutError, KeyError, IndexError, ValueError, json.JSONDecodeError) as exc:
+        return JsonResponse({
+            'status': 'unavailable',
+            'source': 'Yahoo Finance',
+            'error': 'Could not build MSTR/BTC chart data',
+            'detail': str(exc),
+            'points': [],
         }, status=503)
 
 

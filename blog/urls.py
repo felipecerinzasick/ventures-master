@@ -27,6 +27,7 @@ urlpatterns = [
     path('dashboard/report.pdf', views.portfolio_report_pdf, name='portfolio_report_pdf'),
     path('api/wealth-progression/', views.wealth_progression, name='wealth_progression'),
     path('api/bitcoin-price/', views.bitcoin_price, name='bitcoin_price'),
+    path('api/mstr-btc/', views.mstr_btc, name='mstr_btc'),
     path('api/ibkr-portfolio/', views.ibkr_portfolio, name='ibkr_portfolio'),
     path('resources/', views.resources_view, name='resources'),
     path('post/<int:pk>/comment/', add_comment, name='add_comment'),

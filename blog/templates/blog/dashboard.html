@@ -740,7 +740,8 @@
       <nav class="nav-list">
         <a class="nav-link-local active" href="{% url 'dashboard' %}"><span>Overview</span><span>01</span></a>
         <a class="nav-link-local" href="#reports"><span>Reports</span><span>02</span></a>
-        <a class="nav-link-local" href="#integrations"><span>Integrations</span><span>03</span></a>
+        <a class="nav-link-local" href="#mstr"><span>MSTR</span><span>03</span></a>
+        <a class="nav-link-local" href="#integrations"><span>Integrations</span><span>04</span></a>
         <a class="nav-link-local" href="{% url 'index' %}"><span>Landing page</span><span>H</span></a>
       </nav>
     </aside>
@@ -917,6 +918,48 @@
           </section>
         </div>
 
+        <div id="mstr" class="section-grid">
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>MSTR Investment Thesis</h2>
+                <p>Main investment tracked against Bitcoin purchasing power.</p>
+              </div>
+              <span class="pill">MSTR / BTC</span>
+            </div>
+            <div class="empty-note">
+              Thesis placeholder: add the long-form view on MicroStrategy as a Bitcoin treasury company, operating business, capital markets vehicle, and leveraged expression of Bitcoin adoption.
+            </div>
+            <div class="goal-stats mt-3">
+              <div class="goal-stat">
+                <span class="subtle">Current sats per share</span>
+                <strong id="mstrSats">Loading</strong>
+              </div>
+              <div class="goal-stat">
+                <span class="subtle">BTC per share</span>
+                <strong id="mstrBtcPerShare">Loading</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel reports-panel">
+            <div class="panel-header">
+              <div>
+                <h2>MSTR Priced In Bitcoin</h2>
+                <p>Monthly MSTR adjusted close divided by BTC-USD close.</p>
+              </div>
+              <span id="mstrStatus" class="pill">Loading</span>
+            </div>
+            <div class="allocation-chart">
+              <div class="asset-topline">
+                <h3>Sats Per MSTR Share</h3>
+                <span class="subtle">Higher means MSTR is outperforming BTC.</span>
+              </div>
+              <div id="mstrBtcChart"></div>
+            </div>
+          </section>
+        </div>
+
         <div class="section-grid">
           <section id="reports" class="panel reports-panel">
             <div class="panel-header">
@@ -1080,6 +1123,7 @@
       ibkrValue: null,
       ibkrCurrency: null,
       progression: [],
+      mstrBtc: [],
       lockedReportDateLabel: '31.05.2026',
       currentCloseDateLabel: '30.06.2026',
       privateAssets: []
@@ -1119,6 +1163,13 @@
 
     function btcAmount(value) {
       return value.toFixed(8).replace('.', ',');
+    }
+
+    function sats(value) {
+      if (!Number.isFinite(value)) {
+        return 'Unavailable';
+      }
+      return `${Math.round(value).toLocaleString('en-US')} sats`;
     }
 
     function fromChf(value) {
@@ -1400,6 +1451,63 @@
       renderLineChart('stocksChart', 'Stocks', 'stocks_chf', 'var(--blue)');
     }
 
+    function renderMstrBtcChart() {
+      const target = document.getElementById('mstrBtcChart');
+      if (!target) {
+        return;
+      }
+      if (!state.mstrBtc.length) {
+        target.innerHTML = '<div class="empty-note">Loading MSTR/BTC chart.</div>';
+        return;
+      }
+
+      const latest = state.mstrBtc[state.mstrBtc.length - 1];
+      setText('mstrSats', sats(latest.sats_per_share));
+      setText('mstrBtcPerShare', `${btcAmount(latest.btc_per_share)} BTC`);
+
+      const values = state.mstrBtc.map(point => point.sats_per_share);
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      const range = max - min || 1;
+      const width = 720;
+      const height = 240;
+      const padX = 24;
+      const padY = 18;
+      const usableWidth = width - padX * 2;
+      const usableHeight = height - padY * 2;
+      const coordinates = values.map((value, index) => {
+        const x = padX + (values.length === 1 ? 0 : (index / (values.length - 1)) * usableWidth);
+        const y = padY + usableHeight - ((value - min) / range) * usableHeight;
+        return { x, y };
+      });
+      const points = coordinates.map(point => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(' ');
+      const areaPoints = `${padX},${height - padY} ${points} ${width - padX},${height - padY}`;
+      const first = state.mstrBtc[0];
+
+      target.innerHTML = `
+        <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="MSTR priced in Bitcoin line chart">
+          <line x1="${padX}" y1="${height - padY}" x2="${width - padX}" y2="${height - padY}" stroke="#dfe5ec" stroke-width="1" />
+          <line x1="${padX}" y1="${padY}" x2="${padX}" y2="${height - padY}" stroke="#dfe5ec" stroke-width="1" />
+          <polygon points="${areaPoints}" fill="var(--gold)" opacity="0.12"></polygon>
+          <polyline points="${points}" fill="none" stroke="var(--gold)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+          ${state.mstrBtc.map((point, index) => {
+            const { x, y } = coordinates[index];
+            return `<circle cx="${x}" cy="${y}" r="3.5" fill="#fff" stroke="var(--gold)" stroke-width="2"></circle>`;
+          }).join('')}
+          ${state.mstrBtc.map((point, index) => {
+            const { x } = coordinates[index];
+            const previousX = index === 0 ? padX : (x + coordinates[index - 1].x) / 2;
+            const nextX = index === state.mstrBtc.length - 1 ? width - padX : (x + coordinates[index + 1].x) / 2;
+            const tooltip = `${point.label}\n${sats(point.sats_per_share)} per share\n${btcAmount(point.btc_per_share)} BTC per share\nMSTR $${point.mstr_usd.toLocaleString('en-US')}\nBTC $${point.btc_usd.toLocaleString('en-US')}`;
+            return `<rect x="${previousX.toFixed(1)}" y="${padY}" width="${Math.max(2, nextX - previousX).toFixed(1)}" height="${usableHeight}" fill="transparent" data-chart-tooltip="${escapeHtml(tooltip)}"></rect>`;
+          }).join('')}
+          <text x="${padX}" y="${height - 2}" fill="#607285" font-size="12">${escapeHtml(first.label)}</text>
+          <text x="${width - padX}" y="${height - 2}" text-anchor="end" fill="#607285" font-size="12">${escapeHtml(latest.label)}</text>
+        </svg>
+        <div class="chart-meta">${sats(first.sats_per_share)} to ${sats(latest.sats_per_share)}</div>
+      `;
+    }
+
     function renderRelativeAllocationChart() {
       const target = document.getElementById('relativeAllocationChart');
       if (!target) {
@@ -1659,6 +1767,26 @@
       render();
     }
 
+    async function fetchMstrBtc() {
+      try {
+        const response = await fetch('{% url "mstr_btc" %}?start=2021-06-01');
+        const payload = await response.json();
+        if (!response.ok || payload.status !== 'ok') {
+          throw new Error(payload.error || 'MSTR/BTC unavailable');
+        }
+        state.mstrBtc = payload.points || [];
+        setText('mstrStatus', payload.source || 'Loaded');
+      } catch (error) {
+        state.mstrBtc = [];
+        setText('mstrStatus', 'Unavailable');
+        setText('mstrSats', 'Unavailable');
+        setText('mstrBtcPerShare', 'Unavailable');
+        document.getElementById('mstrBtcChart').innerHTML = '<div class="empty-note">MSTR/BTC data is unavailable. Check the market data connection and refresh.</div>';
+        return;
+      }
+      renderMstrBtcChart();
+    }
+
     document.getElementById('currencySelect').addEventListener('change', event => {
       state.currency = event.target.value;
       render();
@@ -1670,7 +1798,7 @@
     document.getElementById('assetForm').addEventListener('submit', addAsset);
     document.getElementById('progressionBars').addEventListener('mousemove', showProgressionTooltip);
     document.getElementById('progressionBars').addEventListener('mouseleave', hideDashboardTooltip);
-    ['relativeAllocationChart', 'cashChart', 'bitcoinChart', 'stocksChart'].forEach(id => {
+    ['relativeAllocationChart', 'cashChart', 'bitcoinChart', 'stocksChart', 'mstrBtcChart'].forEach(id => {
       const chart = document.getElementById(id);
       chart.addEventListener('mousemove', showChartTooltip);
       chart.addEventListener('mouseleave', hideDashboardTooltip);
@@ -1682,6 +1810,7 @@
     fetchBitcoinPrice();
     fetchIbkrPortfolio();
     fetchWealthProgression();
+    fetchMstrBtc();
     setInterval(fetchBitcoinPrice, 120000);
     setInterval(fetchIbkrPortfolio, 120000);
   </script>
