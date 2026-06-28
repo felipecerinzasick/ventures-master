@@ -725,7 +725,9 @@
             <a class="nav-item nav-link active" href="{% url 'index' %}">Home</a>
             <a class="nav-item nav-link" href="{% url 'about' %}">About</a>
             <a class="nav-item nav-link" href="{% url 'blog' %}">Blog</a>
+            {% if not PUBLIC_SITE_ONLY %}
             <a class="nav-item nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+            {% endif %}
             {% if user.is_authenticated %}
               <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
               <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
@@ -748,7 +750,9 @@
         <h1>Building for neutral settlement.</h1>
         <p>Hashen helps investors and companies understand Bitcoin-native financial rails through research, reporting, treasury strategy, and practical infrastructure.</p>
         <div class="hero-actions">
+          {% if not PUBLIC_SITE_ONLY %}
           <a class="sv-btn" href="{% url 'dashboard' %}">Open dashboard</a>
+          {% endif %}
           <button class="sv-btn secondary" type="button" data-toggle="modal" data-target="#contactModal">Start a conversation</button>
         </div>
         <div class="hero-metrics">
@@ -768,7 +772,9 @@
               <h2>A calmer way to understand capital across old and new rails.</h2>
               <p>The dashboard brings cash, stocks, Bitcoin, and private assets into one clean monthly view. It is a local prototype for the reporting layer behind treasury and settlement workflows.</p>
             </div>
+            {% if not PUBLIC_SITE_ONLY %}
             <a class="sv-btn" href="{% url 'dashboard' %}">View dashboard</a>
+            {% endif %}
           </div>
           <div class="dashboard-preview">
             <div class="preview-top">
@@ -871,7 +877,9 @@
         <div class="col-lg-3 mb-4">
           <h4>Links</h4>
           <p><a href="{% url 'index' %}">Home</a></p>
+          {% if not PUBLIC_SITE_ONLY %}
           <p><a href="{% url 'dashboard' %}">Dashboard</a></p>
+          {% endif %}
           <p><a href="{% url 'about' %}">About</a></p>
           <p><a href="{% url 'privacy-policy' %}">Privacy policy</a></p>
         </div>

@@ -12,7 +12,8 @@ from urllib.error import URLError, HTTPError
 from .models import Post, Comment, Resource
 from newsletter.models import Newsletter
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
@@ -398,6 +399,8 @@ DASHBOARD_PASSWORD = os.environ.get('HASHEN_DASHBOARD_PASSWORD', 'hashen123')
 def require_dashboard_auth(view_func):
     @wraps(view_func)
     def wrapped(request, *args, **kwargs):
+        if getattr(settings, 'PUBLIC_SITE_ONLY', False):
+            raise Http404
         auth_header = request.META.get('HTTP_AUTHORIZATION', '')
         if auth_header.startswith('Basic '):
             try:

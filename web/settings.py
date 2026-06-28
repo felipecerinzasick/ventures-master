@@ -28,6 +28,8 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['*']
 
+PUBLIC_SITE_ONLY = os.environ.get('PUBLIC_SITE_ONLY', 'False') == 'True'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -108,6 +110,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'blog.context_processors.public_site',
             ],
         },
     },

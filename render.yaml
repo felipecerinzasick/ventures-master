@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: hashen-public
+    runtime: python
+    plan: free
+    buildCommand: ./build.sh
+    startCommand: gunicorn web.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: web.public_settings
+      - key: PUBLIC_SITE_ONLY
+        value: "True"
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.8.18"
+      - key: SECRET_KEY
+        generateValue: true
